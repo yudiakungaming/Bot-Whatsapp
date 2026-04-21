@@ -1,36 +1,27 @@
 // ============================================================
-// server.js — Backend WABot Manager
-// Jalankan: npm install whatsapp-web.js express socket.io qrcode
-// Kemudian: node server.js
-// Buka: http://localhost:3000
+// server.js — WABot Manager (Baileys Version)
+// Cocok untuk deploy di Railway / Render / VPS
 // ============================================================
 
 const express = require('express');
 const http = require('http');
 const { Server } = require('socket.io');
-const fs = require('fs');
+const makeWASocket = require('@whiskeysockets/baileys').default;
+const { useMultiFileAuthState, DisconnectReason } = require('@whiskeysockets/baileys');
+const pino = require('pino');
+const QRCode = require('qrcode');
 const path = require('path');
-
-// whatsapp-web.js akan di-import jika tersedia
-let Client, LocalAuth, QRCode;
-try {
-    const wh = require('whatsapp-web.js');
-    Client = wh.Client;
-    LocalAuth = wh.LocalAuth;
-    QRCode = require('qrcode');
-} catch (e) {
-    console.log('[INFO] whatsapp-web.js belum terinstall.');
-    console.log('[INFO] Jalankan: npm install whatsapp-web.js qrcode');
-}
+const fs = require('fs');
 
 const app = express();
 const server = http.createServer(app);
 const io = new Server(server, { cors: { origin: '*' } });
 
 app.use(express.json());
+
+// Serve file HTML dari folder public/
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Serve index.html dari folder public/
 app.get('/', (req, res) => {
     const indexPath = path.join(__dirname, 'public', 'index.html');
     if (fs.existsSync(indexPath)) {
@@ -38,8 +29,8 @@ app.get('/', (req, res) => {
     } else {
         res.send(`
             <h2 style="font-family:sans-serif;padding:40px;color:#333;">
-                WABot Manager — Backend Aktif<br><br>
-                <span style="color:#25D366;font-size:14px;">Server berjalan di port 3000</span><br><br>
+                WABot Manager Backend Aktif<br><br>
+                <span style="color:#25D366;">Server berjalan</span><br><br>
                 <span style="color:#666;font-size:13px;">
                 Letakkan file HTML dashboard di folder <code>public/index.html</code>
                 </span>
@@ -49,337 +40,210 @@ app.get('/', (req, res) => {
 });
 
 // ==================== STATE ====================
-let waClient = null;
+let sock = null;
 let waConnected = false;
-let waQR = null;
+let qrDataUrl = null;
 
-// Aturan auto-reply (disimpan di memory, bisa diganti ke database)
 let rules = [
-    {
-        id: 1, name: 'Sapaan',
-        matchType: 'contains',
-        keywords: ['halo', 'hai', 'selamat pagi', 'selamat siang'],
-        reply: 'Halo! Terima kasih telah menghubungi kami. Ada yang bisa kami bantu?',
-        priority: 'high', status: 'active', triggerCount: 0
-    },
-    {
-        id: 2, name: 'Info Harga',
-        matchType: 'contains',
-        keywords: ['harga', 'biaya', 'ongkir'],
-        reply: 'Untuk info harga, silakan hubungi tim sales kami.',
-        priority: 'normal', status: 'active', triggerCount: 0
-    },
-    {
-        id: 3, name: 'Terima Kasih',
-        matchType: 'contains',
-        keywords: ['terima kasih', 'makasih', 'thanks'],
-        reply: 'Sama-sama! Senang bisa membantu.',
-        priority: 'low', status: 'active', triggerCount: 0
-    }
+    { id: 1, name: 'Sapaan', matchType: 'contains', keywords: ['halo','hai','selamat pagi','selamat siang','selamat malam'], reply: 'Halo! Terima kasih telah menghubungi kami. Ada yang bisa kami bantu?', priority: 'high', status: 'active', triggerCount: 0 },
+    { id: 2, name: 'Info Harga', matchType: 'contains', keywords: ['harga','biaya','ongkir','murah'], reply: 'Untuk informasi harga, silakan kunjungi katalog kami atau hubungi tim sales.', priority: 'normal', status: 'active', triggerCount: 0 },
+    { id: 3, name: 'Cek Pesanan', matchType: 'contains', keywords: ['pesanan','order','status','tracking'], reply: 'Untuk cek status pesanan, kirim nomor pesanan (INV-xxxxx).', priority: 'normal', status: 'active', triggerCount: 0 },
+    { id: 4, name: 'Komplain', matchType: 'contains', keywords: ['komplain','keluhan','rusak','salah'], reply: 'Mohon maaf atas ketidaknyamanan. Tim kami akan menindaklanjuti. Sertakan foto dan nomor pesanan.', priority: 'high', status: 'active', triggerCount: 0 },
+    { id: 5, name: 'Terima Kasih', matchType: 'contains', keywords: ['terima kasih','makasih','thanks','thx'], reply: 'Sama-sama! Senang bisa membantu.', priority: 'low', status: 'active', triggerCount: 0 },
 ];
 
-// Log pesan
 let messageLogs = [];
-
-// Jadwal pesan
 let schedules = [];
 
-// ==================== WHATSAPP CLIENT ====================
-function initWhatsApp() {
-    if (!Client) {
-        console.log('[WARN] whatsapp-web.js tidak tersedia. Menjalankan mode demo.');
-        io.emit('wa-status', { status: 'no-library' });
-        return;
-    }
+// ==================== WHATSAPP (BAILEYS) ====================
+async function initWhatsApp() {
+    const SESSION_DIR = path.join(__dirname, 'auth_session');
+    if (!fs.existsSync(SESSION_DIR)) fs.mkdirSync(SESSION_DIR, { recursive: true });
 
-    waClient = new Client({
-        authStrategy: new LocalAuth({ clientId: 'wabot-session' }),
-        puppeteer: {
-            headless: true,
-            args: ['--no-sandbox', '--disable-setuid-sandbox']
-        }
+    const { state, saveCreds } = await useMultiFileAuthState(SESSION_DIR);
+
+    sock = makeWASocket({
+        auth: state,
+        printQRInTerminal: false,
+        logger: pino({ level: 'silent' })
     });
 
-    // Event: QR Code tersedia
-    waClient.on('qr', async (qr) => {
-        console.log('[WA] QR Code tersedia, menunggu scan...');
-        try {
-            const qrImage = await QRCode.toDataURL(qr, { width: 300, margin: 2 });
-            waQR = qrImage;
-            io.emit('wa-qr', { qr: qrImage });
-        } catch (err) {
-            // Fallback: kirim QR string mentah
-            io.emit('wa-qr', { qr: null, qrString: qr });
+    // Simpan kredensial saat update
+    sock.ev.on('creds.update', saveCreds);
+
+    // Event: QR Code
+    sock.ev.on('connection.update', async (update) => {
+        const { qr, connection, lastDisconnect } = update;
+
+        // QR tersedia
+        if (qr) {
+            console.log('[WA] QR Code tersedia');
+            try {
+                qrDataUrl = await QRCode.toDataURL(qr, { width: 300, margin: 2 });
+                io.emit('wa-qr', { qr: qrDataUrl });
+            } catch (e) {
+                io.emit('wa-qr', { qr: null, qrString: qr });
+            }
+            io.emit('wa-status', { status: 'qr-ready' });
         }
-        io.emit('wa-status', { status: 'qr-ready' });
-    });
 
-    // Event: Berhasil terhubung
-    waClient.on('ready', () => {
-        console.log('[WA] Terhubung!');
-        waConnected = true;
-        waQR = null;
-        io.emit('wa-status', { status: 'connected' });
+        // Koneksi berubah
+        if (connection === 'open') {
+            console.log('[WA] TERHUBUNG!');
+            waConnected = true;
+            qrDataUrl = null;
+            io.emit('wa-status', { status: 'connected' });
+        }
 
-        waClient.getContacts().then(contacts => {
-            console.log(`[WA] ${contacts.length} kontak ditemukan`);
-        }).catch(() => {});
+        if (connection === 'close') {
+            const code = lastDisconnect?.error?.output?.statusCode;
+            console.log(`[WA] Diskonek, kode: ${code}`);
+            waConnected = false;
+
+            if (code === DisconnectReason.loggedOut) {
+                console.log('[WA] Session logout, hapus auth_session dan restart');
+                io.emit('wa-status', { status: 'auth-failure' });
+            } else {
+                console.log('[WA] Reconnecting...');
+                io.emit('wa-status', { status: 'reconnecting' });
+                setTimeout(() => initWhatsApp(), 5000);
+            }
+        }
     });
 
     // Event: Pesan masuk
-    waClient.on('message', async (msg) => {
-        if (msg.from === 'status@broadcast') return;
-        if (msg.hasMedia) return;
+    sock.ev.on('messages.upsert', async ({ messages }) => {
+        const msg = messages[0];
+        if (!msg.message || msg.key.fromMe) return;
+        if (msg.key.remoteJid === 'status@broadcast') return;
 
-        const body = msg.body.trim();
-        if (!body) return;
+        const body = msg.message?.conversation ||
+                     msg.message?.extendedTextMessage?.text || '';
+        if (!body.trim()) return;
 
-        const sender = await msg.getContact();
-        const senderName = sender.pushName || sender.number || 'Unknown';
-        const senderPhone = sender.number || msg.from;
+        const senderPhone = msg.key.remoteJid?.replace(/@s\.whatsapp\.net/, '') || 'Unknown';
+        const pushName = msg.pushName || senderPhone;
         const now = new Date();
-        const timeStr = now.getHours().toString().padStart(2, '0') + ':' +
-                        now.getMinutes().toString().padStart(2, '0');
+        const timeStr = now.getHours().toString().padStart(2,'0') + ':' + now.getMinutes().toString().padStart(2,'0');
 
-        console.log(`[MSG] ${senderName}: ${body}`);
+        console.log(`[MSG] ${pushName}: ${body}`);
 
-        // Cocokkan dengan aturan
+        // Cocokkan aturan
         let matchedRule = null;
         const bodyLower = body.toLowerCase();
-
-        // Urutkan berdasarkan prioritas
         const sortedRules = [...rules]
             .filter(r => r.status === 'active')
-            .sort((a, b) => {
-                const p = { high: 0, normal: 1, low: 2 };
-                return (p[a.priority] || 1) - (p[b.priority] || 1);
-            });
+            .sort((a, b) => ({ high:0, normal:1, low:2 }[a.priority]||1) - ({ high:0, normal:1, low:2 }[b.priority]||1));
 
         for (const rule of sortedRules) {
             for (const kw of rule.keywords) {
-                const kwLower = kw.toLowerCase();
+                const kwL = kw.toLowerCase();
                 let found = false;
-
-                if (rule.matchType === 'contains') found = bodyLower.includes(kwLower);
-                else if (rule.matchType === 'exact') found = bodyLower === kwLower;
-                else if (rule.matchType === 'startswith') found = bodyLower.startsWith(kwLower);
-                else if (rule.matchType === 'regex') {
-                    try { found = new RegExp(kw, 'i').test(body); } catch(e) {}
-                }
-
+                if (rule.matchType === 'contains') found = bodyLower.includes(kwL);
+                else if (rule.matchType === 'exact') found = bodyLower === kwL;
+                else if (rule.matchType === 'startswith') found = bodyLower.startsWith(kwL);
+                else if (rule.matchType === 'regex') { try { found = new RegExp(kw,'i').test(body); } catch(e){} }
                 if (found) { matchedRule = rule; break; }
             }
             if (matchedRule) break;
         }
 
-        let replyText = null;
         if (matchedRule) {
-            replyText = matchedRule.reply;
             matchedRule.triggerCount++;
-
-            // Kirim balasan dengan delay 1-3 detik (agar terlihat natural)
+            const replyText = matchedRule.reply;
             const delay = 1000 + Math.random() * 2000;
+
             setTimeout(async () => {
                 try {
-                    await msg.reply(replyText);
-                    console.log(`[REPLY] -> ${senderName}: ${replyText.substring(0, 50)}...`);
+                    await sock.sendMessage(msg.key.remoteJid, { text: replyText });
+                    console.log(`[REPLY] -> ${pushName}: ${replyText.substring(0,50)}...`);
                 } catch (err) {
-                    console.error(`[ERROR] Gagal kirim balasan: ${err.message}`);
+                    console.error(`[ERR] Gagal reply: ${err.message}`);
                 }
             }, delay);
         }
 
-        // Simpan ke log
         const logEntry = {
-            id: Date.now(),
-            time: timeStr,
-            sender: senderName,
-            phone: senderPhone,
+            id: Date.now(), time: timeStr, sender: pushName, phone: senderPhone,
             incoming: body,
-            reply: replyText ? replyText.substring(0, 80) + (replyText.length > 80 ? '...' : '') : '-',
+            reply: matchedRule ? matchedRule.reply.substring(0,80) + (matchedRule.reply.length>80?'...':'') : '-',
             rule: matchedRule ? matchedRule.name : '-',
             status: matchedRule ? 'replied' : 'missed'
         };
         messageLogs.unshift(logEntry);
         if (messageLogs.length > 500) messageLogs = messageLogs.slice(0, 500);
 
-        // Kirim ke dashboard via WebSocket
         io.emit('wa-message', logEntry);
         if (matchedRule) io.emit('rules-updated', rules);
     });
-
-    // Event: Diskonek
-    waClient.on('disconnected', (reason) => {
-        console.log(`[WA] Diskonek: ${reason}`);
-        waConnected = false;
-        io.emit('wa-status', { status: 'disconnected', reason });
-    });
-
-    // Event: Auth failure
-    waClient.on('auth_failure', () => {
-        console.log('[WA] Auth gagal, hapus folder .wabot-session dan coba lagi');
-        io.emit('wa-status', { status: 'auth-failure' });
-    });
-
-    waClient.initialize();
 }
 
-// ==================== SOCKET.IO EVENTS ====================
+// ==================== SOCKET.IO ====================
 io.on('connection', (socket) => {
-    console.log(`[IO] Client terhubung: ${socket.id}`);
+    console.log(`[IO] Client: ${socket.id}`);
 
-    // Kirim status awal
-    socket.emit('wa-status', {
-        status: waConnected ? 'connected' : (waQR ? 'qr-ready' : 'initializing')
-    });
+    socket.emit('wa-status', { status: waConnected ? 'connected' : (qrDataUrl ? 'qr-ready' : 'initializing') });
     socket.emit('rules-updated', rules);
     socket.emit('logs-updated', messageLogs.slice(0, 50));
     socket.emit('schedules-updated', schedules);
 
-    // Client minta QR
-    socket.on('request-qr', () => {
-        if (waQR) socket.emit('wa-qr', { qr: waQR });
+    socket.on('request-qr', () => { if (qrDataUrl) socket.emit('wa-qr', { qr: qrDataUrl }); });
+
+    socket.on('disconnect-wa', () => {
+        if (sock) { sock.end(); waConnected = false; io.emit('wa-status', { status: 'disconnected' }); }
     });
 
-    // Client putuskan koneksi WA
-    socket.on('disconnect-wa', async () => {
-        if (waClient && waConnected) {
-            try {
-                await waClient.logout();
-                waConnected = false;
-                io.emit('wa-status', { status: 'disconnected' });
-                console.log('[WA] Logout oleh user');
-            } catch(e) {}
-        }
-    });
-
-    // Client mengirim pesan manual
     socket.on('send-message', async (data) => {
-        if (!waClient || !waConnected) {
-            socket.emit('send-error', 'WhatsApp tidak terhubung');
-            return;
-        }
+        if (!sock || !waConnected) { socket.emit('send-error', 'WA tidak terhubung'); return; }
         try {
-            const chatId = data.phone.replace(/[^0-9]/g, '') + '@c.us';
-            await waClient.sendMessage(chatId, data.message);
-            socket.emit('send-success', { phone: data.phone, message: data.message });
-            console.log(`[SEND] -> ${data.phone}: ${data.message.substring(0, 50)}`);
-        } catch (err) {
-            socket.emit('send-error', err.message);
-        }
+            const chatId = data.phone.replace(/[^0-9]/g, '') + '@s.whatsapp.net';
+            await sock.sendMessage(chatId, { text: data.message });
+            socket.emit('send-success', { phone: data.phone });
+        } catch (err) { socket.emit('send-error', err.message); }
     });
 
-    // CRUD Rules
-    socket.on('add-rule', (rule) => {
-        rule.id = Date.now();
-        rule.triggerCount = 0;
-        rules.push(rule);
-        io.emit('rules-updated', rules);
-    });
+    socket.on('add-rule', (r) => { r.id = Date.now(); r.triggerCount = 0; rules.push(r); io.emit('rules-updated', rules); });
+    socket.on('update-rule', (r) => { const i = rules.findIndex(x=>x.id===r.id); if(i!==-1){rules[i]=r; io.emit('rules-updated', rules);} });
+    socket.on('delete-rule', (id) => { rules = rules.filter(r=>r.id!==id); io.emit('rules-updated', rules); });
+    socket.on('toggle-rule', (id) => { const r=rules.find(r=>r.id===id); if(r){r.status=r.status==='active'?'paused':'active'; io.emit('rules-updated', rules);} });
 
-    socket.on('update-rule', (rule) => {
-        const idx = rules.findIndex(r => r.id === rule.id);
-        if (idx !== -1) { rules[idx] = rule; io.emit('rules-updated', rules); }
-    });
+    socket.on('add-schedule', (s) => { s.id=Date.now(); s.status='active'; schedules.push(s); io.emit('schedules-updated', schedules); });
+    socket.on('delete-schedule', (id) => { schedules=schedules.filter(s=>s.id!==id); io.emit('schedules-updated', schedules); });
+    socket.on('toggle-schedule', (id) => { const s=schedules.find(s=>s.id===id); if(s){s.status=s.status==='active'?'paused':'active'; io.emit('schedules-updated', schedules);} });
 
-    socket.on('delete-rule', (id) => {
-        rules = rules.filter(r => r.id !== id);
-        io.emit('rules-updated', rules);
-    });
+    socket.on('clear-logs', () => { messageLogs=[]; io.emit('logs-updated', []); });
 
-    socket.on('toggle-rule', (id) => {
-        const r = rules.find(r => r.id === id);
-        if (r) { r.status = r.status === 'active' ? 'paused' : 'active'; io.emit('rules-updated', rules); }
-    });
-
-    // CRUD Schedules
-    socket.on('add-schedule', (sched) => {
-        sched.id = Date.now();
-        sched.status = 'active';
-        schedules.push(sched);
-        io.emit('schedules-updated', schedules);
-    });
-
-    socket.on('delete-schedule', (id) => {
-        schedules = schedules.filter(s => s.id !== id);
-        io.emit('schedules-updated', schedules);
-    });
-
-    socket.on('toggle-schedule', (id) => {
-        const s = schedules.find(s => s.id === id);
-        if (s) { s.status = s.status === 'active' ? 'paused' : 'active'; io.emit('schedules-updated', schedules); }
-    });
-
-    // Clear logs
-    socket.on('clear-logs', () => {
-        messageLogs = [];
-        io.emit('logs-updated', []);
-    });
-
-    socket.on('disconnect', () => {
-        console.log(`[IO] Client diskonek: ${socket.id}`);
-    });
+    socket.on('disconnect', () => {});
 });
 
-// ==================== JADWAL CHECKER ====================
+// Jadwal checker
 setInterval(() => {
+    if (!sock || !waConnected) return;
     const now = new Date();
-    const currentTime = now.getHours().toString().padStart(2, '0') + ':' + now.getMinutes().toString().padStart(2, '0');
-    const currentDate = now.toISOString().split('T')[0];
+    const ct = now.getHours().toString().padStart(2,'0') + ':' + now.getMinutes().toString().padStart(2,'0');
+    const cd = now.toISOString().split('T')[0];
 
-    schedules.filter(s => s.status === 'active').forEach(sched => {
-        if (sched.time === currentTime && sched.date <= currentDate) {
-            if (sched.repeat === 'none' && sched.date !== currentDate) return;
-
-            // Kirim pesan terjadwal
-            if (waClient && waConnected) {
-                let targetId;
-                if (sched.target === 'all') {
-                    console.log(`[SCHED] Tidak bisa kirim ke "semua kontak" langsung. Target spesifik diperlukan.`);
-                    return;
-                } else if (sched.target.startsWith('group:')) {
-                    targetId = sched.target.replace('group:', '') + '@g.us';
-                } else if (sched.target.startsWith('contact:')) {
-                    const phone = sched.target.replace('contact:', '');
-                    targetId = phone + '@c.us';
-                }
-
-                if (targetId) {
-                    waClient.sendMessage(targetId, sched.message).then(() => {
-                        console.log(`[SCHED] Pesan terjadwal terkirim: ${sched.name}`);
-                        io.emit('schedule-sent', { name: sched.name, time: currentTime });
-                    }).catch(err => {
-                        console.error(`[SCHED] Error: ${err.message}`);
-                    });
-                }
-
-                // Update tanggal untuk repeat
-                if (sched.repeat === 'daily') {
-                    const next = new Date(now); next.setDate(next.getDate() + 1);
-                    sched.date = next.toISOString().split('T')[0];
-                } else if (sched.repeat === 'weekly') {
-                    const next = new Date(now); next.setDate(next.getDate() + 7);
-                    sched.date = next.toISOString().split('T')[0];
-                } else if (sched.repeat === 'monthly') {
-                    const next = new Date(now); next.setMonth(next.getMonth() + 1);
-                    sched.date = next.toISOString().split('T')[0];
-                } else if (sched.repeat === 'none') {
-                    sched.status = 'paused';
-                }
+    schedules.filter(s=>s.status==='active').forEach(s => {
+        if (s.time === ct && s.date <= cd) {
+            let targetId = null;
+            if (s.target.startsWith('group:')) targetId = s.target.replace('group:','') + '@g.us';
+            else if (s.target.startsWith('contact:')) targetId = s.target.replace('contact:','').replace(/[^0-9]/g,'') + '@s.whatsapp.net';
+            if (targetId) {
+                sock.sendMessage(targetId, { text: s.message }).then(() => {
+                    io.emit('schedule-sent', { name: s.name });
+                }).catch(e => console.error('[SCHED ERR]', e.message));
             }
+            if (s.repeat === 'daily') { const n=new Date(now); n.setDate(n.getDate()+1); s.date=n.toISOString().split('T')[0]; }
+            else if (s.repeat === 'weekly') { const n=new Date(now); n.setDate(n.getDate()+7); s.date=n.toISOString().split('T')[0]; }
+            else if (s.repeat === 'monthly') { const n=new Date(now); n.setMonth(n.getMonth()+1); s.date=n.toISOString().split('T')[0]; }
+            else { s.status = 'paused'; }
         }
     });
-}, 60000); // Cek setiap menit
+}, 60000);
 
-// ==================== START SERVER ====================
+// ==================== START ====================
 const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {
-    console.log('');
-    console.log('╔══════════════════════════════════════════╗');
-    console.log('║        WABot Manager Backend             ║');
-    console.log('║   Server berjalan di port ' + PORT + '            ║');
-    console.log('║   Buka: http://localhost:' + PORT + '            ║');
-    console.log('╚══════════════════════════════════════════╝');
-    console.log('');
+    console.log('WABot Manager berjalan di port ' + PORT);
     initWhatsApp();
 });
