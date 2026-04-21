@@ -3,1665 +3,678 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WABot Manager — Kelola Bot WhatsApp</title>
+    <title>WABot Manager</title>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="https://cdn.socket.io/4.7.4/socket.io.min.js"></script>
     <style>
-        :root {
-            --bg: #0a0f0d;
-            --bg-secondary: #111a16;
-            --bg-card: #15201b;
-            --bg-card-hover: #1a2b24;
-            --fg: #e8f0ec;
-            --fg-muted: #7a9489;
-            --fg-dim: #4a6b5e;
-            --accent: #25D366;
-            --accent-dim: rgba(37,211,102,0.15);
-            --accent-glow: rgba(37,211,102,0.3);
-            --danger: #ff4757;
-            --danger-dim: rgba(255,71,87,0.15);
-            --warning: #ffa502;
-            --warning-dim: rgba(255,165,2,0.15);
-            --info: #1e90ff;
-            --info-dim: rgba(30,144,255,0.15);
-            --border: #1e3029;
-            --border-light: #2a4038;
-            --radius: 12px;
-            --radius-sm: 8px;
-            --radius-lg: 16px;
-            --shadow: 0 4px 24px rgba(0,0,0,0.4);
-            --shadow-accent: 0 4px 20px rgba(37,211,102,0.2);
-        }
+        :root{--bg:#0a0f0d;--bg2:#111a16;--bgc:#15201b;--bgch:#1a2b24;--fg:#e8f0ec;--fgm:#7a9489;--fgd:#4a6b5e;--acc:#25D366;--accd:rgba(37,211,102,.15);--accg:rgba(37,211,102,.3);--dng:#ff4757;--dngd:rgba(255,71,87,.15);--wrn:#ffa502;--wrnd:rgba(255,165,2,.15);--inf:#1e90ff;--infd:rgba(30,144,255,.15);--brd:#1e3029;--brl:#2a4038;--r:12px;--rs:8px;--rl:16px;--sh:0 4px 24px rgba(0,0,0,.4);--sha:0 4px 20px rgba(37,211,102,.2)}
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{font-family:'Space Grotesk',sans-serif;background:var(--bg);color:var(--fg);min-height:100vh;overflow-x:hidden}
+        body::before{content:'';position:fixed;top:-50%;left:-50%;width:200%;height:200%;background:radial-gradient(ellipse at 20% 20%,rgba(37,211,102,.04) 0%,transparent 50%),radial-gradient(ellipse at 80% 80%,rgba(37,211,102,.03) 0%,transparent 50%);z-index:0;pointer-events:none;animation:bgs 20s ease-in-out infinite alternate}
+        @keyframes bgs{0%{transform:translate(0,0)}100%{transform:translate(-2%,-1%) rotate(2deg)}}
+        .app{display:flex;min-height:100vh;position:relative;z-index:1}
 
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        /* Sidebar */
+        .sb{width:260px;background:var(--bg2);border-right:1px solid var(--brd);display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:100;transition:transform .3s}
+        .sb-hd{padding:20px;border-bottom:1px solid var(--brd)}
+        .sb-logo{display:flex;align-items:center;gap:12px}
+        .sb-ico{width:40px;height:40px;background:linear-gradient(135deg,var(--acc),#128C7E);border-radius:var(--rs);display:flex;align-items:center;justify-content:center;font-size:18px;color:#fff;box-shadow:var(--sha)}
+        .sb-txt span:first-child{font-weight:700;font-size:17px}
+        .sb-txt span:last-child{font-size:10px;color:var(--fgm);letter-spacing:1px;text-transform:uppercase}
+        .sb-txt{display:flex;flex-direction:column}
+        .sb-nav{flex:1;padding:12px;overflow-y:auto;display:flex;flex-direction:column;gap:2px}
+        .nl{font-size:10px;text-transform:uppercase;letter-spacing:1.5px;color:var(--fgd);padding:14px 12px 6px;font-weight:600}
+        .ni{display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:var(--rs);cursor:pointer;transition:all .2s;color:var(--fgm);font-size:13px;font-weight:500;position:relative;border:1px solid transparent}
+        .ni:hover{background:var(--accd);color:var(--fg)}
+        .ni.act{background:var(--accd);color:var(--acc);border-color:rgba(37,211,102,.2)}
+        .ni.act::before{content:'';position:absolute;left:-12px;top:50%;transform:translateY(-50%);width:3px;height:18px;background:var(--acc);border-radius:0 4px 4px 0}
+        .ni i{width:18px;text-align:center;font-size:14px}
+        .nb{margin-left:auto;background:var(--acc);color:var(--bg);font-size:10px;font-weight:700;padding:2px 7px;border-radius:10px}
+        .sb-ft{padding:14px;border-top:1px solid var(--brd)}
+        .bsc{background:var(--bgc);border-radius:var(--r);padding:12px;border:1px solid var(--brd)}
+        .bsr{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+        .bsl{font-size:11px;color:var(--fgm)}
+        .sd{width:8px;height:8px;border-radius:50%;background:var(--fgd);transition:all .3s}
+        .sd.on{background:var(--acc);box-shadow:0 0 8px var(--accg);animation:pls 2s infinite}
+        @keyframes pls{0%,100%{opacity:1}50%{opacity:.5}}
+        .ts{position:relative;width:42px;height:24px;cursor:pointer}
+        .ts input{display:none}
+        .tsl{position:absolute;inset:0;background:var(--brl);border-radius:12px;transition:all .3s}
+        .tsl::before{content:'';position:absolute;width:18px;height:18px;border-radius:50%;background:var(--fgm);top:3px;left:3px;transition:all .3s}
+        .ts input:checked+.tsl{background:var(--acc)}
+        .ts input:checked+.tsl::before{transform:translateX(18px);background:#fff}
 
-        body {
-            font-family: 'Space Grotesk', sans-serif;
-            background: var(--bg);
-            color: var(--fg);
-            min-height: 100vh;
-            overflow-x: hidden;
-        }
+        /* Connection status bar */
+        .csb{display:flex;align-items:center;gap:6px;padding:8px 12px;border-radius:var(--rs);font-size:10px;font-weight:600;margin-top:8px}
+        .csb.real{background:var(--accd);color:var(--acc)}
+        .csb.sim{background:var(--wrnd);color:var(--wrn)}
+        .csb.off{background:var(--dngd);color:var(--dng)}
 
-        body::before {
-            content: '';
-            position: fixed;
-            top: -50%; left: -50%;
-            width: 200%; height: 200%;
-            background:
-                radial-gradient(ellipse at 20% 20%, rgba(37,211,102,0.04) 0%, transparent 50%),
-                radial-gradient(ellipse at 80% 80%, rgba(37,211,102,0.03) 0%, transparent 50%);
-            z-index: 0; pointer-events: none;
-            animation: bgShift 20s ease-in-out infinite alternate;
-        }
+        /* Main */
+        .mc{flex:1;margin-left:260px;min-height:100vh}
+        .tb{padding:14px 28px;border-bottom:1px solid var(--brd);display:flex;align-items:center;justify-content:space-between;background:rgba(10,15,13,.85);backdrop-filter:blur(12px);position:sticky;top:0;z-index:50}
+        .tbl{display:flex;align-items:center;gap:14px}
+        .mb{display:none;background:none;border:none;color:var(--fgm);font-size:18px;cursor:pointer}
+        .pt{font-size:18px;font-weight:700}
+        .pst{font-size:12px;color:var(--fgm)}
+        .tbr{display:flex;align-items:center;gap:10px}
+        .tbb{width:36px;height:36px;border-radius:var(--rs);background:var(--bgc);border:1px solid var(--brd);color:var(--fgm);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;font-size:13px;position:relative}
+        .tbb:hover{background:var(--bgch);color:var(--fg);border-color:var(--brl)}
+        .pc{padding:24px 28px}
+        .pg{display:none}.pg.act{display:block;animation:fi .3s ease}
+        @keyframes fi{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
 
-        @keyframes bgShift {
-            0% { transform: translate(0,0) rotate(0deg); }
-            100% { transform: translate(-2%,-1%) rotate(2deg); }
-        }
+        /* Cards */
+        .cd{background:var(--bgc);border:1px solid var(--brd);border-radius:var(--r);padding:18px;transition:all .25s}
+        .cd:hover{border-color:var(--brl)}
+        .cdh{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+        .cdt{font-size:14px;font-weight:600}
 
-        .app-layout { display: flex; min-height: 100vh; position: relative; z-index: 1; }
+        /* Stats */
+        .sg{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px}
+        .sc{background:var(--bgc);border:1px solid var(--brd);border-radius:var(--r);padding:18px;position:relative;overflow:hidden;transition:all .3s}
+        .sc::after{content:'';position:absolute;top:0;right:0;width:70px;height:70px;border-radius:50%;filter:blur(35px);opacity:.15;transition:opacity .3s}
+        .sc:hover::after{opacity:.25}.sc:hover{border-color:var(--brl);transform:translateY(-2px)}
+        .sc.g::after{background:var(--acc)}.sc.b::after{background:var(--inf)}.sc.o::after{background:var(--wrn)}.sc.r::after{background:var(--dng)}
+        .si{width:38px;height:38px;border-radius:var(--rs);display:flex;align-items:center;justify-content:center;font-size:15px;margin-bottom:12px}
+        .si.g{background:var(--accd);color:var(--acc)}.si.b{background:var(--infd);color:var(--inf)}.si.o{background:var(--wrnd);color:var(--wrn)}.si.r{background:var(--dngd);color:var(--dng)}
+        .sv{font-size:26px;font-weight:700;margin-bottom:3px;font-family:'JetBrains Mono',monospace}
+        .sl{font-size:12px;color:var(--fgm)}
+        .sch{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:600;margin-top:6px;padding:2px 7px;border-radius:5px}
+        .sch.up{background:var(--accd);color:var(--acc)}.sch.dn{background:var(--dngd);color:var(--dng)}
 
-        /* ===== SIDEBAR ===== */
-        .sidebar {
-            width: 260px;
-            background: var(--bg-secondary);
-            border-right: 1px solid var(--border);
-            display: flex; flex-direction: column;
-            position: fixed; top: 0; left: 0; bottom: 0;
-            z-index: 100; transition: transform 0.3s ease;
-        }
+        .g2{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:24px}
+        .g3{display:grid;grid-template-columns:2fr 1fr;gap:18px;margin-bottom:24px}
 
-        .sidebar-header { padding: 24px 20px; border-bottom: 1px solid var(--border); }
-        .sidebar-logo { display: flex; align-items: center; gap: 12px; }
-        .logo-icon {
-            width: 42px; height: 42px;
-            background: linear-gradient(135deg, var(--accent), #128C7E);
-            border-radius: var(--radius);
-            display: flex; align-items: center; justify-content: center;
-            font-size: 20px; color: white;
-            box-shadow: var(--shadow-accent);
-        }
-        .logo-text span:first-child { font-weight: 700; font-size: 18px; color: var(--fg); }
-        .logo-text span:last-child { font-size: 11px; color: var(--fg-muted); letter-spacing: 1px; text-transform: uppercase; }
-        .logo-text { display: flex; flex-direction: column; }
+        /* Buttons */
+        .btn{display:inline-flex;align-items:center;gap:7px;padding:9px 16px;border-radius:var(--rs);font-family:'Space Grotesk',sans-serif;font-size:12px;font-weight:600;cursor:pointer;transition:all .2s;border:1px solid transparent}
+        .bp{background:var(--acc);color:var(--bg);border-color:var(--acc)}.bp:hover{background:#20c05c;box-shadow:var(--sha);transform:translateY(-1px)}
+        .bs{background:var(--bgc);color:var(--fg);border-color:var(--brd)}.bs:hover{background:var(--bgch);border-color:var(--brl)}
+        .bd{background:var(--dngd);color:var(--dng);border-color:rgba(255,71,87,.3)}.bd:hover{background:rgba(255,71,87,.25)}
+        .bsm{padding:5px 10px;font-size:11px}
+        .bi{width:32px;height:32px;padding:0;justify-content:center}
 
-        .sidebar-nav { flex: 1; padding: 16px 12px; display: flex; flex-direction: column; gap: 4px; overflow-y: auto; }
-        .nav-label { font-size: 10px; text-transform: uppercase; letter-spacing: 1.5px; color: var(--fg-dim); padding: 16px 12px 8px; font-weight: 600; }
-        .nav-item {
-            display: flex; align-items: center; gap: 12px;
-            padding: 11px 14px; border-radius: var(--radius-sm);
-            cursor: pointer; transition: all 0.2s ease;
-            color: var(--fg-muted); font-size: 14px; font-weight: 500;
-            position: relative; border: 1px solid transparent;
-        }
-        .nav-item:hover { background: var(--accent-dim); color: var(--fg); }
-        .nav-item.active { background: var(--accent-dim); color: var(--accent); border-color: rgba(37,211,102,0.2); }
-        .nav-item.active::before {
-            content: ''; position: absolute; left: -12px; top: 50%; transform: translateY(-50%);
-            width: 3px; height: 20px; background: var(--accent); border-radius: 0 4px 4px 0;
-        }
-        .nav-item i { width: 20px; text-align: center; font-size: 15px; }
-        .nav-badge { margin-left: auto; background: var(--accent); color: var(--bg); font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 10px; }
+        /* Table */
+        .tw{overflow-x:auto}
+        table{width:100%;border-collapse:collapse}
+        thead th{text-align:left;padding:10px 14px;font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--fgd);font-weight:600;border-bottom:1px solid var(--brd)}
+        tbody td{padding:12px 14px;font-size:12px;border-bottom:1px solid var(--brd);color:var(--fgm)}
+        tbody tr{transition:background .15s}tbody tr:hover{background:rgba(37,211,102,.03)}
+        tbody tr:last-child td{border-bottom:none}
 
-        .sidebar-footer { padding: 16px; border-top: 1px solid var(--border); }
-        .bot-status-card { background: var(--bg-card); border-radius: var(--radius); padding: 14px; border: 1px solid var(--border); }
-        .bot-status-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
-        .bot-status-label { font-size: 12px; color: var(--fg-muted); }
-        .status-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--fg-dim); transition: all 0.3s ease; }
-        .status-dot.online { background: var(--accent); box-shadow: 0 0 8px var(--accent-glow); animation: pulse 2s infinite; }
-        @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.5; } }
+        /* Tags */
+        .tg{display:inline-flex;align-items:center;gap:3px;padding:2px 9px;border-radius:5px;font-size:10px;font-weight:600}
+        .tg.g{background:var(--accd);color:var(--acc)}.tg.r{background:var(--dngd);color:var(--dng)}.tg.o{background:var(--wrnd);color:var(--wrn)}.tg.b{background:var(--infd);color:var(--inf)}
 
-        .toggle-switch { position: relative; width: 44px; height: 24px; cursor: pointer; }
-        .toggle-switch input { display: none; }
-        .toggle-slider {
-            position: absolute; inset: 0;
-            background: var(--border-light); border-radius: 12px; transition: all 0.3s ease;
-        }
-        .toggle-slider::before {
-            content: ''; position: absolute;
-            width: 18px; height: 18px; border-radius: 50%;
-            background: var(--fg-muted); top: 3px; left: 3px; transition: all 0.3s ease;
-        }
-        .toggle-switch input:checked + .toggle-slider { background: var(--accent); }
-        .toggle-switch input:checked + .toggle-slider::before { transform: translateX(20px); background: white; }
+        /* Forms */
+        .fg{margin-bottom:14px}
+        .fl{display:block;font-size:11px;font-weight:600;color:var(--fgm);margin-bottom:5px;text-transform:uppercase;letter-spacing:.5px}
+        .fi,.fs,.ft{width:100%;padding:9px 12px;background:var(--bg);border:1px solid var(--brd);border-radius:var(--rs);color:var(--fg);font-family:'Space Grotesk',sans-serif;font-size:13px;transition:all .2s;outline:none}
+        .fi:focus,.fs:focus,.ft:focus{border-color:var(--acc);box-shadow:0 0 0 3px var(--accd)}
+        .ft{resize:vertical;min-height:70px}
+        .fs{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%237a9489' d='M6 8L1 3h10z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;padding-right:30px}
+        .fs option{background:var(--bgc);color:var(--fg)}
+        .fr{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+        .sbx{position:relative}.sbx i{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--fgd);font-size:12px}.sbx input{padding-left:32px}
 
-        /* ===== MAIN ===== */
-        .main-content { flex: 1; margin-left: 260px; min-height: 100vh; }
-        .topbar {
-            padding: 16px 32px; border-bottom: 1px solid var(--border);
-            display: flex; align-items: center; justify-content: space-between;
-            background: rgba(10,15,13,0.8); backdrop-filter: blur(12px);
-            position: sticky; top: 0; z-index: 50;
-        }
-        .topbar-left { display: flex; align-items: center; gap: 16px; }
-        .menu-btn { display: none; background: none; border: none; color: var(--fg-muted); font-size: 20px; cursor: pointer; }
-        .page-title { font-size: 20px; font-weight: 700; }
-        .page-subtitle { font-size: 13px; color: var(--fg-muted); }
-        .topbar-right { display: flex; align-items: center; gap: 12px; }
-        .topbar-btn {
-            width: 38px; height: 38px; border-radius: var(--radius-sm);
-            background: var(--bg-card); border: 1px solid var(--border); color: var(--fg-muted);
-            display: flex; align-items: center; justify-content: center;
-            cursor: pointer; transition: all 0.2s ease; font-size: 14px; position: relative;
-        }
-        .topbar-btn:hover { background: var(--bg-card-hover); color: var(--fg); border-color: var(--border-light); }
-        .topbar-btn .notif-dot { position: absolute; top: 6px; right: 6px; width: 7px; height: 7px; border-radius: 50%; background: var(--danger); }
+        /* Range slider */
+        .range-wrap{display:flex;align-items:center;gap:12px}
+        .range-wrap input[type=range]{flex:1;-webkit-appearance:none;height:6px;background:var(--brl);border-radius:3px;outline:none}
+        .range-wrap input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:var(--acc);cursor:pointer;box-shadow:0 0 6px var(--accg)}
+        .range-val{font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:700;color:var(--acc);min-width:40px;text-align:right}
 
-        .page-content { padding: 28px 32px; }
-        .page { display: none; }
-        .page.active { display: block; animation: fadeIn 0.3s ease; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+        /* Modal */
+        .mo{position:fixed;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(4px);z-index:1000;display:none;align-items:center;justify-content:center}
+        .mo.sh{display:flex}
+        .md{background:var(--bgc);border:1px solid var(--brd);border-radius:var(--rl);width:500px;max-width:90vw;max-height:85vh;overflow-y:auto;box-shadow:var(--sh);animation:mi .3s ease}
+        @keyframes mi{from{opacity:0;transform:scale(.95) translateY(8px)}to{opacity:1;transform:scale(1) translateY(0)}}
+        .mdh{padding:18px 22px;border-bottom:1px solid var(--brd);display:flex;align-items:center;justify-content:space-between}
+        .mdt{font-size:15px;font-weight:700}
+        .mdc{width:30px;height:30px;border-radius:var(--rs);background:none;border:1px solid var(--brd);color:var(--fgm);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s}
+        .mdc:hover{background:var(--dngd);color:var(--dng);border-color:rgba(255,71,87,.3)}
+        .mdb{padding:22px}.mdf{padding:14px 22px;border-top:1px solid var(--brd);display:flex;justify-content:flex-end;gap:8px}
 
-        /* ===== COMPONENTS ===== */
-        .card {
-            background: var(--bg-card); border: 1px solid var(--border);
-            border-radius: var(--radius); padding: 20px; transition: all 0.25s ease;
-        }
-        .card:hover { border-color: var(--border-light); }
-        .card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
-        .card-title { font-size: 15px; font-weight: 600; }
+        /* Toast */
+        .tc{position:fixed;top:16px;right:16px;z-index:2000;display:flex;flex-direction:column;gap:6px}
+        .tt{background:var(--bgc);border:1px solid var(--brd);border-radius:var(--r);padding:12px 16px;display:flex;align-items:center;gap:9px;box-shadow:var(--sh);animation:ti .3s ease,to .3s ease 2.7s forwards;min-width:280px}
+        .tt.s{border-left:3px solid var(--acc)}.tt.e{border-left:3px solid var(--dng)}.tt.w{border-left:3px solid var(--wrn)}
+        .tt i{font-size:15px}.tt.s i{color:var(--acc)}.tt.e i{color:var(--dng)}.tt.w i{color:var(--wrn)}
+        .tm{font-size:12px;color:var(--fg)}
+        @keyframes ti{from{opacity:0;transform:translateX(30px)}to{opacity:1;transform:translateX(0)}}
+        @keyframes to{from{opacity:1}to{opacity:0;transform:translateX(30px)}}
 
-        .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 28px; }
-        .stat-card {
-            background: var(--bg-card); border: 1px solid var(--border);
-            border-radius: var(--radius); padding: 20px;
-            position: relative; overflow: hidden; transition: all 0.3s ease;
-        }
-        .stat-card::after {
-            content: ''; position: absolute; top: 0; right: 0;
-            width: 80px; height: 80px; border-radius: 50%;
-            filter: blur(40px); opacity: 0.15; transition: opacity 0.3s ease;
-        }
-        .stat-card:hover::after { opacity: 0.25; }
-        .stat-card:hover { border-color: var(--border-light); transform: translateY(-2px); }
-        .stat-card.green::after { background: var(--accent); }
-        .stat-card.blue::after { background: var(--info); }
-        .stat-card.orange::after { background: var(--warning); }
-        .stat-card.red::after { background: var(--danger); }
+        /* Settings */
+        .ss{margin-bottom:24px}
+        .sst{font-size:15px;font-weight:700;margin-bottom:3px;display:flex;align-items:center;gap:8px}
+        .ssd{font-size:12px;color:var(--fgm);margin-bottom:14px}
+        .sti{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;background:var(--bgc);border:1px solid var(--brd);border-radius:var(--rs);margin-bottom:6px;gap:12px}
+        .stx h4{font-size:13px;font-weight:600;margin-bottom:2px}
+        .stx p{font-size:11px;color:var(--fgm)}
+        .sti.col{flex-direction:column;align-items:stretch}
 
-        .stat-icon {
-            width: 40px; height: 40px; border-radius: var(--radius-sm);
-            display: flex; align-items: center; justify-content: center;
-            font-size: 16px; margin-bottom: 14px;
-        }
-        .stat-icon.green { background: var(--accent-dim); color: var(--accent); }
-        .stat-icon.blue { background: var(--info-dim); color: var(--info); }
-        .stat-icon.orange { background: var(--warning-dim); color: var(--warning); }
-        .stat-icon.red { background: var(--danger-dim); color: var(--danger); }
+        /* Rule/Schedule cards */
+        .rc{background:var(--bgc);border:1px solid var(--brd);border-radius:var(--r);padding:14px 18px;display:flex;align-items:center;gap:14px;transition:all .2s;margin-bottom:8px}
+        .rc:hover{border-color:var(--brl);background:var(--bgch)}
+        .ric{width:40px;height:40px;border-radius:var(--rs);background:var(--accd);color:var(--acc);display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0}
+        .ri{flex:1;min-width:0}.rn{font-size:13px;font-weight:600;margin-bottom:2px}.rd{font-size:11px;color:var(--fgm);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+        .ra{display:flex;gap:5px;flex-shrink:0}
 
-        .stat-value { font-size: 28px; font-weight: 700; margin-bottom: 4px; font-family: 'JetBrains Mono', monospace; }
-        .stat-label { font-size: 13px; color: var(--fg-muted); }
-        .stat-change {
-            display: inline-flex; align-items: center; gap: 4px;
-            font-size: 11px; font-weight: 600; margin-top: 8px; padding: 2px 8px; border-radius: 6px;
-        }
-        .stat-change.up { background: var(--accent-dim); color: var(--accent); }
-        .stat-change.down { background: var(--danger-dim); color: var(--danger); }
+        .scc{background:var(--bgc);border:1px solid var(--brd);border-radius:var(--r);padding:14px 18px;margin-bottom:8px;transition:all .2s}
+        .scc:hover{border-color:var(--brl)}
+        .sct{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+        .scn{font-size:13px;font-weight:600}
+        .scm{display:flex;gap:14px;font-size:11px;color:var(--fgm);flex-wrap:wrap}
+        .scm i{margin-right:3px;color:var(--fgd)}
+        .scp{font-size:12px;color:var(--fgm);padding:9px;background:var(--bg);border-radius:var(--rs);border-left:3px solid var(--acc);line-height:1.5}
 
-        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 28px; }
-        .grid-3 { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; margin-bottom: 28px; }
+        .ci{display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:var(--rs);transition:background .15s;cursor:pointer}
+        .ci:hover{background:var(--accd)}
+        .ca{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;flex-shrink:0}
+        .cif{flex:1}.cn{font-size:13px;font-weight:600}.cp{font-size:11px;color:var(--fgm)}
 
-        .btn {
-            display: inline-flex; align-items: center; gap: 8px;
-            padding: 10px 18px; border-radius: var(--radius-sm);
-            font-family: 'Space Grotesk', sans-serif; font-size: 13px; font-weight: 600;
-            cursor: pointer; transition: all 0.2s ease; border: 1px solid transparent;
-        }
-        .btn-primary { background: var(--accent); color: var(--bg); border-color: var(--accent); }
-        .btn-primary:hover { background: #20c05c; box-shadow: var(--shadow-accent); transform: translateY(-1px); }
-        .btn-secondary { background: var(--bg-card); color: var(--fg); border-color: var(--border); }
-        .btn-secondary:hover { background: var(--bg-card-hover); border-color: var(--border-light); }
-        .btn-danger { background: var(--danger-dim); color: var(--danger); border-color: rgba(255,71,87,0.3); }
-        .btn-danger:hover { background: rgba(255,71,87,0.25); }
-        .btn-sm { padding: 6px 12px; font-size: 12px; }
-        .btn-icon { width: 34px; height: 34px; padding: 0; justify-content: center; }
+        .es{text-align:center;padding:40px 18px;color:var(--fgd)}
+        .es i{font-size:44px;margin-bottom:14px;opacity:.3}
+        .es p{font-size:13px}
 
-        .table-wrapper { overflow-x: auto; }
-        table { width: 100%; border-collapse: collapse; }
-        thead th { text-align: left; padding: 12px 16px; font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--fg-dim); font-weight: 600; border-bottom: 1px solid var(--border); }
-        tbody td { padding: 14px 16px; font-size: 13px; border-bottom: 1px solid var(--border); color: var(--fg-muted); }
-        tbody tr { transition: background 0.15s ease; }
-        tbody tr:hover { background: rgba(37,211,102,0.03); }
-        tbody tr:last-child td { border-bottom: none; }
+        .tabs{display:flex;gap:3px;background:var(--bg);border-radius:var(--rs);padding:3px;border:1px solid var(--brd)}
+        .tb{padding:6px 14px;border-radius:5px;font-size:11px;font-weight:600;cursor:pointer;transition:all .2s;background:none;border:none;color:var(--fgm);font-family:'Space Grotesk',sans-serif}
+        .tb.act{background:var(--acc);color:var(--bg)}.tb:hover:not(.act){color:var(--fg)}
 
-        .tag { display: inline-flex; align-items: center; gap: 4px; padding: 3px 10px; border-radius: 6px; font-size: 11px; font-weight: 600; }
-        .tag.green { background: var(--accent-dim); color: var(--accent); }
-        .tag.red { background: var(--danger-dim); color: var(--danger); }
-        .tag.orange { background: var(--warning-dim); color: var(--warning); }
-        .tag.blue { background: var(--info-dim); color: var(--info); }
+        /* Connection page */
+        .cf{display:flex;flex-direction:column;align-items:center;gap:20px;max-width:680px;margin:0 auto}
+        .csb2{width:100%;padding:18px 22px;border-radius:var(--r);display:flex;align-items:center;gap:14px;border:1px solid var(--brd)}
+        .csb2.disc{background:var(--dngd);border-color:rgba(255,71,87,.3)}
+        .csb2.conn{background:var(--wrnd);border-color:rgba(255,165,2,.3)}
+        .csb2.ok{background:var(--accd);border-color:rgba(37,211,102,.3)}
+        .csi2{width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+        .csb2.disc .csi2{background:rgba(255,71,87,.2);color:var(--dng)}
+        .csb2.conn .csi2{background:rgba(255,165,2,.2);color:var(--wrn);animation:sp 2s linear infinite}
+        .csb2.ok .csi2{background:rgba(37,211,102,.2);color:var(--acc)}
+        @keyframes sp{from{transform:rotate(0)}to{transform:rotate(360deg)}}
+        .cst h3{font-size:15px;font-weight:700;margin-bottom:2px}.cst p{font-size:12px}
+        .qra{background:#fff;border-radius:var(--rl);padding:28px;display:flex;flex-direction:column;align-items:center;gap:14px;position:relative;overflow:hidden}
+        .qra canvas{border-radius:6px;image-rendering:pixelated}
+        .qrl{font-size:13px;font-weight:600;color:#1a1a1a;text-align:center}
+        .qrsl{font-size:11px;color:#666;text-align:center;max-width:280px;line-height:1.5}
+        .qro{position:absolute;inset:0;background:rgba(255,255,255,.92);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;border-radius:var(--rl)}
+        .qro i{font-size:44px;color:var(--acc)}.qro span{font-size:15px;font-weight:700;color:#1a1a1a}
+        .cpi{width:100%;background:var(--bgc);border:1px solid var(--brd);border-radius:var(--r);padding:18px;display:none}
+        .cpi.sh{display:block;animation:fi .3s ease}
+        .cpr{display:flex;align-items:center;gap:14px}
+        .cpa{width:52px;height:52px;border-radius:50%;background:var(--accd);color:var(--acc);display:flex;align-items:center;justify-content:center;font-size:22px}
+        .cpn{font-size:17px;font-weight:700}.cpp{font-size:13px;color:var(--fgm);font-family:'JetBrains Mono',monospace}
+        .cpm{display:flex;gap:18px;margin-top:12px;padding-top:12px;border-top:1px solid var(--brd)}
+        .cpmi{text-align:center}.cpmi .v{font-size:18px;font-weight:700;font-family:'JetBrains Mono',monospace;color:var(--acc)}.cpmi .l{font-size:10px;color:var(--fgd);margin-top:2px}
+        .wb{width:100%;padding:14px 18px;border-radius:var(--r);display:flex;align-items:flex-start;gap:10px}
+        .wb.w{background:var(--wrnd);border:1px solid rgba(255,165,2,.3)}.wb.w i{color:var(--wrn)}
+        .wb.i{background:var(--infd);border:1px solid rgba(30,144,255,.3)}.wb.i i{color:var(--inf)}
+        .wb i{font-size:16px;margin-top:2px;flex-shrink:0}
+        .wb p{font-size:12px;color:var(--fgm);line-height:1.5}
+        .wb strong{color:var(--wrn)}
+        .wb.i strong{color:var(--inf)}
 
-        .form-group { margin-bottom: 16px; }
-        .form-label { display: block; font-size: 12px; font-weight: 600; color: var(--fg-muted); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; }
-        .form-input, .form-select, .form-textarea {
-            width: 100%; padding: 10px 14px;
-            background: var(--bg); border: 1px solid var(--border);
-            border-radius: var(--radius-sm); color: var(--fg);
-            font-family: 'Space Grotesk', sans-serif; font-size: 14px;
-            transition: all 0.2s ease; outline: none;
-        }
-        .form-input:focus, .form-select:focus, .form-textarea:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-dim); }
-        .form-textarea { resize: vertical; min-height: 80px; }
-        .form-select {
-            cursor: pointer; appearance: none;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%237a9489' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
-            background-repeat: no-repeat; background-position: right 12px center; padding-right: 32px;
-        }
-        .form-select option { background: var(--bg-card); color: var(--fg); }
-        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        /* Blacklist tags */
+        .bl-list{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+        .bl-tag{display:inline-flex;align-items:center;gap:4px;background:var(--dngd);color:var(--dng);padding:4px 10px;border-radius:5px;font-size:11px;font-weight:600}
+        .bl-tag button{background:none;border:none;color:var(--dng);cursor:pointer;font-size:10px;padding:0;margin-left:2px}
 
-        .search-box { position: relative; }
-        .search-box i { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--fg-dim); font-size: 13px; }
-        .search-box input { padding-left: 36px; }
-
-        .tabs { display: flex; gap: 4px; background: var(--bg); border-radius: var(--radius-sm); padding: 4px; border: 1px solid var(--border); }
-        .tab-btn {
-            padding: 7px 16px; border-radius: 6px; font-size: 12px; font-weight: 600;
-            cursor: pointer; transition: all 0.2s ease; background: none; border: none;
-            color: var(--fg-muted); font-family: 'Space Grotesk', sans-serif;
-        }
-        .tab-btn.active { background: var(--accent); color: var(--bg); }
-        .tab-btn:hover:not(.active) { color: var(--fg); }
-
-        /* ===== MODAL ===== */
-        .modal-overlay {
-            position: fixed; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px);
-            z-index: 1000; display: none; align-items: center; justify-content: center;
-        }
-        .modal-overlay.show { display: flex; }
-        .modal {
-            background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-lg);
-            width: 520px; max-width: 90vw; max-height: 85vh; overflow-y: auto;
-            box-shadow: var(--shadow); animation: modalIn 0.3s ease;
-        }
-        @keyframes modalIn { from { opacity: 0; transform: scale(0.95) translateY(10px); } to { opacity: 1; transform: scale(1) translateY(0); } }
-        .modal-header { padding: 20px 24px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
-        .modal-title { font-size: 16px; font-weight: 700; }
-        .modal-close {
-            width: 32px; height: 32px; border-radius: var(--radius-sm);
-            background: none; border: 1px solid var(--border); color: var(--fg-muted);
-            cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s ease;
-        }
-        .modal-close:hover { background: var(--danger-dim); color: var(--danger); border-color: rgba(255,71,87,0.3); }
-        .modal-body { padding: 24px; }
-        .modal-footer { padding: 16px 24px; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; gap: 10px; }
-
-        /* ===== TOAST ===== */
-        .toast-container { position: fixed; top: 20px; right: 20px; z-index: 2000; display: flex; flex-direction: column; gap: 8px; }
-        .toast {
-            background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius);
-            padding: 14px 18px; display: flex; align-items: center; gap: 10px;
-            box-shadow: var(--shadow); animation: toastIn 0.3s ease, toastOut 0.3s ease 2.7s forwards;
-            min-width: 300px;
-        }
-        .toast.success { border-left: 3px solid var(--accent); }
-        .toast.error { border-left: 3px solid var(--danger); }
-        .toast.warning { border-left: 3px solid var(--warning); }
-        .toast i { font-size: 16px; }
-        .toast.success i { color: var(--accent); }
-        .toast.error i { color: var(--danger); }
-        .toast.warning i { color: var(--warning); }
-        .toast-msg { font-size: 13px; color: var(--fg); }
-        @keyframes toastIn { from { opacity: 0; transform: translateX(40px); } to { opacity: 1; transform: translateX(0); } }
-        @keyframes toastOut { from { opacity: 1; } to { opacity: 0; transform: translateX(40px); } }
-
-        /* ===== RULE/SCHEDULE/CARD ITEMS ===== */
-        .rule-card {
-            background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius);
-            padding: 16px 20px; display: flex; align-items: center; gap: 16px;
-            transition: all 0.2s ease; margin-bottom: 10px;
-        }
-        .rule-card:hover { border-color: var(--border-light); background: var(--bg-card-hover); }
-        .rule-icon {
-            width: 42px; height: 42px; border-radius: var(--radius-sm);
-            background: var(--accent-dim); color: var(--accent);
-            display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0;
-        }
-        .rule-info { flex: 1; min-width: 0; }
-        .rule-name { font-size: 14px; font-weight: 600; margin-bottom: 3px; }
-        .rule-desc { font-size: 12px; color: var(--fg-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .rule-actions { display: flex; gap: 6px; flex-shrink: 0; }
-
-        .schedule-card {
-            background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius);
-            padding: 16px 20px; margin-bottom: 10px; transition: all 0.2s ease;
-        }
-        .schedule-card:hover { border-color: var(--border-light); }
-        .schedule-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
-        .schedule-title { font-size: 14px; font-weight: 600; }
-        .schedule-meta { display: flex; gap: 16px; font-size: 12px; color: var(--fg-muted); flex-wrap: wrap; }
-        .schedule-meta i { margin-right: 4px; color: var(--fg-dim); }
-        .schedule-msg-preview {
-            font-size: 13px; color: var(--fg-muted); padding: 10px;
-            background: var(--bg); border-radius: var(--radius-sm);
-            border-left: 3px solid var(--accent); line-height: 1.5;
-        }
-
-        .contact-item {
-            display: flex; align-items: center; gap: 12px;
-            padding: 12px 16px; border-radius: var(--radius-sm); transition: background 0.15s ease; cursor: pointer;
-        }
-        .contact-item:hover { background: var(--accent-dim); }
-        .contact-avatar {
-            width: 40px; height: 40px; border-radius: 50%;
-            display: flex; align-items: center; justify-content: center;
-            font-weight: 700; font-size: 14px; flex-shrink: 0;
-        }
-        .contact-info { flex: 1; }
-        .contact-name { font-size: 14px; font-weight: 600; }
-        .contact-phone { font-size: 12px; color: var(--fg-muted); }
-
-        .empty-state { text-align: center; padding: 48px 20px; color: var(--fg-dim); }
-        .empty-state i { font-size: 48px; margin-bottom: 16px; opacity: 0.3; }
-        .empty-state p { font-size: 14px; }
-
-        /* ===== SETTINGS ===== */
-        .settings-section { margin-bottom: 28px; }
-        .settings-section-title { font-size: 16px; font-weight: 700; margin-bottom: 4px; }
-        .settings-section-desc { font-size: 13px; color: var(--fg-muted); margin-bottom: 16px; }
-        .setting-item {
-            display: flex; align-items: center; justify-content: space-between;
-            padding: 14px 16px; background: var(--bg-card);
-            border: 1px solid var(--border); border-radius: var(--radius-sm); margin-bottom: 8px;
-        }
-        .setting-info h4 { font-size: 14px; font-weight: 600; margin-bottom: 2px; }
-        .setting-info p { font-size: 12px; color: var(--fg-muted); }
-
-        /* ===== KONEKSI PAGE ===== */
-        .connection-flow {
-            display: flex; flex-direction: column; align-items: center; gap: 24px;
-            max-width: 700px; margin: 0 auto;
-        }
-
-        .conn-status-banner {
-            width: 100%; padding: 20px 24px; border-radius: var(--radius);
-            display: flex; align-items: center; gap: 16px;
-            border: 1px solid var(--border);
-        }
-        .conn-status-banner.disconnected { background: var(--danger-dim); border-color: rgba(255,71,87,0.3); }
-        .conn-status-banner.connecting { background: var(--warning-dim); border-color: rgba(255,165,2,0.3); }
-        .conn-status-banner.connected { background: var(--accent-dim); border-color: rgba(37,211,102,0.3); }
-
-        .conn-status-icon {
-            width: 52px; height: 52px; border-radius: 50%;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 22px; flex-shrink: 0;
-        }
-        .conn-status-banner.disconnected .conn-status-icon { background: rgba(255,71,87,0.2); color: var(--danger); }
-        .conn-status-banner.connecting .conn-status-icon { background: rgba(255,165,2,0.2); color: var(--warning); animation: spin 2s linear infinite; }
-        .conn-status-banner.connected .conn-status-icon { background: rgba(37,211,102,0.2); color: var(--accent); }
-
-        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-
-        .conn-status-text h3 { font-size: 16px; font-weight: 700; margin-bottom: 2px; }
-        .conn-status-text p { font-size: 13px; }
-
-        .qr-area {
-            background: white; border-radius: var(--radius-lg); padding: 32px;
-            display: flex; flex-direction: column; align-items: center; gap: 16px;
-            position: relative; overflow: hidden;
-        }
-        .qr-area canvas { border-radius: 8px; image-rendering: pixelated; }
-        .qr-label { font-size: 14px; font-weight: 600; color: #1a1a1a; text-align: center; }
-        .qr-sublabel { font-size: 12px; color: #666; text-align: center; max-width: 300px; line-height: 1.5; }
-
-        .qr-overlay {
-            position: absolute; inset: 0; background: rgba(255,255,255,0.92);
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            gap: 12px; border-radius: var(--radius-lg);
-        }
-        .qr-overlay i { font-size: 48px; color: var(--accent); }
-        .qr-overlay span { font-size: 16px; font-weight: 700; color: #1a1a1a; }
-
-        .method-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; width: 100%; }
-        .method-card {
-            background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius);
-            padding: 20px; cursor: pointer; transition: all 0.25s ease;
-        }
-        .method-card:hover { border-color: var(--accent); transform: translateY(-2px); }
-        .method-card.selected { border-color: var(--accent); background: var(--accent-dim); }
-        .method-card-icon {
-            width: 44px; height: 44px; border-radius: var(--radius-sm);
-            display: flex; align-items: center; justify-content: center;
-            font-size: 18px; margin-bottom: 12px;
-        }
-        .method-card h4 { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
-        .method-card p { font-size: 12px; color: var(--fg-muted); line-height: 1.5; }
-        .method-tag { display: inline-block; margin-top: 8px; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; padding: 2px 8px; border-radius: 4px; }
-        .method-tag.recommended { background: var(--accent-dim); color: var(--accent); }
-        .method-tag.advanced { background: var(--warning-dim); color: var(--warning); }
-
-        .arch-diagram {
-            width: 100%; background: var(--bg-card); border: 1px solid var(--border);
-            border-radius: var(--radius); padding: 24px; overflow-x: auto;
-        }
-        .arch-diagram h4 { font-size: 14px; font-weight: 700; margin-bottom: 16px; }
-        .arch-flow {
-            display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
-            justify-content: center; min-height: 60px;
-        }
-        .arch-node {
-            padding: 12px 18px; border-radius: var(--radius-sm);
-            font-size: 12px; font-weight: 600; text-align: center; min-width: 120px;
-        }
-        .arch-node.whatsapp { background: var(--accent-dim); color: var(--accent); border: 1px solid rgba(37,211,102,0.3); }
-        .arch-node.backend { background: var(--info-dim); color: var(--info); border: 1px solid rgba(30,144,255,0.3); }
-        .arch-node.frontend { background: var(--warning-dim); color: var(--warning); border: 1px solid rgba(255,165,2,0.3); }
-        .arch-node.db { background: rgba(168,85,247,0.15); color: #a855f7; border: 1px solid rgba(168,85,247,0.3); }
-        .arch-arrow { color: var(--fg-dim); font-size: 18px; flex-shrink: 0; }
-        .arch-note { font-size: 11px; color: var(--fg-dim); margin-top: 12px; text-align: center; line-height: 1.6; }
-
-        .step-list { width: 100%; }
-        .step-item {
-            display: flex; gap: 16px; padding: 16px 0;
-            border-bottom: 1px solid var(--border);
-        }
-        .step-item:last-child { border-bottom: none; }
-        .step-num {
-            width: 32px; height: 32px; border-radius: 50%;
-            background: var(--accent-dim); color: var(--accent);
-            display: flex; align-items: center; justify-content: center;
-            font-size: 13px; font-weight: 700; flex-shrink: 0;
-        }
-        .step-content h4 { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
-        .step-content p { font-size: 13px; color: var(--fg-muted); line-height: 1.6; }
-        .step-content code {
-            font-family: 'JetBrains Mono', monospace; font-size: 12px;
-            background: var(--bg); padding: 2px 8px; border-radius: 4px;
-            color: var(--accent); border: 1px solid var(--border);
-        }
-
-        .warning-box {
-            width: 100%; padding: 16px 20px; border-radius: var(--radius);
-            background: var(--warning-dim); border: 1px solid rgba(255,165,2,0.3);
-            display: flex; align-items: flex-start; gap: 12px;
-        }
-        .warning-box i { color: var(--warning); font-size: 18px; margin-top: 2px; flex-shrink: 0; }
-        .warning-box p { font-size: 13px; color: var(--fg-muted); line-height: 1.6; }
-        .warning-box strong { color: var(--warning); }
-
-        .info-box {
-            width: 100%; padding: 16px 20px; border-radius: var(--radius);
-            background: var(--info-dim); border: 1px solid rgba(30,144,255,0.3);
-            display: flex; align-items: flex-start; gap: 12px;
-        }
-        .info-box i { color: var(--info); font-size: 18px; margin-top: 2px; flex-shrink: 0; }
-        .info-box p { font-size: 13px; color: var(--fg-muted); line-height: 1.6; }
-
-        .conn-phone-info {
-            width: 100%; background: var(--bg-card); border: 1px solid var(--border);
-            border-radius: var(--radius); padding: 20px; display: none;
-        }
-        .conn-phone-info.show { display: block; animation: fadeIn 0.3s ease; }
-        .conn-phone-row { display: flex; align-items: center; gap: 16px; }
-        .conn-phone-avatar {
-            width: 56px; height: 56px; border-radius: 50%;
-            background: var(--accent-dim); color: var(--accent);
-            display: flex; align-items: center; justify-content: center; font-size: 24px;
-        }
-        .conn-phone-name { font-size: 18px; font-weight: 700; }
-        .conn-phone-number { font-size: 14px; color: var(--fg-muted); font-family: 'JetBrains Mono', monospace; }
-        .conn-phone-meta { display: flex; gap: 20px; margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border); }
-        .conn-phone-meta-item { text-align: center; }
-        .conn-phone-meta-item .val { font-size: 20px; font-weight: 700; font-family: 'JetBrains Mono', monospace; color: var(--accent); }
-        .conn-phone-meta-item .lbl { font-size: 11px; color: var(--fg-dim); margin-top: 2px; }
-
-        /* ===== SCROLLBAR ===== */
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: var(--border-light); border-radius: 3px; }
-        ::-webkit-scrollbar-thumb:hover { background: var(--fg-dim); }
-
-        /* ===== RESPONSIVE ===== */
-        @media (max-width: 1024px) {
-            .stats-grid { grid-template-columns: repeat(2, 1fr); }
-            .grid-2, .grid-3 { grid-template-columns: 1fr; }
-            .method-cards { grid-template-columns: 1fr; }
-        }
-        @media (max-width: 768px) {
-            .sidebar { transform: translateX(-100%); }
-            .sidebar.open { transform: translateX(0); }
-            .main-content { margin-left: 0; }
-            .menu-btn { display: flex; }
-            .page-content { padding: 20px 16px; }
-            .topbar { padding: 12px 16px; }
-            .stats-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
-            .stat-value { font-size: 22px; }
-            .form-row { grid-template-columns: 1fr; }
-        }
-
-        @media (prefers-reduced-motion: reduce) {
-            *, *::before, *::after {
-                animation-duration: 0.01ms !important;
-                transition-duration: 0.01ms !important;
-            }
-        }
+        ::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--brl);border-radius:3px}
+        @media(max-width:1024px){.sg{grid-template-columns:repeat(2,1fr)}.g2,.g3{grid-template-columns:1fr}}
+        @media(max-width:768px){.sb{transform:translateX(-100%)}.sb.op{transform:translateX(0)}.mc{margin-left:0}.mb{display:flex}.pc{padding:16px}.tb{padding:10px 14px}.sg{grid-template-columns:1fr 1fr;gap:8px}.sv{font-size:20px}.fr{grid-template-columns:1fr}}
+        @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
     </style>
 </head>
 <body>
-    <div class="app-layout">
-        <!-- Sidebar -->
-        <aside class="sidebar" id="sidebar">
-            <div class="sidebar-header">
-                <div class="sidebar-logo">
-                    <div class="logo-icon"><i class="fab fa-whatsapp"></i></div>
-                    <div class="logo-text">
-                        <span>WABot Manager</span>
-                        <span>Control Panel</span>
-                    </div>
-                </div>
+<div class="app">
+    <!-- SIDEBAR -->
+    <aside class="sb" id="sb">
+        <div class="sb-hd">
+            <div class="sb-logo">
+                <div class="sb-ico"><i class="fab fa-whatsapp"></i></div>
+                <div class="sb-txt"><span>WABot Manager</span><span>Control Panel</span></div>
             </div>
-            <nav class="sidebar-nav">
-                <div class="nav-label">Koneksi</div>
-                <div class="nav-item active" data-page="connection" onclick="switchPage('connection', this)">
-                    <i class="fas fa-plug"></i> Hubungkan WA
-                </div>
-                <div class="nav-label">Utama</div>
-                <div class="nav-item" data-page="dashboard" onclick="switchPage('dashboard', this)">
-                    <i class="fas fa-chart-pie"></i> Dashboard
-                </div>
-                <div class="nav-item" data-page="autoreply" onclick="switchPage('autoreply', this)">
-                    <i class="fas fa-reply-all"></i> Auto-Reply
-                    <span class="nav-badge" id="ruleCount">5</span>
-                </div>
-                <div class="nav-item" data-page="schedule" onclick="switchPage('schedule', this)">
-                    <i class="fas fa-clock"></i> Pesan Terjadwal
-                </div>
-                <div class="nav-item" data-page="logs" onclick="switchPage('logs', this)">
-                    <i class="fas fa-list-ul"></i> Log Pesan
-                </div>
-                <div class="nav-label">Manajemen</div>
-                <div class="nav-item" data-page="contacts" onclick="switchPage('contacts', this)">
-                    <i class="fas fa-address-book"></i> Kontak
-                </div>
-                <div class="nav-item" data-page="groups" onclick="switchPage('groups', this)">
-                    <i class="fas fa-users"></i> Grup
-                </div>
-                <div class="nav-item" data-page="settings" onclick="switchPage('settings', this)">
-                    <i class="fas fa-cog"></i> Pengaturan
-                </div>
-            </nav>
-            <div class="sidebar-footer">
-                <div class="bot-status-card">
-                    <div class="bot-status-row">
-                        <span class="bot-status-label">Status Bot</span>
-                        <div style="display:flex;align-items:center;gap:8px;">
-                            <span id="botStatusText" style="font-size:11px;color:var(--fg-dim);">Offline</span>
-                            <div class="status-dot" id="statusDot"></div>
-                        </div>
-                    </div>
-                    <label class="toggle-switch">
-                        <input type="checkbox" id="botToggle" onchange="toggleBot()">
-                        <div class="toggle-slider"></div>
-                    </label>
-                </div>
+        </div>
+        <nav class="sb-nav">
+            <div class="nl">Koneksi</div>
+            <div class="ni act" data-p="connection" onclick="go('connection',this)"><i class="fas fa-plug"></i> Hubungkan WA</div>
+            <div class="nl">Bot</div>
+            <div class="ni" data-p="settings" onclick="go('settings',this)"><i class="fas fa-sliders-h"></i> Pengaturan Bot</div>
+            <div class="ni" data-p="autoreply" onclick="go('autoreply',this)"><i class="fas fa-reply-all"></i> Auto-Reply <span class="nb" id="rc">5</span></div>
+            <div class="ni" data-p="schedule" onclick="go('schedule',this)"><i class="fas fa-clock"></i> Pesan Terjadwal</div>
+            <div class="nl">Monitoring</div>
+            <div class="ni" data-p="dashboard" onclick="go('dashboard',this)"><i class="fas fa-chart-pie"></i> Dashboard</div>
+            <div class="ni" data-p="logs" onclick="go('logs',this)"><i class="fas fa-list-ul"></i> Log Pesan</div>
+            <div class="nl">Data</div>
+            <div class="ni" data-p="contacts" onclick="go('contacts',this)"><i class="fas fa-address-book"></i> Kontak</div>
+            <div class="ni" data-p="groups" onclick="go('groups',this)"><i class="fas fa-users"></i> Grup</div>
+        </nav>
+        <div class="sb-ft">
+            <div class="bsc">
+                <div class="bsr"><span class="bsl">Bot Status</span><div style="display:flex;align-items:center;gap:6px"><span id="bstxt" style="font-size:10px;color:var(--fgd)">Off</span><div class="sd" id="bsd"></div></div></div>
+                <label class="ts"><input type="checkbox" id="btog" onchange="togBot()"><div class="tsl"></div></label>
             </div>
-        </aside>
+            <div class="csb off" id="modeBar"><i class="fas fa-circle" style="font-size:6px"></i> <span id="modeTxt">Backend offline</span></div>
+        </div>
+    </aside>
 
-        <!-- Main Content -->
-        <main class="main-content">
-            <div class="topbar">
-                <div class="topbar-left">
-                    <button class="menu-btn" onclick="toggleSidebar()"><i class="fas fa-bars"></i></button>
-                    <div>
-                        <div class="page-title" id="pageTitle">Hubungkan WhatsApp</div>
-                        <div class="page-subtitle" id="pageSubtitle">Sambungkan bot ke akun WhatsApp Anda</div>
-                    </div>
-                </div>
-                <div class="topbar-right">
-                    <button class="topbar-btn" onclick="showToast('Tidak ada notifikasi baru', 'warning')">
-                        <i class="fas fa-bell"></i>
-                        <div class="notif-dot"></div>
-                    </button>
-                    <button class="topbar-btn" onclick="switchPage('settings', document.querySelector('[data-page=settings]'))">
-                        <i class="fas fa-cog"></i>
-                    </button>
-                </div>
+    <!-- MAIN -->
+    <main class="mc">
+        <div class="tb">
+            <div class="tbl">
+                <button class="mb" onclick="document.getElementById('sb').classList.toggle('op')"><i class="fas fa-bars"></i></button>
+                <div><div class="pt" id="ptitle">Hubungkan WhatsApp</div><div class="pst" id="psub">Sambungkan bot ke akun WhatsApp</div></div>
             </div>
-
-            <div class="page-content">
-                <!-- ==================== KONEKSI ==================== -->
-                <div class="page active" id="page-connection">
-                    <div class="connection-flow">
-
-                        <!-- Status Banner -->
-                        <div class="conn-status-banner disconnected" id="connBanner">
-                            <div class="conn-status-icon"><i class="fas fa-unlink"></i></div>
-                            <div class="conn-status-text">
-                                <h3 id="connTitle">Belum Terhubung</h3>
-                                <p id="connDesc">Pilih metode koneksi di bawah untuk memulai</p>
-                            </div>
-                        </div>
-
-                        <!-- Info: Kenapa Butuh Backend -->
-                        <div class="info-box">
-                            <i class="fas fa-info-circle"></i>
-                            <p><strong style="color:var(--fg);">Kenapa tidak bisa langsung dari browser?</strong><br>
-                            WhatsApp tidak mengizinkan koneksi langsung dari halaman web. Diperlukan server backend (Node.js/Python) yang menjalankan library WhatsApp untuk membaca QR code dan berkomunikasi dengan server WhatsApp. Dashboard ini adalah frontend yang mengontrol backend tersebut.</p>
-                        </div>
-
-                        <!-- Pilih Metode -->
-                        <div class="method-cards">
-                            <div class="method-card selected" id="methodBaileys" onclick="selectMethod('baileys')">
-                                <div class="method-card-icon" style="background:var(--accent-dim);color:var(--accent);"><i class="fab fa-node-js"></i></div>
-                                <h4>whatsapp-web.js / Baileys</h4>
-                                <p>Library Node.js open-source. Scan QR dari WhatsApp Web seperti biasa. Gratis dan tanpa batasan.</p>
-                                <span class="method-tag recommended">Rekomendasi</span>
-                            </div>
-                            <div class="method-card" id="methodOfficial" onclick="selectMethod('official')">
-                                <div class="method-card-icon" style="background:var(--info-dim);color:var(--info);"><i class="fab fa-meta"></i></div>
-                                <h4>WhatsApp Cloud API</h4>
-                                <p>API resmi dari Meta. Butuh bisnis terverifikasi. Stabil tapi berbayar per pesan.</p>
-                                <span class="method-tag advanced">Berbayar</span>
-                            </div>
-                        </div>
-
-                        <!-- Arsitektur -->
-                        <div class="arch-diagram">
-                            <h4><i class="fas fa-project-diagram" style="margin-right:8px;color:var(--accent);"></i>Arsitektur Sistem</h4>
-                            <div class="arch-flow">
-                                <div class="arch-node whatsapp"><i class="fab fa-whatsapp" style="margin-right:6px;"></i>WhatsApp<br><span style="font-size:10px;font-weight:400;opacity:0.7;">Ponsel Anda</span></div>
-                                <div class="arch-arrow"><i class="fas fa-arrows-left-right"></i></div>
-                                <div class="arch-node backend"><i class="fas fa-server" style="margin-right:6px;"></i>Backend Server<br><span style="font-size:10px;font-weight:400;opacity:0.7;">Node.js + Baileys</span></div>
-                                <div class="arch-arrow"><i class="fas fa-arrows-left-right"></i></div>
-                                <div class="arch-node frontend" style="border-color:var(--accent);"><i class="fas fa-desktop" style="margin-right:6px;"></i>Dashboard Ini<br><span style="font-size:10px;font-weight:400;opacity:0.7;">HTML + WebSocket</span></div>
-                                <div class="arch-arrow"><i class="fas fa-arrows-left-right"></i></div>
-                                <div class="arch-node db"><i class="fas fa-database" style="margin-right:6px;"></i>Database<br><span style="font-size:10px;font-weight:400;opacity:0.7;">SQLite / MongoDB</span></div>
-                            </div>
-                            <div class="arch-note">
-                                Backend menjalankan sesi WhatsApp (via QR scan). Dashboard mengirim perintah ke backend via WebSocket/REST API. Semua aturan auto-reply dan jadwal disimpan di database.
-                            </div>
-                        </div>
-
-                        <!-- Langkah-langkah (Baileys) -->
-                        <div class="step-list" id="stepsBaileys">
-                            <div style="margin-bottom:16px;">
-                                <h3 style="font-size:16px;font-weight:700;">Langkah Implementasi (whatsapp-web.js)</h3>
-                                <p style="font-size:13px;color:var(--fg-muted);">Ikuti langkah berikut untuk membangun backend bot</p>
-                            </div>
-                            <div class="step-item">
-                                <div class="step-num">1</div>
-                                <div class="step-content">
-                                    <h4>Install Node.js dan inisialisasi project</h4>
-                                    <p>Buat folder project, lalu jalankan:<br>
-                                    <code>npm init -y</code><br>
-                                    <code>npm install whatsapp-web.js express socket.io qrcode</code>
-                                    </p>
-                                </div>
-                            </div>
-                            <div class="step-item">
-                                <div class="step-num">2</div>
-                                <div class="step-content">
-                                    <h4>Buat file server.js</h4>
-                                    <p>Buat server Express + Socket.IO yang menginisialisasi klien WhatsApp. Saat pertama kali dijalankan, library akan menghasilkan QR code. Scan QR tersebut dari aplikasi WhatsApp di ponsel (Menu > Perangkat Tertaut > Tautkan Perangkat).</p>
-                                </div>
-                            </div>
-                            <div class="step-item">
-                                <div class="step-num">3</div>
-                                <div class="step-content">
-                                    <h4>Implementasi logika auto-reply</h4>
-                                    <p>Di event listener <code>message</code>, cocokkan isi pesan dengan kata kunci yang tersimpan di database. Kirim balasan menggunakan <code>client.sendMessage()</code>. Dashboard ini mengirim update aturan ke backend via WebSocket.</p>
-                                </div>
-                            </div>
-                            <div class="step-item">
-                                <div class="step-num">4</div>
-                                <div class="step-content">
-                                    <h4>Hubungkan dashboard ke backend</h4>
-                                    <p>Dashboard ini (HTML) terhubung ke backend via <code>Socket.IO</code>. Saat aturan ditambah/diubah di dashboard, dikirim ke backend. Saat pesan masuk di backend, dikirim ke dashboard untuk ditampilkan di log. Ubah URL WebSocket di kode untuk menunjuk ke server Anda.</p>
-                                </div>
-                            </div>
-                            <div class="step-item">
-                                <div class="step-num">5</div>
-                                <div class="step-content">
-                                    <h4>Jalankan server</h4>
-                                    <p><code>node server.js</code> — Buka dashboard di browser, buka halaman Koneksi, scan QR code yang muncul. Setelah terhubung, toggle Bot ke ON di sidebar.</p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- QR Code Simulation Area -->
-                        <div id="qrSection" style="width:100%;display:flex;flex-direction:column;align-items:center;gap:16px;">
-                            <button class="btn btn-primary" onclick="startQRSimulation()" id="btnStartQR">
-                                <i class="fas fa-qrcode"></i> Simulasi Scan QR Code
-                            </button>
-                            <p style="font-size:12px;color:var(--fg-dim);max-width:400px;text-align:center;">
-                                Dalam implementasi nyata, QR code dihasilkan oleh backend. Tombol ini mensimulasikan proses scanning untuk demo.
-                            </p>
-                            <div class="qr-area" id="qrArea" style="display:none;">
-                                <canvas id="qrCanvas" width="200" height="200"></canvas>
-                                <div class="qr-label" id="qrLabel">Scan QR Code dengan WhatsApp</div>
-                                <div class="qr-sublabel">Buka WhatsApp > Menu > Perangkat Tertaut > Tautkan Perangkat</div>
-                                <div class="qr-overlay" id="qrOverlay" style="display:none;">
-                                    <i class="fas fa-check-circle"></i>
-                                    <span>Terhubung!</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Info setelah terhubung (simulasi) -->
-                        <div class="conn-phone-info" id="connPhoneInfo">
-                            <div class="conn-phone-row">
-                                <div class="conn-phone-avatar"><i class="fab fa-whatsapp"></i></div>
-                                <div>
-                                    <div class="conn-phone-name" id="connPhoneName">WABot Assistant</div>
-                                    <div class="conn-phone-number" id="connPhoneNumber">+62 812-3456-7890</div>
-                                </div>
-                            </div>
-                            <div class="conn-phone-meta">
-                                <div class="conn-phone-meta-item">
-                                    <div class="val" id="connUptime">00:00</div>
-                                    <div class="lbl">Uptime</div>
-                                </div>
-                                <div class="conn-phone-meta-item">
-                                    <div class="val" id="connBattery">85%</div>
-                                    <div class="lbl">Baterai HP</div>
-                                </div>
-                                <div class="conn-phone-meta-item">
-                                    <div class="val" id="connMsgCount">0</div>
-                                    <div class="lbl">Pesan Hari Ini</div>
-                                </div>
-                            </div>
-                            <div style="margin-top:14px;display:flex;gap:10px;">
-                                <button class="btn btn-danger btn-sm" onclick="disconnectWA()">
-                                    <i class="fas fa-power-off"></i> Putuskan Koneksi
-                                </button>
-                            </div>
-                        </div>
-
-                        <!-- Warning -->
-                        <div class="warning-box">
-                            <i class="fas fa-exclamation-triangle"></i>
-                            <p><strong>Peringatan:</strong> Akun WhatsApp pribadi bisa diblokir sementara oleh Meta jika terdeteksi menggunakan automasi yang berlebihan. Gunakan nomor sekunder, jangan spam, berikan delay antar pesan, dan hormati kebijakan WhatsApp Terms of Service. Untuk penggunaan bisnis serius, gunakan WhatsApp Business API resmi.</p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- ==================== DASHBOARD ==================== -->
-                <div class="page" id="page-dashboard">
-                    <div class="stats-grid">
-                        <div class="stat-card green">
-                            <div class="stat-icon green"><i class="fas fa-paper-plane"></i></div>
-                            <div class="stat-value" id="statSent">1,247</div>
-                            <div class="stat-label">Pesan Terkirim</div>
-                            <div class="stat-change up"><i class="fas fa-arrow-up"></i> 12.5%</div>
-                        </div>
-                        <div class="stat-card blue">
-                            <div class="stat-icon blue"><i class="fas fa-inbox"></i></div>
-                            <div class="stat-value" id="statReceived">3,891</div>
-                            <div class="stat-label">Pesan Diterima</div>
-                            <div class="stat-change up"><i class="fas fa-arrow-up"></i> 8.2%</div>
-                        </div>
-                        <div class="stat-card orange">
-                            <div class="stat-icon orange"><i class="fas fa-robot"></i></div>
-                            <div class="stat-value" id="statReplies">892</div>
-                            <div class="stat-label">Auto-Reply</div>
-                            <div class="stat-change up"><i class="fas fa-arrow-up"></i> 15.3%</div>
-                        </div>
-                        <div class="stat-card red">
-                            <div class="stat-icon red"><i class="fas fa-exclamation-triangle"></i></div>
-                            <div class="stat-value" id="statErrors">7</div>
-                            <div class="stat-label">Error</div>
-                            <div class="stat-change down"><i class="fas fa-arrow-down"></i> 23.1%</div>
-                        </div>
-                    </div>
-                    <div class="grid-3">
-                        <div class="card">
-                            <div class="card-header">
-                                <span class="card-title">Aktivitas 7 Hari Terakhir</span>
-                                <div class="tabs">
-                                    <button class="tab-btn active" onclick="updateChart('week', this)">Minggu</button>
-                                    <button class="tab-btn" onclick="updateChart('month', this)">Bulan</button>
-                                </div>
-                            </div>
-                            <canvas id="activityChart" height="240"></canvas>
-                        </div>
-                        <div class="card">
-                            <div class="card-header"><span class="card-title">Top Kata Kunci</span></div>
-                            <div id="topKeywords"></div>
-                        </div>
-                    </div>
-                    <div class="card">
-                        <div class="card-header">
-                            <span class="card-title">Aktivitas Terbaru</span>
-                            <button class="btn btn-secondary btn-sm" onclick="switchPage('logs', document.querySelector('[data-page=logs]'))">Lihat Semua <i class="fas fa-arrow-right"></i></button>
-                        </div>
-                        <div class="table-wrapper">
-                            <table>
-                                <thead><tr><th>Pengirim</th><th>Pesan</th><th>Respon</th><th>Waktu</th><th>Status</th></tr></thead>
-                                <tbody id="recentTable"></tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- ==================== AUTO-REPLY ==================== -->
-                <div class="page" id="page-autoreply">
-                    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:10px;">
-                        <p style="font-size:14px;color:var(--fg-muted);">Buat aturan balasan otomatis berdasarkan kata kunci pesan masuk</p>
-                        <button class="btn btn-primary" onclick="openModal('ruleModal')"><i class="fas fa-plus"></i> Tambah Aturan</button>
-                    </div>
-                    <div id="rulesList"></div>
-                </div>
-
-                <!-- ==================== SCHEDULE ==================== -->
-                <div class="page" id="page-schedule">
-                    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:10px;">
-                        <p style="font-size:14px;color:var(--fg-muted);">Atur pesan yang akan dikirim secara otomatis pada waktu tertentu</p>
-                        <button class="btn btn-primary" onclick="openModal('scheduleModal')"><i class="fas fa-plus"></i> Jadwalkan Pesan</button>
-                    </div>
-                    <div id="scheduleList"></div>
-                </div>
-
-                <!-- ==================== LOGS ==================== -->
-                <div class="page" id="page-logs">
-                    <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px;flex-wrap:wrap;">
-                        <div class="search-box" style="flex:1;min-width:200px;">
-                            <i class="fas fa-search"></i>
-                            <input class="form-input" type="text" placeholder="Cari log pesan..." id="logSearch" oninput="filterLogs()">
-                        </div>
-                        <select class="form-select" style="width:160px;" id="logFilter" onchange="filterLogs()">
-                            <option value="all">Semua Status</option>
-                            <option value="replied">Dibalas</option>
-                            <option value="missed">Tidak Dibalas</option>
-                            <option value="error">Error</option>
-                        </select>
-                        <button class="btn btn-secondary" onclick="clearLogs()"><i class="fas fa-trash"></i> Hapus Semua</button>
-                    </div>
-                    <div class="card">
-                        <div class="table-wrapper">
-                            <table>
-                                <thead><tr><th>Waktu</th><th>Pengirim</th><th>Pesan Masuk</th><th>Balasan Bot</th><th>Aturan</th><th>Status</th></tr></thead>
-                                <tbody id="logTable"></tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- ==================== KONTAK ==================== -->
-                <div class="page" id="page-contacts">
-                    <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px;flex-wrap:wrap;">
-                        <div class="search-box" style="flex:1;min-width:200px;">
-                            <i class="fas fa-search"></i>
-                            <input class="form-input" type="text" placeholder="Cari kontak..." id="contactSearch" oninput="filterContacts()">
-                        </div>
-                        <button class="btn btn-primary" onclick="openModal('contactModal')"><i class="fas fa-plus"></i> Tambah Kontak</button>
-                    </div>
-                    <div class="card"><div id="contactList"></div></div>
-                </div>
-
-                <!-- ==================== GRUP ==================== -->
-                <div class="page" id="page-groups">
-                    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:10px;">
-                        <p style="font-size:14px;color:var(--fg-muted);">Kelola grup WhatsApp yang dipantau bot</p>
-                        <button class="btn btn-primary" onclick="openModal('groupModal')"><i class="fas fa-plus"></i> Tambah Grup</button>
-                    </div>
-                    <div id="groupList"></div>
-                </div>
-
-                <!-- ==================== PENGATURAN ==================== -->
-                <div class="page" id="page-settings">
-                    <div class="settings-section">
-                        <div class="settings-section-title">Umum</div>
-                        <div class="settings-section-desc">Konfigurasi dasar bot Anda</div>
-                        <div class="setting-item">
-                            <div class="setting-info"><h4>Nama Bot</h4><p>Nama yang muncul saat bot membalas pesan</p></div>
-                            <input class="form-input" style="width:200px;" value="WABot Assistant" id="botNameInput">
-                        </div>
-                        <div class="setting-item">
-                            <div class="setting-info"><h4>Nomor WhatsApp</h4><p>Nomor terhubung ke bot</p></div>
-                            <input class="form-input" style="width:200px;" value="+62 812-3456-7890" id="botPhoneInput">
-                        </div>
-                        <div class="setting-item">
-                            <div class="setting-info"><h4>Zona Waktu</h4><p>Untuk penjadwalan pesan</p></div>
-                            <select class="form-select" style="width:200px;" id="timezoneSelect">
-                                <option value="WIB" selected>WIB (UTC+7)</option>
-                                <option value="WITA">WITA (UTC+8)</option>
-                                <option value="WIT">WIT (UTC+9)</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="settings-section">
-                        <div class="settings-section-title">Backend WebSocket</div>
-                        <div class="settings-section-desc">URL server backend untuk komunikasi real-time</div>
-                        <div class="setting-item" style="flex-direction:column;align-items:stretch;gap:8px;">
-                            <div class="setting-info"><h4>WebSocket URL</h4><p>Alamat server Node.js yang menjalankan whatsapp-web.js</p></div>
-                            <input class="form-input" type="url" value="ws://localhost:3000" id="wsUrlInput" placeholder="ws://localhost:3000">
-                        </div>
-                        <div class="setting-item">
-                            <div class="setting-info"><h4>Status Koneksi Backend</h4><p>Koneksi real-time ke server backend</p></div>
-                            <span class="tag red" id="wsStatus">Tidak Terhubung</span>
-                        </div>
-                    </div>
-                    <div class="settings-section">
-                        <div class="settings-section-title">Perilaku Bot</div>
-                        <div class="settings-section-desc">Atur bagaimana bot merespons pesan</div>
-                        <div class="setting-item">
-                            <div class="setting-info"><h4>Balas Pesan Pribadi</h4><p>Aktifkan auto-reply untuk chat pribadi</p></div>
-                            <label class="toggle-switch"><input type="checkbox" checked><div class="toggle-slider"></div></label>
-                        </div>
-                        <div class="setting-item">
-                            <div class="setting-info"><h4>Balas Pesan Grup</h4><p>Aktifkan auto-reply untuk pesan grup</p></div>
-                            <label class="toggle-switch"><input type="checkbox" checked><div class="toggle-slider"></div></label>
-                        </div>
-                        <div class="setting-item">
-                            <div class="setting-info"><h4>Deteksi Kata Kunci (Case-Sensitive)</h4><p>Pencocokan kata kunci memperhatikan huruf besar/kecil</p></div>
-                            <label class="toggle-switch"><input type="checkbox"><div class="toggle-slider"></div></label>
-                        </div>
-                        <div class="setting-item">
-                            <div class="setting-info"><h4>Delay Balasan</h4><p>Jeda waktu sebelum bot membalas (detik)</p></div>
-                            <input class="form-input" type="number" style="width:80px;" value="2" min="0" max="30">
-                        </div>
-                    </div>
-                    <div class="settings-section">
-                        <div class="settings-section-title">Pesan Default</div>
-                        <div class="settings-section-desc">Pesan yang dikirim saat tidak ada aturan yang cocok</div>
-                        <div class="setting-item" style="flex-direction:column;align-items:stretch;">
-                            <textarea class="form-textarea" id="defaultReplyText" rows="3">Terima kasih telah menghubungi kami. Pesan Anda akan segera diproses oleh tim kami. Jam operasional: Senin-Jumat, 08.00-17.00 WIB.</textarea>
-                        </div>
-                    </div>
-                    <div style="display:flex;gap:10px;">
-                        <button class="btn btn-primary" onclick="showToast('Pengaturan berhasil disimpan', 'success')"><i class="fas fa-save"></i> Simpan Pengaturan</button>
-                        <button class="btn btn-secondary" onclick="showToast('Pengaturan dikembalikan ke default', 'warning')"><i class="fas fa-undo"></i> Reset Default</button>
-                    </div>
-                </div>
+            <div class="tbr">
+                <button class="tbb" onclick="toast('Tidak ada notifikasi baru','w')"><i class="fas fa-bell"></i></button>
             </div>
-        </main>
+        </div>
+
+        <div class="pc">
+
+<!-- ===== KONEKSI ===== -->
+<div class="pg act" id="pg-connection">
+<div class="cf">
+    <div class="csb2 disc" id="cbanner">
+        <div class="csi2"><i class="fas fa-unlink"></i></div>
+        <div class="cst"><h3 id="ctitle">Belum Terhubung</h3><p id="cdesc">Klik tombol di bawah untuk mulai</p></div>
+    </div>
+    <div class="wb i"><i class="fas fa-info-circle"></i><p><strong style="color:var(--inf)">Mode Aktif:</strong> <span id="modeLabel">Mendeteksi koneksi backend...</span></p></div>
+    <div id="qrsec" style="width:100%;display:flex;flex-direction:column;align-items:center;gap:14px;">
+        <button class="btn bp" onclick="startQR()" id="btnQR"><i class="fas fa-qrcode"></i> Mulai Koneksi WhatsApp</button>
+        <div class="qra" id="qrArea" style="display:none;">
+            <canvas id="qrCvs" width="280" height="280"></canvas>
+            <div class="qrl" id="qrLbl">Scan QR Code dengan WhatsApp</div>
+            <div class="qrsl">WhatsApp → Menu → Perangkat Tertaut → Tautkan Perangkat</div>
+            <div class="qro" id="qrOv" style="display:none;"><i class="fas fa-check-circle"></i><span>Terhubung!</span></div>
+        </div>
+    </div>
+    <div class="cpi" id="cpInfo">
+        <div class="cpr"><div class="cpa"><i class="fab fa-whatsapp"></i></div><div><div class="cpn" id="cpName">WABot</div><div class="cpp" id="cpPhone">-</div></div></div>
+        <div class="cpm">
+            <div class="cpmi"><div class="v" id="cpUp">00:00</div><div class="l">Uptime</div></div>
+            <div class="cpmi"><div class="v" id="cpMsg">0</div><div class="l">Pesan Hari Ini</div></div>
+            <div class="cpmi"><div class="v" id="cpReply">0</div><div class="l">Auto-Reply</div></div>
+        </div>
+        <div style="margin-top:12px"><button class="btn bd bsm" onclick="discWA()"><i class="fas fa-power-off"></i> Putuskan Koneksi</button></div>
+    </div>
+    <div class="wb w"><i class="fas fa-exclamation-triangle"></i><p><strong>Peringatan:</strong> Akun WhatsApp bisa diblokir jika automasi berlebihan. Gunakan nomor sekunder, berikan delay, jangan spam. Untuk bisnis serius, gunakan WhatsApp Cloud API resmi.</p></div>
+</div>
+</div>
+
+<!-- ===== PENGATURAN BOT ===== -->
+<div class="pg" id="pg-settings">
+    <div class="ss">
+        <div class="sst"><i class="fas fa-server" style="color:var(--inf)"></i> Koneksi Backend</div>
+        <div class="ssd">Status koneksi real-time ke server Node.js</div>
+        <div class="sti"><div class="stx"><h4>Status WebSocket</h4><p>Koneksi ke backend server</p></div><span class="tg r" id="wsStat">Tidak Terhubung</span></div>
     </div>
 
-    <!-- ===== MODALS ===== -->
-    <div class="modal-overlay" id="ruleModal">
-        <div class="modal">
-            <div class="modal-header">
-                <span class="modal-title" id="ruleModalTitle">Tambah Aturan Auto-Reply</span>
-                <button class="modal-close" onclick="closeModal('ruleModal')"><i class="fas fa-times"></i></button>
+    <div class="ss">
+        <div class="sst"><i class="fas fa-id-card" style="color:var(--acc)"></i> Identitas Bot</div>
+        <div class="ssd">Informasi dasar bot Anda</div>
+        <div class="sti"><div class="stx"><h4>Nama Bot</h4><p>Nama yang muncul saat membalas</p></div><input class="fi" style="width:200px" id="sBotName" value="WABot Assistant" onchange="pushSetting('botName',this.value)"></div>
+        <div class="sti"><div class="stx"><h4>Nomor WhatsApp</h4><p>Nomor yang terhubung</p></div><input class="fi" style="width:200px" id="sBotPhone" value="+62 812-xxxx-7890" onchange="pushSetting('botPhone',this.value)"></div>
+        <div class="sti"><div class="stx"><h4>Zona Waktu</h4><p>Untuk penjadwalan pesan</p></div>
+            <select class="fs" style="width:160px" id="sTimezone" onchange="pushSetting('timezone',this.value)">
+                <option value="WIB" selected>WIB (UTC+7)</option><option value="WITA">WITA (UTC+8)</option><option value="WIT">WIT (UTC+9)</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="ss">
+        <div class="sst"><i class="fas fa-hourglass-half" style="color:var(--wrn)"></i> Delay Balasan</div>
+        <div class="ssd">Atur jeda waktu sebelum bot membalas pesan — penting agar terlihat natural</div>
+        <div class="sti col">
+            <div style="display:flex;align-items:center;justify-content:space-between;width:100%"><div class="stx"><h4>Delay Balasan Utama</h4><p>Jeda dasar sebelum membalas (detik)</p></div></div>
+            <div class="range-wrap" style="width:100%;margin-top:4px">
+                <input type="range" min="0" max="30" step="1" id="sDelay" value="2" oninput="document.getElementById('sDelayV').textContent=this.value+'s';pushSetting('delayReply',+this.value)">
+                <div class="range-val" id="sDelayV">2s</div>
             </div>
-            <div class="modal-body">
-                <div class="form-group"><label class="form-label">Nama Aturan</label><input class="form-input" type="text" id="ruleName" placeholder="contoh: Sapaan Pelanggan"></div>
-                <div class="form-group"><label class="form-label">Tipe Pencocokan</label>
-                    <select class="form-select" id="ruleMatchType"><option value="contains">Mengandung kata</option><option value="exact">Persis sama</option><option value="startswith">Dimulai dengan</option><option value="regex">Regex (Lanjutan)</option></select>
-                </div>
-                <div class="form-group"><label class="form-label">Kata Kunci (pisahkan dengan koma)</label><input class="form-input" type="text" id="ruleKeyword" placeholder="halo, hai, selamat pagi"></div>
-                <div class="form-group"><label class="form-label">Pesan Balasan</label><textarea class="form-textarea" id="ruleReply" rows="4" placeholder="Halo! Terima kasih telah menghubungi kami..."></textarea></div>
-                <div class="form-row">
-                    <div class="form-group"><label class="form-label">Prioritas</label><select class="form-select" id="rulePriority"><option value="normal">Normal</option><option value="high">Tinggi</option><option value="low">Rendah</option></select></div>
-                    <div class="form-group"><label class="form-label">Status</label><select class="form-select" id="ruleStatus"><option value="active">Aktif</option><option value="paused">Jeda</option></select></div>
-                </div>
+        </div>
+        <div class="sti">
+            <div class="stx"><h4>Delay Acak Tambahan</h4><p>Tambahkan jeda acak agar tidak terlihat robot (0 - max detik)</p></div>
+            <label class="ts"><input type="checkbox" id="sRandDelay" checked onchange="pushSetting('randomDelay',this.checked)"><div class="tsl"></div></label>
+        </div>
+        <div class="sti col" id="randDelayWrap">
+            <div style="display:flex;align-items:center;justify-content:space-between;width:100%"><div class="stx"><h4>Max Delay Acak</h4><p>Batas atas delay acak tambahan (detik)</p></div></div>
+            <div class="range-wrap" style="width:100%;margin-top:4px">
+                <input type="range" min="0" max="10" step="1" id="sRandMax" value="3" oninput="document.getElementById('sRandMaxV').textContent=this.value+'s';pushSetting('randomDelayMax',+this.value)">
+                <div class="range-val" id="sRandMaxV">3s</div>
             </div>
-            <div class="modal-footer">
-                <button class="btn btn-secondary" onclick="closeModal('ruleModal')">Batal</button>
-                <button class="btn btn-primary" onclick="saveRule()"><i class="fas fa-save"></i> Simpan Aturan</button>
+        </div>
+        <div class="sti">
+            <div class="stx"><h4>Total Delay Efektif</h4><p>Estimasi: delay utama + acak</p></div>
+            <span style="font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:700;color:var(--acc)" id="effDelay">2 - 5 detik</span>
+        </div>
+    </div>
+
+    <div class="ss">
+        <div class="sst"><i class="fas fa-shield-alt" style="color:var(--dng)"></i> Rate Limiting & Cooldown</div>
+        <div class="ssd">Cegah spam dan deteksi oleh WhatsApp</div>
+        <div class="sti">
+            <div class="stx"><h4>Cooldown Per Nomor</h4><p>Bot tidak membalas nomor yang sama jika dalam cooldown</p></div>
+            <label class="ts"><input type="checkbox" id="sCooldown" checked onchange="pushSetting('cooldownEnabled',this.checked);toggleEl('cooldownWrap',this.checked)"><div class="tsl"></div></label>
+        </div>
+        <div class="sti col" id="cooldownWrap">
+            <div style="display:flex;align-items:center;justify-content:space-between;width:100%"><div class="stx"><h4>Durasi Cooldown</h4><p>Jeda antar balasan ke nomor yang sama (detik)</p></div></div>
+            <div class="range-wrap" style="width:100%;margin-top:4px">
+                <input type="range" min="5" max="300" step="5" id="sCooldownSec" value="30" oninput="document.getElementById('sCooldownV').textContent=this.value+'s';pushSetting('cooldownSeconds',+this.value)">
+                <div class="range-val" id="sCooldownV">30s</div>
+            </div>
+        </div>
+        <div class="sti col">
+            <div style="display:flex;align-items:center;justify-content:space-between;width:100%"><div class="stx"><h4>Max Balasan Per Jam</h4><p>Batas total balasan bot per jam (0 = tanpa batas)</p></div></div>
+            <div class="range-wrap" style="width:100%;margin-top:4px">
+                <input type="range" min="0" max="500" step="10" id="sMaxHr" value="100" oninput="document.getElementById('sMaxHrV').textContent=this.value==0?'Unlimited':this.value;pushSetting('maxRepliesPerHour',+this.value)">
+                <div class="range-val" id="sMaxHrV">100</div>
             </div>
         </div>
     </div>
 
-    <div class="modal-overlay" id="scheduleModal">
-        <div class="modal">
-            <div class="modal-header">
-                <span class="modal-title">Jadwalkan Pesan</span>
-                <button class="modal-close" onclick="closeModal('scheduleModal')"><i class="fas fa-times"></i></button>
+    <div class="ss">
+        <div class="sst"><i class="fas fa-robot" style="color:var(--acc)"></i> Perilaku Balasan</div>
+        <div class="ssd">Kapan dan bagaimana bot membalas</div>
+        <div class="sti"><div class="stx"><h4>Balas Chat Pribadi</h4><p>Aktifkan auto-reply untuk DM</p></div><label class="ts"><input type="checkbox" id="sReplyPriv" checked onchange="pushSetting('replyPrivate',this.checked)"><div class="tsl"></div></label></div>
+        <div class="sti"><div class="stx"><h4>Balas Pesan Grup</h4><p>Aktifkan auto-reply untuk grup</p></div><label class="ts"><input type="checkbox" id="sReplyGrp" checked onchange="pushSetting('replyGroup',this.checked)"><div class="tsl"></div></label></div>
+        <div class="sti"><div class="stx"><h4>Hanya Balas Jika Di-tag di Grup</h4><p>Bot hanya membalas jika ada @mention di grup</p></div><label class="ts"><input type="checkbox" id="sGrpTag" onchange="pushSetting('groupTagOnly',this.checked)"><div class="tsl"></div></label></div>
+        <div class="sti"><div class="stx"><h4>Case-Sensitive</h4><p>Pencocokan kata kunci membedakan huruf besar/kecil</p></div><label class="ts"><input type="checkbox" id="sCase" onchange="pushSetting('caseSensitive',this.checked)"><div class="tsl"></div></label></div>
+        <div class="sti"><div class="stx"><h4>Balas Pesan Media</h4><p>Balas juga pesan berupa gambar/video/stiker (menggunakan aturan khusus)</p></div><label class="ts"><input type="checkbox" id="sReplyMedia" onchange="pushSetting('replyMedia',this.checked)"><div class="tsl"></div></label></div>
+    </div>
+
+    <div class="ss">
+        <div class="sst"><i class="fas fa-font" style="color:var(--inf)"></i> Format Pesan Balasan</div>
+        <div class="ssd">Tambahkan prefix/suffix otomatis di setiap balasan bot</div>
+        <div class="sti"><div class="stx"><h4>Aktifkan Prefix</h4><p>Tambahkan teks di awal setiap balasan</p></div><label class="ts"><input type="checkbox" id="sPreEn" onchange="pushSetting('prefixEnabled',this.checked);toggleEl('preWrap',this.checked)"><div class="tsl"></div></label></div>
+        <div class="sti" id="preWrap" style="display:none"><div class="stx"><h4>Teks Prefix</h4></div><input class="fi" style="width:200px" id="sPreTxt" value="[BOT] " onchange="pushSetting('prefixText',this.value)"></div>
+        <div class="sti"><div class="stx"><h4>Aktifkan Suffix</h4><p>Tambahkan teks di akhir setiap balasan</p></div><label class="ts"><input type="checkbox" id="sSufEn" onchange="pushSetting('suffixEnabled',this.checked);toggleEl('sufWrap',this.checked)"><div class="tsl"></div></label></div>
+        <div class="sti" id="sufWrap" style="display:none"><div class="stx"><h4>Teks Suffix</h4></div><input class="fi" style="width:200px" id="sSufTxt" value="" onchange="pushSetting('suffixText',this.value)"></div>
+        <div class="sti col"><div class="stx"><h4>Preview Format</h4><p>Contoh tampilan balasan bot</p></div><div style="background:var(--bg);border:1px solid var(--brd);border-radius:var(--rs);padding:10px;font-size:13px;color:var(--acc);font-family:'JetBrains Mono',monospace;margin-top:4px" id="fmtPreview">[BOT] Halo! Ada yang bisa dibantu?</div></div>
+    </div>
+
+    <div class="ss">
+        <div class="sst"><i class="fas fa-comment-dots" style="color:var(--acc)"></i> Pesan Default</div>
+        <div class="ssd">Dikirim saat tidak ada aturan yang cocok</div>
+        <div class="sti"><div class="stx"><h4>Aktifkan Pesan Default</h4><p>Kirim pesan default jika tidak ada aturan cocok</p></div><label class="ts"><input type="checkbox" id="sDefEn" checked onchange="pushSetting('defaultReplyEnabled',this.checked);toggleEl('defWrap',this.checked)"><div class="tsl"></div></label></div>
+        <div class="sti col" id="defWrap"><textarea class="ft" id="sDefTxt" rows="3" onchange="pushSetting('defaultReplyText',this.value)">Terima kasih telah menghubungi kami. Pesan Anda akan segera diproses. Jam operasional: Senin-Jumat, 08.00-17.00 WIB.</textarea></div>
+    </div>
+
+    <div class="ss">
+        <div class="sst"><i class="fas fa-ban" style="color:var(--dng)"></i> Blacklist</div>
+        <div class="ssd">Nomor yang tidak akan dibalas oleh bot</div>
+        <div class="sti col">
+            <div style="display:flex;gap:8px;width:100%">
+                <input class="fi" id="blInput" placeholder="Masukkan nomor, contoh: 6281234567890" style="flex:1">
+                <button class="btn bd bsm" onclick="addBL()"><i class="fas fa-plus"></i> Tambah</button>
             </div>
-            <div class="modal-body">
-                <div class="form-group"><label class="form-label">Nama Jadwal</label><input class="form-input" type="text" id="schedName" placeholder="Reminder Meeting"></div>
-                <div class="form-group"><label class="form-label">Penerima</label>
-                    <select class="form-select" id="schedTarget"><option value="all">Semua Kontak</option><option value="group:1">Grup: Tim Marketing</option><option value="group:2">Grup: Customer Support</option><option value="contact:1">Ahmad Fauzi</option><option value="contact:2">Siti Nurhaliza</option></select>
-                </div>
-                <div class="form-row">
-                    <div class="form-group"><label class="form-label">Tanggal</label><input class="form-input" type="date" id="schedDate"></div>
-                    <div class="form-group"><label class="form-label">Waktu</label><input class="form-input" type="time" id="schedTime"></div>
-                </div>
-                <div class="form-group"><label class="form-label">Ulangi</label>
-                    <select class="form-select" id="schedRepeat"><option value="none">Sekali saja</option><option value="daily">Setiap hari</option><option value="weekly">Setiap minggu</option><option value="monthly">Setiap bulan</option></select>
-                </div>
-                <div class="form-group"><label class="form-label">Isi Pesan</label><textarea class="form-textarea" id="schedMessage" rows="4" placeholder="Tulis pesan..."></textarea></div>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-secondary" onclick="closeModal('scheduleModal')">Batal</button>
-                <button class="btn btn-primary" onclick="saveSchedule()"><i class="fas fa-save"></i> Simpan Jadwal</button>
-            </div>
+            <div class="bl-list" id="blList"></div>
         </div>
     </div>
 
-    <div class="modal-overlay" id="contactModal">
-        <div class="modal">
-            <div class="modal-header">
-                <span class="modal-title">Tambah Kontak</span>
-                <button class="modal-close" onclick="closeModal('contactModal')"><i class="fas fa-times"></i></button>
-            </div>
-            <div class="modal-body">
-                <div class="form-group"><label class="form-label">Nama</label><input class="form-input" type="text" id="contactName" placeholder="Nama lengkap"></div>
-                <div class="form-group"><label class="form-label">Nomor WhatsApp</label><input class="form-input" type="text" id="contactPhone" placeholder="+62 xxx-xxxx-xxxx"></div>
-                <div class="form-group"><label class="form-label">Label</label>
-                    <select class="form-select" id="contactLabel"><option value="customer">Customer</option><option value="partner">Partner</option><option value="internal">Internal</option><option value="vip">VIP</option></select>
-                </div>
-                <div class="form-group"><label class="form-label">Catatan</label><textarea class="form-textarea" id="contactNote" rows="2" placeholder="Opsional..."></textarea></div>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-secondary" onclick="closeModal('contactModal')">Batal</button>
-                <button class="btn btn-primary" onclick="saveContact()"><i class="fas fa-save"></i> Simpan Kontak</button>
-            </div>
-        </div>
+    <div style="display:flex;gap:8px;margin-top:8px">
+        <button class="btn bp" onclick="saveAllSettings()"><i class="fas fa-save"></i> Simpan Semua Pengaturan</button>
+        <button class="btn bs" onclick="loadSettings()"><i class="fas fa-sync"></i> Muat Ulang dari Backend</button>
     </div>
+</div>
 
-    <div class="modal-overlay" id="groupModal">
-        <div class="modal">
-            <div class="modal-header">
-                <span class="modal-title">Tambah Grup</span>
-                <button class="modal-close" onclick="closeModal('groupModal')"><i class="fas fa-times"></i></button>
-            </div>
-            <div class="modal-body">
-                <div class="form-group"><label class="form-label">Nama Grup</label><input class="form-input" type="text" id="groupName" placeholder="Nama grup"></div>
-                <div class="form-group"><label class="form-label">Deskripsi</label><textarea class="form-textarea" id="groupDesc" rows="2" placeholder="Deskripsi singkat"></textarea></div>
-                <div class="form-group"><label class="form-label">Bot Aktif di Grup</label>
-                    <select class="form-select" id="groupBotActive"><option value="yes">Ya</option><option value="no">Tidak</option></select>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-secondary" onclick="closeModal('groupModal')">Batal</button>
-                <button class="btn btn-primary" onclick="saveGroup()"><i class="fas fa-save"></i> Simpan Grup</button>
-            </div>
-        </div>
+<!-- ===== AUTO-REPLY ===== -->
+<div class="pg" id="pg-autoreply">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;flex-wrap:wrap;gap:8px">
+        <p style="font-size:13px;color:var(--fgm)">Aturan balasan otomatis berdasarkan kata kunci</p>
+        <button class="btn bp" onclick="openM('ruleM')"><i class="fas fa-plus"></i> Tambah Aturan</button>
     </div>
+    <div id="ruleList"></div>
+</div>
 
-    <div class="toast-container" id="toastContainer"></div>
+<!-- ===== JADWAL ===== -->
+<div class="pg" id="pg-schedule">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;flex-wrap:wrap;gap:8px">
+        <p style="font-size:13px;color:var(--fgm)">Pesan yang dikirim otomatis pada waktu tertentu</p>
+        <button class="btn bp" onclick="openM('schedM')"><i class="fas fa-plus"></i> Jadwalkan Pesan</button>
+    </div>
+    <div id="schedList"></div>
+</div>
 
-    <script>
-        // ===================== STATE =====================
-        let botOnline = false;
-        let waConnected = false;
-        let editingRuleId = null;
-        let selectedMethod = 'baileys';
-        let connStartTime = null;
-        let uptimeInterval = null;
+<!-- ===== DASHBOARD ===== -->
+<div class="pg" id="pg-dashboard">
+    <div class="sg">
+        <div class="sc g"><div class="si g"><i class="fas fa-paper-plane"></i></div><div class="sv" id="stS">0</div><div class="sl">Terkirim</div><div class="sch up"><i class="fas fa-arrow-up"></i> 12.5%</div></div>
+        <div class="sc b"><div class="si b"><i class="fas fa-inbox"></i></div><div class="sv" id="stR">0</div><div class="sl">Diterima</div><div class="sch up"><i class="fas fa-arrow-up"></i> 8.2%</div></div>
+        <div class="sc o"><div class="si o"><i class="fas fa-robot"></i></div><div class="sv" id="stA">0</div><div class="sl">Auto-Reply</div><div class="sch up"><i class="fas fa-arrow-up"></i> 15.3%</div></div>
+        <div class="sc r"><div class="si r"><i class="fas fa-exclamation-triangle"></i></div><div class="sv" id="stE">0</div><div class="sl">Error</div><div class="sch dn"><i class="fas fa-arrow-down"></i> 23%</div></div>
+    </div>
+    <div class="g3"><div class="cd"><div class="cdh"><span class="cdt">Aktivitas 7 Hari</span><div class="tabs"><button class="tb act" onclick="uchart('week',this)">Minggu</button><button class="tb" onclick="uchart('month',this)">Bulan</button></div></div><canvas id="aChart" height="230"></canvas></div><div class="cd"><div class="cdh"><span class="cdt">Top Kata Kunci</span></div><div id="topKw"></div></div></div>
+    <div class="cd"><div class="cdh"><span class="cdt">Aktivitas Terbaru</span><button class="btn bs bsm" onclick="go('logs',document.querySelector('[data-p=logs]'))">Lihat Semua <i class="fas fa-arrow-right"></i></button></div><div class="tw"><table><thead><tr><th>Pengirim</th><th>Pesan</th><th>Respon</th><th>Waktu</th><th>Status</th></tr></thead><tbody id="recTbl"></tbody></table></div></div>
+</div>
 
-        // ===================== DATA =====================
-        let rules = [
-            { id: 1, name: 'Sapaan Pelanggan', matchType: 'contains', keywords: ['halo','hai','selamat pagi','selamat siang','selamat malam'], reply: 'Halo! Terima kasih telah menghubungi kami. Ada yang bisa kami bantu hari ini?', priority: 'high', status: 'active', triggerCount: 234 },
-            { id: 2, name: 'Info Harga', matchType: 'contains', keywords: ['harga','biaya','ongkir','murah'], reply: 'Untuk informasi harga, silakan kunjungi katalog kami di website atau hubungi tim sales kami di ext. 201.', priority: 'normal', status: 'active', triggerCount: 189 },
-            { id: 3, name: 'Cek Pesanan', matchType: 'contains', keywords: ['pesanan','order','status','tracking'], reply: 'Untuk mengecek status pesanan, silakan kirim nomor pesanan (INV-xxxxx).', priority: 'normal', status: 'active', triggerCount: 156 },
-            { id: 4, name: 'Komplain', matchType: 'contains', keywords: ['komplain','keluhan','rusak','salah','tidak sesuai'], reply: 'Mohon maaf atas ketidaknyamanan. Tim kami akan segera menindaklanjuti. Mohon sertakan foto dan nomor pesanan.', priority: 'high', status: 'active', triggerCount: 67 },
-            { id: 5, name: 'Ucapan Terima Kasih', matchType: 'contains', keywords: ['terima kasih','makasih','thanks','thx'], reply: 'Sama-sama! Senang bisa membantu. Jangan ragu menghubungi kami kembali.', priority: 'low', status: 'active', triggerCount: 312 },
-        ];
+<!-- ===== LOGS ===== -->
+<div class="pg" id="pg-logs">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:18px;flex-wrap:wrap">
+        <div class="sbx" style="flex:1;min-width:180px"><i class="fas fa-search"></i><input class="fi" placeholder="Cari log..." id="logS" oninput="fLogs()"></div>
+        <select class="fs" style="width:140px" id="logF" onchange="fLogs()"><option value="all">Semua</option><option value="replied">Dibalas</option><option value="missed">Missed</option><option value="error">Error</option></select>
+        <button class="btn bs bsm" onclick="clrLogs()"><i class="fas fa-trash"></i> Hapus</button>
+    </div>
+    <div class="cd"><div class="tw"><table><thead><tr><th>Waktu</th><th>Pengirim</th><th>Pesan</th><th>Balasan</th><th>Aturan</th><th>Status</th></tr></thead><tbody id="logTbl"></tbody></table></div></div>
+</div>
 
-        let schedules = [
-            { id: 1, name: 'Reminder Meeting Senin', target: 'group:1', targetLabel: 'Tim Marketing', date: '2025-01-20', time: '08:00', repeat: 'weekly', message: 'Reminder: Meeting mingguan hari ini jam 09:00. Siapkan laporan mingguan.', status: 'active' },
-            { id: 2, name: 'Laporan Harian', target: 'group:2', targetLabel: 'Customer Support', date: '2025-01-18', time: '17:30', repeat: 'daily', message: 'Mohon kirimkan laporan harian sebelum jam 18:00.', status: 'active' },
-            { id: 3, name: 'Selamat Ulang Tahun VIP', target: 'contact:3', targetLabel: 'Budi Santoso', date: '2025-02-14', time: '08:00', repeat: 'yearly', message: 'Selamat ulang tahun! Semoga sehat selalu dan sukses.', status: 'paused' },
-        ];
+<!-- ===== KONTAK ===== -->
+<div class="pg" id="pg-contacts">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:18px;flex-wrap:wrap">
+        <div class="sbx" style="flex:1;min-width:180px"><i class="fas fa-search"></i><input class="fi" placeholder="Cari kontak..." id="ctS" oninput="fCt()"></div>
+    </div>
+    <div class="cd"><div id="ctList"></div></div>
+</div>
 
-        let messageLogs = [
-            { id: 1, time: '14:32', sender: 'Ahmad Fauzi', phone: '+62 812-xxxx-1234', incoming: 'Halo, saya mau tanya harga produk A', reply: 'Untuk informasi harga, silakan kunjungi...', rule: 'Info Harga', status: 'replied' },
-            { id: 2, time: '14:28', sender: 'Siti Nurhaliza', phone: '+62 857-xxxx-5678', incoming: 'Selamat pagi, pesanan saya sudah sampai', reply: 'Sama-sama! Senang bisa membantu...', rule: 'Ucapan Terima Kasih', status: 'replied' },
-            { id: 3, time: '14:15', sender: 'Rudi Hartono', phone: '+62 813-xxxx-9012', incoming: 'Dimana lokasi toko kalian?', reply: '-', rule: '-', status: 'missed' },
-            { id: 4, time: '13:58', sender: 'Dewi Lestari', phone: '+62 878-xxxx-3456', incoming: 'Pesanan saya salah kirim', reply: 'Mohon maaf atas ketidaknyamanan...', rule: 'Komplain', status: 'replied' },
-            { id: 5, time: '13:42', sender: 'Budi Santoso', phone: '+62 821-xxxx-7890', incoming: 'Mau cek pesanan INV-20250118', reply: 'Untuk mengecek status pesanan...', rule: 'Cek Pesanan', status: 'replied' },
-            { id: 6, time: '13:30', sender: 'Anita Sari', phone: '+62 856-xxxx-2345', incoming: 'Hai, bisa bantu saya?', reply: 'Halo! Terima kasih telah menghubungi...', rule: 'Sapaan Pelanggan', status: 'replied' },
-            { id: 7, time: '13:15', sender: 'Fajar Pratama', phone: '+62 838-xxxx-6789', incoming: 'Test pesan', reply: '-', rule: '-', status: 'missed' },
-            { id: 8, time: '12:40', sender: 'Maya Putri', phone: '+62 819-xxxx-0123', incoming: 'Ongkir ke Jakarta berapa?', reply: 'Untuk informasi harga...', rule: 'Info Harga', status: 'replied' },
-            { id: 9, time: '12:30', sender: 'Hendra Wijaya', phone: '+62 811-xxxx-4567', incoming: 'Terima kasih banyak ya', reply: 'Sama-sama! Senang bisa membantu...', rule: 'Ucapan Terima Kasih', status: 'replied' },
-        ];
+<!-- ===== GRUP ===== -->
+<div class="pg" id="pg-groups">
+    <div style="margin-bottom:18px"><p style="font-size:13px;color:var(--fgm)">Grup yang dipantau bot</p></div>
+    <div id="grpList"></div>
+</div>
 
-        let contacts = [
-            { id: 1, name: 'Ahmad Fauzi', phone: '+62 812-3456-1234', label: 'customer', note: 'Pelanggan tetap sejak 2023', messages: 45 },
-            { id: 2, name: 'Siti Nurhaliza', phone: '+62 857-7890-5678', label: 'vip', note: 'VIP customer', messages: 89 },
-            { id: 3, name: 'Budi Santoso', phone: '+62 821-2345-7890', label: 'partner', note: 'Partner distribusi Jawa Barat', messages: 34 },
-            { id: 4, name: 'Dewi Lestari', phone: '+62 878-6789-3456', label: 'customer', note: '-', messages: 12 },
-            { id: 5, name: 'Rudi Hartono', phone: '+62 813-0123-9012', label: 'customer', note: 'Baru join', messages: 3 },
-            { id: 6, name: 'Anita Sari', phone: '+62 856-4567-2345', label: 'internal', note: 'Staff marketing', messages: 156 },
-        ];
+        </div>
+    </main>
+</div>
 
-        let groups = [
-            { id: 1, name: 'Tim Marketing', desc: 'Grup koordinasi tim marketing', members: 15, botActive: true, messages: 234 },
-            { id: 2, name: 'Customer Support', desc: 'Grup penanganan customer', members: 22, botActive: true, messages: 567 },
-            { id: 3, name: 'Internal Dev', desc: 'Grup internal developer', members: 8, botActive: false, messages: 45 },
-        ];
+<!-- MODALS -->
+<div class="mo" id="ruleM"><div class="md"><div class="mdh"><span class="mdt" id="ruleMT">Tambah Aturan</span><button class="mdc" onclick="clM('ruleM')"><i class="fas fa-times"></i></button></div><div class="mdb"><div class="fg"><label class="fl">Nama Aturan</label><input class="fi" id="rN" placeholder="Sapaan Pelanggan"></div><div class="fg"><label class="fl">Tipe Pencocokan</label><select class="fs" id="rMT"><option value="contains">Mengandung kata</option><option value="exact">Persis sama</option><option value="startswith">Dimulai dengan</option><option value="regex">Regex</option></select></div><div class="fg"><label class="fl">Kata Kunci (koma)</label><input class="fi" id="rKW" placeholder="halo, hai, pagi"></div><div class="fg"><label class="fl">Pesan Balasan</label><textarea class="ft" id="rRP" rows="4" placeholder="Tulis balasan..."></textarea></div><div class="fr"><div class="fg"><label class="fl">Prioritas</label><select class="fs" id="rPR"><option value="normal">Normal</option><option value="high">Tinggi</option><option value="low">Rendah</option></select></div><div class="fg"><label class="fl">Status</label><select class="fs" id="rST"><option value="active">Aktif</option><option value="paused">Jeda</option></select></div></div></div><div class="mdf"><button class="btn bs" onclick="clM('ruleM')">Batal</button><button class="btn bp" onclick="saveRule()"><i class="fas fa-save"></i> Simpan</button></div></div></div>
 
-        // ===================== NAVIGASI =====================
-        const pageTitles = {
-            connection: ['Hubungkan WhatsApp', 'Sambungkan bot ke akun WhatsApp Anda'],
-            dashboard: ['Dashboard', 'Ringkasan aktivitas bot Anda'],
-            autoreply: ['Auto-Reply', 'Kelola aturan balasan otomatis'],
-            schedule: ['Pesan Terjadwal', 'Atur pengiriman pesan otomatis'],
-            logs: ['Log Pesan', 'Riwayat semua pesan masuk dan keluar'],
-            contacts: ['Kontak', 'Daftar kontak yang dipantau bot'],
-            groups: ['Grup', 'Kelola grup WhatsApp'],
-            settings: ['Pengaturan', 'Konfigurasi bot Anda'],
-        };
+<div class="mo" id="schedM"><div class="md"><div class="mdh"><span class="mdt">Jadwalkan Pesan</span><button class="mdc" onclick="clM('schedM')"><i class="fas fa-times"></i></button></div><div class="mdb"><div class="fg"><label class="fl">Nama</label><input class="fi" id="scN" placeholder="Reminder Meeting"></div><div class="fg"><label class="fl">Target</label><select class="fs" id="scT"><option value="all">Semua Kontak</option></select></div><div class="fr"><div class="fg"><label class="fl">Tanggal</label><input class="fi" type="date" id="scD"></div><div class="fg"><label class="fl">Waktu</label><input class="fi" type="time" id="scTm" value="09:00"></div></div><div class="fg"><label class="fl">Ulangi</label><select class="fs" id="scR"><option value="none">Sekali</option><option value="daily">Harian</option><option value="weekly">Mingguan</option><option value="monthly">Bulanan</option></select></div><div class="fg"><label class="fl">Isi Pesan</label><textarea class="ft" id="scM" rows="4" placeholder="Pesan..."></textarea></div></div><div class="mdf"><button class="btn bs" onclick="clM('schedM')">Batal</button><button class="btn bp" onclick="saveSched()"><i class="fas fa-save"></i> Simpan</button></div></div></div>
 
-        function switchPage(pageId, navEl) {
-            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-            if (navEl) navEl.classList.add('active');
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            document.getElementById('page-' + pageId).classList.add('active');
-            document.getElementById('pageTitle').textContent = pageTitles[pageId][0];
-            document.getElementById('pageSubtitle').textContent = pageTitles[pageId][1];
-            document.getElementById('sidebar').classList.remove('open');
-        }
+<div class="tc" id="tC"></div>
 
-        function toggleSidebar() { document.getElementById('sidebar').classList.toggle('open'); }
+<script>
+// ==================== STATE ====================
+let botOn=false, waConn=false, realMode=false, editId=null, connT=null, upI=null;
+let sock=null;
 
-        // ===================== TOAST =====================
-        function showToast(message, type = 'success') {
-            const container = document.getElementById('toastContainer');
-            const icons = { success: 'fa-check-circle', error: 'fa-times-circle', warning: 'fa-exclamation-circle' };
-            const toast = document.createElement('div');
-            toast.className = `toast ${type}`;
-            toast.innerHTML = `<i class="fas ${icons[type]}"></i><span class="toast-msg">${message}</span>`;
-            container.appendChild(toast);
-            setTimeout(() => toast.remove(), 3000);
-        }
+// Settings (default, akan di-overwrite oleh backend)
+let S={
+    botName:'WABot Assistant',botPhone:'+62 812-xxxx-7890',timezone:'WIB',
+    delayReply:2,randomDelay:true,randomDelayMax:3,
+    cooldownEnabled:true,cooldownSeconds:30,maxRepliesPerHour:100,
+    replyPrivate:true,replyGroup:true,groupTagOnly:false,caseSensitive:false,replyMedia:false,
+    prefixEnabled:false,prefixText:'[BOT] ',suffixEnabled:false,suffixText:'',
+    defaultReplyEnabled:true,defaultReplyText:'Terima kasih telah menghubungi kami. Pesan Anda akan segera diproses. Jam operasional: Senin-Jumat, 08.00-17.00 WIB.',
+    whitelistMode:false,blacklist:[]
+};
 
-        // ===================== MODAL =====================
-        function openModal(id) { document.getElementById(id).classList.add('show'); }
-        function closeModal(id) { document.getElementById(id).classList.remove('show'); editingRuleId = null; }
-        document.querySelectorAll('.modal-overlay').forEach(o => {
-            o.addEventListener('click', e => { if (e.target === o) o.classList.remove('show'); });
+let rules=[
+    {id:1,name:'Sapaan',matchType:'contains',keywords:['halo','hai','selamat pagi','selamat siang','selamat malam'],reply:'Halo! Terima kasih telah menghubungi kami. Ada yang bisa kami bantu?',priority:'high',status:'active',triggerCount:0},
+    {id:2,name:'Info Harga',matchType:'contains',keywords:['harga','biaya','ongkir','murah'],reply:'Untuk info harga, silakan kunjungi katalog kami atau hubungi tim sales.',priority:'normal',status:'active',triggerCount:0},
+    {id:3,name:'Cek Pesanan',matchType:'contains',keywords:['pesanan','order','status','tracking'],reply:'Untuk cek status pesanan, kirim nomor pesanan (INV-xxxxx).',priority:'normal',status:'active',triggerCount:0},
+    {id:4,name:'Komplain',matchType:'contains',keywords:['komplain','keluhan','rusak','salah'],reply:'Mohon maaf atas ketidaknyamanan. Tim kami akan menindaklanjuti. Sertakan foto dan nomor pesanan.',priority:'high',status:'active',triggerCount:0},
+    {id:5,name:'Terima Kasih',matchType:'contains',keywords:['terima kasih','makasih','thanks','thx'],reply:'Sama-sama! Senang bisa membantu.',priority:'low',status:'active',triggerCount:0}
+];
+let schedules=[],logs=[],contacts=[],groups=[];
+let hourlyReplyCount=0;
+let cooldownMap={};// phone -> timestamp
+
+// ==================== WEBSOCKET ====================
+function initWS(){
+    try{
+        sock=io({transports:['websocket','polling'],timeout:8000,reconnection:true,reconnectionAttempts:10,reconnectionDelay:3000});
+        sock.on('connect',()=>{realMode=true;updMode();sock.emit('get-settings');sock.emit('get-rules');sock.emit('get-logs');sock.emit('get-schedules')});
+        sock.on('disconnect',()=>{realMode=false;updMode()});
+        sock.on('connect_error',()=>{realMode=false;updMode()});
+
+        sock.on('settings-updated',d=>{S={...S,...d};applySettings();toast('Pengaturan diterima dari backend','s')});
+        sock.on('rules-updated',d=>{rules=d;renderRules();document.getElementById('rc').textContent=d.length});
+        sock.on('logs-updated',d=>{logs=d;renderLogs();renderRecent()});
+        sock.on('schedules-updated',d=>{schedules=d;renderScheds()});
+
+        sock.on('wa-qr',d=>{
+            if(d.qr){const c=document.getElementById('qrCvs'),ctx=c.getContext('2d'),img=new Image();img.onload=()=>{c.width=280;c.height=280;ctx.drawImage(img,0,0,280,280)};img.src=d.qr}
+            document.getElementById('qrOv').style.display='none';
         });
-
-        // ===================== KONEKSI =====================
-        function selectMethod(method) {
-            selectedMethod = method;
-            document.getElementById('methodBaileys').classList.toggle('selected', method === 'baileys');
-            document.getElementById('methodOfficial').classList.toggle('selected', method === 'official');
-        }
-
-        function startQRSimulation() {
-            const qrArea = document.getElementById('qrArea');
-            const qrOverlay = document.getElementById('qrOverlay');
-            const btn = document.getElementById('btnStartQR');
-            const banner = document.getElementById('connBanner');
-
-            qrArea.style.display = 'flex';
-            qrOverlay.style.display = 'none';
-            btn.disabled = true;
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Menunggu Scan...';
-
-            // Update banner ke connecting
-            banner.className = 'conn-status-banner connecting';
-            banner.querySelector('.conn-status-icon').innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
-            document.getElementById('connTitle').textContent = 'Menunggu Scan QR...';
-            document.getElementById('connDesc').textContent = 'Buka WhatsApp di ponsel dan scan QR code di atas';
-
-            // Gambar QR palsu (pattern acak)
-            generateFakeQR();
-
-            // Simulasi scan setelah 4 detik
-            setTimeout(() => {
-                qrOverlay.style.display = 'flex';
-                banner.className = 'conn-status-banner connected';
-                banner.querySelector('.conn-status-icon').innerHTML = '<i class="fas fa-link"></i>';
-                document.getElementById('connTitle').textContent = 'Terhubung ke WhatsApp';
-                document.getElementById('connDesc').textContent = 'Nomor +62 812-3456-7890 berhasil ditautkan';
-                btn.style.display = 'none';
-
-                waConnected = true;
-                document.getElementById('connPhoneInfo').classList.add('show');
-                connStartTime = Date.now();
-                startUptimeCounter();
-
-                showToast('WhatsApp berhasil terhubung!', 'success');
-            }, 4000);
-        }
-
-        function generateFakeQR() {
-            const canvas = document.getElementById('qrCanvas');
-            const ctx = canvas.getContext('2d');
-            const size = 200;
-            const modules = 25;
-            const moduleSize = size / modules;
-
-            ctx.fillStyle = '#ffffff';
-            ctx.fillRect(0, 0, size, size);
-
-            // Finder patterns (3 sudut)
-            function drawFinder(x, y) {
-                ctx.fillStyle = '#000000';
-                ctx.fillRect(x, y, 7 * moduleSize, 7 * moduleSize);
-                ctx.fillStyle = '#ffffff';
-                ctx.fillRect(x + moduleSize, y + moduleSize, 5 * moduleSize, 5 * moduleSize);
-                ctx.fillStyle = '#000000';
-                ctx.fillRect(x + 2 * moduleSize, y + 2 * moduleSize, 3 * moduleSize, 3 * moduleSize);
+        sock.on('wa-status',d=>{
+            const b=document.getElementById('cbanner'),i=b.querySelector('.csi2'),t=document.getElementById('ctitle'),ds=document.getElementById('cdesc');
+            if(d.status==='connected'){
+                b.className='csb2 ok';i.innerHTML='<i class="fas fa-link"></i>';t.textContent='Terhubung ke WhatsApp';ds.textContent='Bot siap menerima dan membalas pesan';
+                document.getElementById('qrOv').style.display='flex';document.getElementById('qrOv').querySelector('span').textContent='Terhubung!';
+                document.getElementById('btnQR').style.display='none';document.getElementById('cpInfo').classList.add('sh');
+                waConn=true;connT=Date.now();startUp();toast('WhatsApp terhubung!','s');
+            }else if(d.status==='qr-ready'){
+                b.className='csb2 conn';i.innerHTML='<i class="fas fa-qrcode"></i>';t.textContent='QR Code Siap';ds.textContent='Scan dengan WhatsApp Anda';
+            }else if(d.status==='reconnecting'){
+                b.className='csb2 conn';i.innerHTML='<i class="fas fa-spinner fa-spin"></i>';t.textContent='Reconnecting...';ds.textContent='';
+            }else{
+                b.className='csb2 disc';i.innerHTML='<i class="fas fa-unlink"></i>';t.textContent='Tidak Terhubung';ds.textContent=d.reason||'';
             }
-            drawFinder(0, 0);
-            drawFinder((modules - 7) * moduleSize, 0);
-            drawFinder(0, (modules - 7) * moduleSize);
-
-            // Data modules acak
-            ctx.fillStyle = '#000000';
-            for (let r = 0; r < modules; r++) {
-                for (let c = 0; c < modules; c++) {
-                    // Skip finder pattern areas
-                    if (r < 8 && c < 8) continue;
-                    if (r < 8 && c > modules - 9) continue;
-                    if (r > modules - 9 && c < 8) continue;
-                    if (Math.random() > 0.55) {
-                        ctx.fillRect(c * moduleSize, r * moduleSize, moduleSize, moduleSize);
-                    }
-                }
-            }
-
-            // Timing patterns
-            ctx.fillStyle = '#000000';
-            for (let i = 8; i < modules - 8; i++) {
-                if (i % 2 === 0) {
-                    ctx.fillRect(i * moduleSize, 6 * moduleSize, moduleSize, moduleSize);
-                    ctx.fillRect(6 * moduleSize, i * moduleSize, moduleSize, moduleSize);
-                }
-            }
-        }
-
-        function disconnectWA() {
-            waConnected = false;
-            connStartTime = null;
-            if (uptimeInterval) clearInterval(uptimeInterval);
-
-            document.getElementById('connPhoneInfo').classList.remove('show');
-            document.getElementById('qrArea').style.display = 'none';
-            const btn = document.getElementById('btnStartQR');
-            btn.style.display = 'inline-flex';
-            btn.disabled = false;
-            btn.innerHTML = '<i class="fas fa-qrcode"></i> Simulasi Scan QR Code';
-
-            const banner = document.getElementById('connBanner');
-            banner.className = 'conn-status-banner disconnected';
-            banner.querySelector('.conn-status-icon').innerHTML = '<i class="fas fa-unlink"></i>';
-            document.getElementById('connTitle').textContent = 'Belum Terhubung';
-            document.getElementById('connDesc').textContent = 'Pilih metode koneksi di bawah untuk memulai';
-
-            // Juga matikan bot
-            botOnline = false;
-            document.getElementById('botToggle').checked = false;
-            document.getElementById('statusDot').classList.remove('online');
-            document.getElementById('botStatusText').textContent = 'Offline';
-            document.getElementById('botStatusText').style.color = 'var(--fg-dim)';
-
-            showToast('Koneksi WhatsApp diputus', 'warning');
-        }
-
-        function startUptimeCounter() {
-            if (uptimeInterval) clearInterval(uptimeInterval);
-            uptimeInterval = setInterval(() => {
-                if (!connStartTime) return;
-                const elapsed = Math.floor((Date.now() - connStartTime) / 1000);
-                const m = Math.floor(elapsed / 60).toString().padStart(2, '0');
-                const s = (elapsed % 60).toString().padStart(2, '0');
-                document.getElementById('connUptime').textContent = `${m}:${s}`;
-                // Simulasi baterai & pesan
-                const battery = Math.max(20, 85 - Math.floor(elapsed / 60));
-                document.getElementById('connBattery').textContent = battery + '%';
-                const msgs = Math.min(999, Math.floor(elapsed / 8));
-                document.getElementById('connMsgCount').textContent = msgs;
-            }, 1000);
-        }
-
-        // ===================== BOT TOGGLE =====================
-        function toggleBot() {
-            if (!waConnected) {
-                document.getElementById('botToggle').checked = false;
-                showToast('Hubungkan WhatsApp terlebih dahulu di halaman Koneksi', 'error');
-                return;
-            }
-            botOnline = document.getElementById('botToggle').checked;
-            const dot = document.getElementById('statusDot');
-            const text = document.getElementById('botStatusText');
-            if (botOnline) {
-                dot.classList.add('online');
-                text.textContent = 'Online';
-                text.style.color = 'var(--accent)';
-                showToast('Bot berhasil diaktifkan', 'success');
-                simulateIncoming();
-            } else {
-                dot.classList.remove('online');
-                text.textContent = 'Offline';
-                text.style.color = 'var(--fg-dim)';
-                showToast('Bot dimatikan', 'warning');
-            }
-        }
-
-        // ===================== CHART =====================
-        let activityChart;
-        const chartData = {
-            week: { labels: ['Sen','Sel','Rab','Kam','Jum','Sab','Min'], received: [520,610,480,720,560,430,571], replied: [120,145,98,178,132,89,130] },
-            month: { labels: ['Mg 1','Mg 2','Mg 3','Mg 4'], received: [3200,3800,3500,3891], replied: [780,890,810,892] }
-        };
-
-        function initChart() {
-            const ctx = document.getElementById('activityChart').getContext('2d');
-            activityChart = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: chartData.week.labels,
-                    datasets: [
-                        { label: 'Diterima', data: chartData.week.received, backgroundColor: 'rgba(37,211,102,0.2)', borderColor: 'rgba(37,211,102,0.6)', borderWidth: 1, borderRadius: 6, barPercentage: 0.6 },
-                        { label: 'Dibalas Bot', data: chartData.week.replied, backgroundColor: 'rgba(30,144,255,0.2)', borderColor: 'rgba(30,144,255,0.6)', borderWidth: 1, borderRadius: 6, barPercentage: 0.6 }
-                    ]
-                },
-                options: {
-                    responsive: true, maintainAspectRatio: false,
-                    plugins: { legend: { position: 'top', align: 'end', labels: { color: '#7a9489', font: { family: 'Space Grotesk', size: 11 }, boxWidth: 12, boxHeight: 12, borderRadius: 3, useBorderRadius: true } } },
-                    scales: {
-                        x: { grid: { color: 'rgba(30,48,41,0.5)' }, ticks: { color: '#4a6b5e', font: { family: 'Space Grotesk', size: 11 } } },
-                        y: { grid: { color: 'rgba(30,48,41,0.5)' }, ticks: { color: '#4a6b5e', font: { family: 'Space Grotesk', size: 11 } } }
-                    }
-                }
-            });
-        }
-
-        function updateChart(period, btn) {
-            btn.parentElement.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            const d = chartData[period];
-            activityChart.data.labels = d.labels;
-            activityChart.data.datasets[0].data = d.received;
-            activityChart.data.datasets[1].data = d.replied;
-            activityChart.update();
-        }
-
-        // ===================== RENDER =====================
-        function renderTopKeywords() {
-            const kws = [
-                { word: 'harga', count: 189, pct: 100 }, { word: 'halo', count: 156, pct: 82 },
-                { word: 'pesanan', count: 134, pct: 71 }, { word: 'terima kasih', count: 112, pct: 59 },
-                { word: 'komplain', count: 67, pct: 35 }, { word: 'tracking', count: 45, pct: 24 },
-                { word: 'promo', count: 38, pct: 20 },
-            ];
-            document.getElementById('topKeywords').innerHTML = kws.map(k => `
-                <div style="margin-bottom:14px;">
-                    <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
-                        <span style="font-size:13px;font-weight:500;">${k.word}</span>
-                        <span style="font-size:12px;color:var(--fg-dim);font-family:'JetBrains Mono',monospace;">${k.count}</span>
-                    </div>
-                    <div style="height:6px;background:var(--bg);border-radius:3px;overflow:hidden;">
-                        <div style="height:100%;width:${k.pct}%;background:linear-gradient(90deg,var(--accent),#128C7E);border-radius:3px;transition:width 0.5s ease;"></div>
-                    </div>
-                </div>`).join('');
-        }
-
-        function renderRecentTable() {
-            document.getElementById('recentTable').innerHTML = messageLogs.slice(0, 5).map(l => `
-                <tr>
-                    <td style="color:var(--fg);font-weight:500;">${l.sender}</td>
-                    <td style="max-width:200px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${l.incoming}</td>
-                    <td style="max-width:180px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${l.reply}</td>
-                    <td style="font-family:'JetBrains Mono',monospace;font-size:12px;">${l.time}</td>
-                    <td><span class="tag ${l.status==='replied'?'green':l.status==='error'?'red':'orange'}">${l.status==='replied'?'Dibalas':l.status==='error'?'Error':'Missed'}</span></td>
-                </tr>`).join('');
-        }
-
-        function renderRules() {
-            const c = document.getElementById('rulesList');
-            document.getElementById('ruleCount').textContent = rules.length;
-            if (!rules.length) { c.innerHTML = '<div class="empty-state"><i class="fas fa-robot"></i><p>Belum ada aturan auto-reply.</p></div>'; return; }
-            const pc = { high:'red', normal:'blue', low:'orange' };
-            const pl = { high:'Tinggi', normal:'Normal', low:'Rendah' };
-            c.innerHTML = rules.map(r => `
-                <div class="rule-card">
-                    <div class="rule-icon" style="${r.status==='paused'?'background:var(--warning-dim);color:var(--warning);':''}"><i class="fas ${r.status==='paused'?'fa-pause':'fa-bolt'}"></i></div>
-                    <div class="rule-info">
-                        <div class="rule-name">${r.name} <span class="tag ${pc[r.priority]}" style="margin-left:6px;">${pl[r.priority]}</span></div>
-                        <div class="rule-desc">Kata kunci: ${r.keywords.join(', ')} | Dipicu ${r.triggerCount} kali</div>
-                    </div>
-                    <span class="tag ${r.status==='active'?'green':'orange'}" style="flex-shrink:0;">${r.status==='active'?'Aktif':'Jeda'}</span>
-                    <div class="rule-actions">
-                        <button class="btn btn-secondary btn-icon btn-sm" onclick="editRule(${r.id})"><i class="fas fa-pen"></i></button>
-                        <button class="btn btn-secondary btn-icon btn-sm" onclick="toggleRule(${r.id})"><i class="fas ${r.status==='active'?'fa-pause':'fa-play'}"></i></button>
-                        <button class="btn btn-danger btn-icon btn-sm" onclick="deleteRule(${r.id})"><i class="fas fa-trash"></i></button>
-                    </div>
-                </div>`).join('');
-        }
-
-        function renderSchedules() {
-            const c = document.getElementById('scheduleList');
-            if (!schedules.length) { c.innerHTML = '<div class="empty-state"><i class="fas fa-clock"></i><p>Belum ada pesan terjadwal.</p></div>'; return; }
-            const rl = { none:'Sekali', daily:'Harian', weekly:'Mingguan', monthly:'Bulanan', yearly:'Tahunan' };
-            c.innerHTML = schedules.map(s => `
-                <div class="schedule-card">
-                    <div class="schedule-top">
-                        <div style="display:flex;align-items:center;gap:10px;"><span class="schedule-title">${s.name}</span><span class="tag ${s.status==='active'?'green':'orange'}">${s.status==='active'?'Aktif':'Jeda'}</span></div>
-                        <div class="rule-actions">
-                            <button class="btn btn-secondary btn-icon btn-sm" onclick="toggleSchedule(${s.id})"><i class="fas ${s.status==='active'?'fa-pause':'fa-play'}"></i></button>
-                            <button class="btn btn-danger btn-icon btn-sm" onclick="deleteSchedule(${s.id})"><i class="fas fa-trash"></i></button>
-                        </div>
-                    </div>
-                    <div class="schedule-meta"><span><i class="fas fa-user"></i> ${s.targetLabel}</span><span><i class="fas fa-calendar"></i> ${s.date} ${s.time}</span><span><i class="fas fa-redo"></i> ${rl[s.repeat]||s.repeat}</span></div>
-                    <div class="schedule-msg-preview">${s.message}</div>
-                </div>`).join('');
-        }
-
-        function renderLogs(filtered = null) {
-            const tbody = document.getElementById('logTable');
-            const data = filtered || messageLogs;
-            if (!data.length) { tbody.innerHTML = '<tr><td colspan="6"><div class="empty-state"><i class="fas fa-inbox"></i><p>Tidak ada log ditemukan</p></div></td></tr>'; return; }
-            tbody.innerHTML = data.map(l => {
-                const st = l.status==='replied'?'green':l.status==='error'?'red':'orange';
-                const sl = l.status==='replied'?'Dibalas':l.status==='error'?'Error':'Missed';
-                return `<tr>
-                    <td style="font-family:'JetBrains Mono',monospace;font-size:12px;">${l.time}</td>
-                    <td style="color:var(--fg);font-weight:500;">${l.sender}</td>
-                    <td style="max-width:180px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${l.incoming}</td>
-                    <td style="max-width:180px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${l.reply}</td>
-                    <td>${l.rule!=='-'?`<span class="tag blue">${l.rule}</span>`:'<span style="color:var(--fg-dim);">-</span>'}</td>
-                    <td><span class="tag ${st}">${sl}</span></td>
-                </tr>`;
-            }).join('');
-        }
-
-        function filterLogs() {
-            const s = document.getElementById('logSearch').value.toLowerCase();
-            const f = document.getElementById('logFilter').value;
-            let d = messageLogs;
-            if (s) d = d.filter(l => l.sender.toLowerCase().includes(s) || l.incoming.toLowerCase().includes(s) || l.reply.toLowerCase().includes(s));
-            if (f !== 'all') d = d.filter(l => l.status === f);
-            renderLogs(d);
-        }
-        function clearLogs() { messageLogs = []; renderLogs(); showToast('Semua log dihapus', 'success'); }
-
-        function renderContacts(filtered = null) {
-            const c = document.getElementById('contactList');
-            const d = filtered || contacts;
-            if (!d.length) { c.innerHTML = '<div class="empty-state"><i class="fas fa-address-book"></i><p>Tidak ada kontak ditemukan</p></div>'; return; }
-            const lc = { customer:'#25D366', partner:'#1e90ff', internal:'#ffa502', vip:'#ff6b81' };
-            const ln = { customer:'Customer', partner:'Partner', internal:'Internal', vip:'VIP' };
-            c.innerHTML = d.map(ct => `
-                <div class="contact-item">
-                    <div class="contact-avatar" style="background:${lc[ct.label]}22;color:${lc[ct.label]};">${ct.name.split(' ').map(n=>n[0]).join('').slice(0,2)}</div>
-                    <div class="contact-info">
-                        <div class="contact-name">${ct.name} <span class="tag" style="background:${lc[ct.label]}22;color:${lc[ct.label]};font-size:10px;">${ln[ct.label]}</span></div>
-                        <div class="contact-phone">${ct.phone} &middot; ${ct.messages} pesan</div>
-                    </div>
-                    <button class="btn btn-danger btn-icon btn-sm" onclick="deleteContact(${ct.id})"><i class="fas fa-trash"></i></button>
-                </div>`).join('');
-        }
-        function filterContacts() {
-            const s = document.getElementById('contactSearch').value.toLowerCase();
-            if (!s) { renderContacts(); return; }
-            renderContacts(contacts.filter(c => c.name.toLowerCase().includes(s) || c.phone.includes(s)));
-        }
-
-        function renderGroups() {
-            const c = document.getElementById('groupList');
-            if (!groups.length) { c.innerHTML = '<div class="empty-state"><i class="fas fa-users"></i><p>Belum ada grup terdaftar.</p></div>'; return; }
-            c.innerHTML = groups.map(g => `
-                <div class="rule-card">
-                    <div class="rule-icon" style="${g.botActive?'':'background:var(--warning-dim);color:var(--warning);'}"><i class="fas fa-users"></i></div>
-                    <div class="rule-info">
-                        <div class="rule-name">${g.name} ${g.botActive?'<span class="tag green" style="margin-left:6px;">Bot Aktif</span>':'<span class="tag orange" style="margin-left:6px;">Bot Nonaktif</span>'}</div>
-                        <div class="rule-desc">${g.desc} &middot; ${g.members} anggota &middot; ${g.messages} pesan</div>
-                    </div>
-                    <div class="rule-actions">
-                        <button class="btn btn-secondary btn-icon btn-sm" onclick="toggleGroupBot(${g.id})"><i class="fas ${g.botActive?'fa-power-off':'fa-play'}"></i></button>
-                        <button class="btn btn-danger btn-icon btn-sm" onclick="deleteGroup(${g.id})"><i class="fas fa-trash"></i></button>
-                    </div>
-                </div>`).join('');
-        }
-
-        // ===================== CRUD =====================
-        function saveRule() {
-            const name = document.getElementById('ruleName').value.trim();
-            const matchType = document.getElementById('ruleMatchType').value;
-            const kw = document.getElementById('ruleKeyword').value.trim();
-            const reply = document.getElementById('ruleReply').value.trim();
-            const priority = document.getElementById('rulePriority').value;
-            const status = document.getElementById('ruleStatus').value;
-            if (!name || !kw || !reply) { showToast('Mohon lengkapi semua field', 'error'); return; }
-            const keywords = kw.split(',').map(k => k.trim()).filter(k => k);
-            if (editingRuleId) {
-                const r = rules.find(r => r.id === editingRuleId);
-                if (r) Object.assign(r, { name, matchType, keywords, reply, priority, status });
-                editingRuleId = null;
-                showToast('Aturan diperbarui', 'success');
-            } else {
-                rules.push({ id: Date.now(), name, matchType, keywords, reply, priority, status, triggerCount: 0 });
-                showToast('Aturan ditambahkan', 'success');
-            }
-            document.getElementById('ruleName').value = '';
-            document.getElementById('ruleKeyword').value = '';
-            document.getElementById('ruleReply').value = '';
-            closeModal('ruleModal');
-            renderRules();
-        }
-
-        function editRule(id) {
-            const r = rules.find(r => r.id === id); if (!r) return;
-            editingRuleId = id;
-            document.getElementById('ruleModalTitle').textContent = 'Edit Aturan Auto-Reply';
-            document.getElementById('ruleName').value = r.name;
-            document.getElementById('ruleMatchType').value = r.matchType;
-            document.getElementById('ruleKeyword').value = r.keywords.join(', ');
-            document.getElementById('ruleReply').value = r.reply;
-            document.getElementById('rulePriority').value = r.priority;
-            document.getElementById('ruleStatus').value = r.status;
-            openModal('ruleModal');
-        }
-
-        function toggleRule(id) { const r = rules.find(r=>r.id===id); if(!r) return; r.status = r.status==='active'?'paused':'active'; showToast(`Aturan "${r.name}" ${r.status==='active'?'diaktifkan':'dijeda'}`, 'success'); renderRules(); }
-        function deleteRule(id) { const r = rules.find(r=>r.id===id); rules = rules.filter(r=>r.id!==id); showToast(`Aturan "${r.name}" dihapus`, 'warning'); renderRules(); }
-
-        function saveSchedule() {
-            const name = document.getElementById('schedName').value.trim();
-            const target = document.getElementById('schedTarget').value;
-            const date = document.getElementById('schedDate').value;
-            const time = document.getElementById('schedTime').value;
-            const repeat = document.getElementById('schedRepeat').value;
-            const message = document.getElementById('schedMessage').value.trim();
-            if (!name || !date || !time || !message) { showToast('Mohon lengkapi semua field', 'error'); return; }
-            const sel = document.getElementById('schedTarget');
-            schedules.push({ id: Date.now(), name, target, targetLabel: sel.options[sel.selectedIndex].text, date, time, repeat, message, status: 'active' });
-            document.getElementById('schedName').value = '';
-            document.getElementById('schedMessage').value = '';
-            closeModal('scheduleModal');
-            showToast('Jadwal ditambahkan', 'success');
-            renderSchedules();
-        }
-        function toggleSchedule(id) { const s = schedules.find(s=>s.id===id); if(!s) return; s.status = s.status==='active'?'paused':'active'; showToast(`Jadwal "${s.name}" ${s.status==='active'?'diaktifkan':'dijeda'}`, 'success'); renderSchedules(); }
-        function deleteSchedule(id) { const s = schedules.find(s=>s.id===id); schedules = schedules.filter(s=>s.id!==id); showToast(`Jadwal "${s.name}" dihapus`, 'warning'); renderSchedules(); }
-
-        function saveContact() {
-            const name = document.getElementById('contactName').value.trim();
-            const phone = document.getElementById('contactPhone').value.trim();
-            const label = document.getElementById('contactLabel').value;
-            const note = document.getElementById('contactNote').value.trim();
-            if (!name || !phone) { showToast('Mohon isi nama dan nomor telepon', 'error'); return; }
-            contacts.push({ id: Date.now(), name, phone, label, note, messages: 0 });
-            document.getElementById('contactName').value = '';
-            document.getElementById('contactPhone').value = '';
-            document.getElementById('contactNote').value = '';
-            closeModal('contactModal');
-            showToast(`Kontak "${name}" ditambahkan`, 'success');
-            renderContacts();
-        }
-        function deleteContact(id) { const c = contacts.find(c=>c.id===id); contacts = contacts.filter(c=>c.id!==id); showToast(`Kontak "${c.name}" dihapus`, 'warning'); renderContacts(); }
-
-        function saveGroup() {
-            const name = document.getElementById('groupName').value.trim();
-            const desc = document.getElementById('groupDesc').value.trim();
-            const botActive = document.getElementById('groupBotActive').value === 'yes';
-            if (!name) { showToast('Mohon isi nama grup', 'error'); return; }
-            groups.push({ id: Date.now(), name, desc: desc||'-', members: 0, botActive, messages: 0 });
-            document.getElementById('groupName').value = '';
-            document.getElementById('groupDesc').value = '';
-            closeModal('groupModal');
-            showToast(`Grup "${name}" ditambahkan`, 'success');
-            renderGroups();
-        }
-        function toggleGroupBot(id) { const g = groups.find(g=>g.id===id); if(!g) return; g.botActive = !g.botActive; showToast(`Bot ${g.botActive?'diaktifkan':'dinonaktifkan'} di "${g.name}"`, 'success'); renderGroups(); }
-        function deleteGroup(id) { const g = groups.find(g=>g.id===id); groups = groups.filter(g=>g.id!==id); showToast(`Grup "${g.name}" dihapus`, 'warning'); renderGroups(); }
-
-        // ===================== SIMULASI PESAN =====================
-        function simulateIncoming() {
-            if (!botOnline) return;
-            const senders = [
-                { name: 'Rina Wati', phone: '+62 815-xxxx-1111' },
-                { name: 'Doni Prasetyo', phone: '+62 822-xxxx-2222' },
-                { name: 'Lina Marlina', phone: '+62 853-xxxx-3333' },
-                { name: 'Agus Setiawan', phone: '+62 819-xxxx-4444' },
-                { name: 'Fitri Handayani', phone: '+62 856-xxxx-5555' },
-            ];
-            const msgs = ['Halo, ada di sana?','Mau tanya harga produk B','Pesanan saya kemana ya?','Terima kasih atas bantuannya!','Barangnya rusak nih','Selamat pagi','Bisa kirim katalognya?'];
-            setInterval(() => {
-                if (!botOnline) return;
-                const sender = senders[Math.floor(Math.random() * senders.length)];
-                const msg = msgs[Math.floor(Math.random() * msgs.length)];
-                let matched = null;
-                for (const r of rules) {
-                    if (r.status !== 'active') continue;
-                    const ml = msg.toLowerCase();
-                    for (const k of r.keywords) {
-                        let f = false;
-                        if (r.matchType==='contains') f = ml.includes(k.toLowerCase());
-                        else if (r.matchType==='exact') f = ml===k.toLowerCase();
-                        else if (r.matchType==='startswith') f = ml.startsWith(k.toLowerCase());
-                        if (f) { matched = r; break; }
-                    }
-                    if (matched) break;
-                }
-                const now = new Date();
-                const ts = now.getHours().toString().padStart(2,'0')+':'+now.getMinutes().toString().padStart(2,'0');
-                messageLogs.unshift({ id: Date.now(), time: ts, sender: sender.name, phone: sender.phone, incoming: msg, reply: matched ? matched.reply.substring(0,50)+'...' : '-', rule: matched ? matched.name : '-', status: matched ? 'replied' : 'missed' });
-                if (matched) matched.triggerCount++;
-                const se = document.getElementById('statSent'), re = document.getElementById('statReceived'), rp = document.getElementById('statReplies');
-                re.textContent = (parseInt(re.textContent.replace(/,/g,''))+1).toLocaleString();
-                if (matched) { se.textContent = (parseInt(se.textContent.replace(/,/g,''))+1).toLocaleString(); rp.textContent = (parseInt(rp.textContent.replace(/,/g,''))+1).toLocaleString(); }
-                const ap = document.querySelector('.page.active');
-                if (ap && ap.id==='page-logs') filterLogs();
-                if (ap && ap.id==='page-dashboard') renderRecentTable();
-                if (ap && ap.id==='page-autoreply') renderRules();
-            }, 5000 + Math.random() * 8000);
-        }
-
-        // ===================== INIT =====================
-        function setDefaultDates() {
-            const t = new Date(); t.setDate(t.getDate()+1);
-            const d = document.getElementById('schedDate');
-            if (d) d.value = t.toISOString().split('T')[0];
-            const ti = document.getElementById('schedTime');
-            if (ti) ti.value = '09:00';
-        }
-
-        function animateCounters() {
-            document.querySelectorAll('.stat-value').forEach(el => {
-                const target = parseInt(el.textContent.replace(/,/g,''));
-                let cur = 0; const step = Math.ceil(target/40);
-                const iv = setInterval(() => { cur += step; if (cur >= target) { cur = target; clearInterval(iv); } el.textContent = cur.toLocaleString(); }, 30);
-            });
-        }
-
-        document.addEventListener('DOMContentLoaded', () => {
-            initChart();
-            renderTopKeywords();
-            renderRecentTable();
-            renderRules();
-            renderSchedules();
-            renderLogs();
-            renderContacts();
-            renderGroups();
-            setDefaultDates();
-            animateCounters();
         });
-
-        document.addEventListener('keydown', e => {
-            if (e.key === 'Escape') document.querySelectorAll('.modal-overlay.show').forEach(m => m.classList.remove('show'));
+        sock.on('wa-message',l=>{
+            logs.unshift(l);if(logs.length>500)logs=logs.slice(0,500);
+            const r=parseInt(document.getElementById('stR').textContent.replace(/,/g,''))+1;
+            document.getElementById('stR').textContent=r.toLocaleString();
+            if(l.status==='replied'){document.getElementById('stS').textContent=(parseInt(document.getElementById('stS').textContent.replace(/,/g,''))+1).toLocaleString();document.getElementById('stA').textContent=(parseInt(document.getElementById('stA').textContent.replace(/,/g,''))+1).toLocaleString();document.getElementById('cpReply').textContent=parseInt(document.getElementById('cpReply').textContent)+1}
+            document.getElementById('cpMsg').textContent=parseInt(document.getElementById('cpMsg').textContent)+1;
+            const ap=document.querySelector('.pg.act');
+            if(ap&&ap.id==='pg-logs')fLogs();if(ap&&ap.id==='pg-dashboard')renderRecent();
         });
-    </script>
+        sock.on('schedule-sent',d=>toast(`Jadwal "${d.name}" terkirim`,'s'));
+    }catch(e){realMode=false;updMode()}
+}
+
+function updMode(){
+    const bar=document.getElementById('modeBar'),txt=document.getElementById('modeTxt'),ws=document.getElementById('wsStat'),ml=document.getElementById('modeLabel');
+    if(realMode){bar.className='csb real';txt.textContent='Backend terhubung';ws.textContent='Terhubung';ws.className='tg g';ml.textContent='Terhubung ke backend — semua perubahan langsung berlaku'}
+    else{bar.className='csb off';txt.textContent='Backend offline';ws.textContent='Tidak Terhubung';ws.className='tg r';ml.textContent='Backend tidak terdeteksi — mode offline (perubahan disimpan lokal saja)'}
+}
+
+function emit(ev,data){if(realMode&&sock&&sock.connected)sock.emit(ev,data)}
+
+// ==================== SETTINGS ====================
+function pushSetting(k,v){S[k]=v;emit('update-setting',{key:k,value:v});updEffDelay();updFmtPreview()}
+function saveAllSettings(){emit('update-settings',S);toast('Semua pengaturan dikirim ke backend','s')}
+function loadSettings(){emit('get-settings');toast('Memuat pengaturan dari backend...','w')}
+
+function applySettings(){
+    const m={
+        sBotName:S.botName,sBotPhone:S.botPhone,sTimezone:S.timezone,
+        sDelay:S.delayReply,sRandDelay:S.randomDelay,sRandMax:S.randomDelayMax,
+        sCooldown:S.cooldownEnabled,sCooldownSec:S.cooldownSeconds,sMaxHr:S.maxRepliesPerHour,
+        sReplyPriv:S.replyPrivate,sReplyGrp:S.replyGroup,sGrpTag:S.groupTagOnly,sCase:S.caseSensitive,sReplyMedia:S.replyMedia,
+        sPreEn:S.prefixEnabled,sPreTxt:S.prefixText,sSufEn:S.suffixEnabled,sSufTxt:S.suffixText,
+        sDefEn:S.defaultReplyEnabled,sDefTxt:S.defaultReplyText
+    };
+    for(const[id,v]of Object.entries(m)){
+        const el=document.getElementById(id);if(!el)continue;
+        if(el.type==='checkbox')el.checked=v;else el.value=v;
+    }
+    document.getElementById('sDelayV').textContent=S.delayReply+'s';
+    document.getElementById('sRandMaxV').textContent=S.randomDelayMax+'s';
+    document.getElementById('sCooldownV').textContent=S.cooldownSeconds+'s';
+    document.getElementById('sMaxHrV').textContent=S.maxRepliesPerHour==0?'Unlimited':S.maxRepliesPerHour;
+    toggleEl('randDelayWrap',S.randomDelay);toggleEl('cooldownWrap',S.cooldownEnabled);
+    toggleEl('preWrap',S.prefixEnabled);toggleEl('sufWrap',S.suffixEnabled);toggleEl('defWrap',S.defaultReplyEnabled);
+    updEffDelay();updFmtPreview();renderBL();
+}
+function updEffDelay(){
+    const mn=S.delayReply,mx=S.randomDelay?S.delayReply+S.randomDelayMax:S.delayReply;
+    document.getElementById('effDelay').textContent=mn===mx?mn+' detik':mn+' - '+mx+' detik';
+}
+function updFmtPreview(){
+    let t='Halo! Ada yang bisa dibantu?';
+    if(S.prefixEnabled)t=S.prefixText+t;if(S.suffixEnabled&&S.suffixText)t=t+S.suffixText;
+    document.getElementById('fmtPreview').textContent=t;
+}
+function toggleEl(id,show){const e=document.getElementById(id);if(e)e.style.display=show?'':'none'}
+
+// Blacklist
+function addBL(){const v=document.getElementById('blInput').value.replace(/[^0-9]/g,'');if(!v){toast('Masukkan nomor yang valid','e');return}if(S.blacklist.includes(v)){toast('Nomor sudah ada di blacklist','w');return}S.blacklist.push(v);document.getElementById('blInput').value='';emit('update-settings',S);renderBL();toast('Nomor ditambahkan ke blacklist','s')}
+function rmBL(n){S.blacklist=S.blacklist.filter(x=>x!==n);emit('update-settings',S);renderBL();toast('Nomor dihapus dari blacklist','s')}
+function renderBL(){document.getElementById('blList').innerHTML=S.blacklist.map(n=>`<span class="bl-tag">${n} <button onclick="rmBL('${n}')"><i class="fas fa-times"></i></button></span>`).join('')}
+
+// ==================== NAV ====================
+const PT={connection:['Hubungkan WhatsApp','Sambungkan bot ke akun WhatsApp'],settings:['Pengaturan Bot','Konfigurasi lengkap bot Anda'],autoreply:['Auto-Reply','Kelola aturan balasan otomatis'],schedule:['Pesan Terjadwal','Pengiriman pesan otomatis'],dashboard:['Dashboard','Ringkasan aktivitas bot'],logs:['Log Pesan','Riwayat pesan masuk dan keluar'],contacts:['Kontak','Daftar kontak'],groups:['Grup','Kelola grup WhatsApp']};
+function go(p,el){document.querySelectorAll('.ni').forEach(n=>n.classList.remove('act'));if(el)el.classList.add('act');document.querySelectorAll('.pg').forEach(x=>x.classList.remove('act'));document.getElementById('pg-'+p).classList.add('act');document.getElementById('ptitle').textContent=PT[p][0];document.getElementById('psub').textContent=PT[p][1];document.getElementById('sb').classList.remove('op')}
+
+// ==================== TOAST ====================
+function toast(m,t='s'){const c=document.getElementById('tC'),ic={s:'fa-check-circle',e:'fa-times-circle',w:'fa-exclamation-circle'},d=document.createElement('div');d.className='tt '+t;d.innerHTML=`<i class="fas ${ic[t]}"></i><span class="tm">${m}</span>`;c.appendChild(d);setTimeout(()=>d.remove(),3000)}
+
+// ==================== MODAL ====================
+function openM(id){document.getElementById(id).classList.add('sh')}
+function clM(id){document.getElementById(id).classList.remove('sh');editId=null}
+document.querySelectorAll('.mo').forEach(o=>o.addEventListener('click',e=>{if(e.target===o)o.classList.remove('sh')}));
+
+// ==================== BOT TOGGLE ====================
+function togBot(){
+    if(!waConn){document.getElementById('btog').checked=false;toast('Hubungkan WhatsApp dulu di halaman Koneksi','e');return}
+    botOn=document.getElementById('btog').checked;
+    const d=document.getElementById('bsd'),t=document.getElementById('bstxt');
+    if(botOn){d.classList.add('on');t.textContent='On';t.style.color='var(--acc)';emit('toggle-bot',true);toast('Bot diaktifkan','s')}
+    else{d.classList.remove('on');t.textContent='Off';t.style.color='var(--fgd)';emit('toggle-bot',false);toast('Bot dimatikan','w')}
+}
+
+// ==================== KONEKSI ====================
+function startQR(){
+    const qa=document.getElementById('qrArea'),btn=document.getElementById('btnQR'),bn=document.getElementById('cbanner');
+    qa.style.display='flex';document.getElementById('qrOv').style.display='none';btn.disabled=true;btn.innerHTML='<i class="fas fa-spinner fa-spin"></i> Menunggu...';
+    bn.className='csb2 conn';bn.querySelector('.csi2').innerHTML='<i class="fas fa-spinner fa-spin"></i>';document.getElementById('ctitle').textContent='Menghubungkan...';document.getElementById('cdesc').textContent='Menunggu QR dari WhatsApp';
+    if(realMode){emit('request-qr')}
+    else{genFakeQR();setTimeout(()=>{document.getElementById('qrOv').style.display='flex';document.getElementById('qrOv').querySelector('span').textContent='Simulasi';bn.className='csb2 ok';bn.querySelector('.csi2').innerHTML='<i class="fas fa-link"></i>';document.getElementById('ctitle').textContent='Terhubung (Offline)';document.getElementById('cdesc').textContent='Backend tidak tersedia — mode simulasi';btn.style.display='none';waConn=true;connT=Date.now();startUp();toast('Mode simulasi — hubungkan ke backend untuk koneksi nyata','w')},3500)}
+}
+function genFakeQR(){const c=document.getElementById('qrCvs'),x=c.getContext('2d'),s=280,md=25,ms=s/md;x.fillStyle='#fff';x.fillRect(0,0,s,s);function fp(px,py){x.fillStyle='#000';x.fillRect(px,py,7*ms,7*ms);x.fillStyle='#fff';x.fillRect(px+ms,py+ms,5*ms,5*ms);x.fillStyle='#000';x.fillRect(px+2*ms,py+2*ms,3*ms,3*ms)}fp(0,0);fp((md-7)*ms,0);fp(0,(md-7)*ms);x.fillStyle='#000';for(let r=0;r<md;r++)for(let c=0;c<md;c++){if(r<8&&c<8)continue;if(r<8&&c>md-9)continue;if(r>md-9&&c<8)continue;if(Math.random()>.55)x.fillRect(c*ms,r*ms,ms,ms)}for(let i=8;i<md-8;i++){if(i%2===0){x.fillRect(i*ms,6*ms,ms,ms);x.fillRect(6*ms,i*ms,ms,ms)}}}
+function discWA(){waConn=false;connT=null;if(upI)clearInterval(upI);document.getElementById('cpInfo').classList.remove('sh');document.getElementById('qrArea').style.display='none';const btn=document.getElementById('btnQR');btn.style.display='inline-flex';btn.disabled=false;btn.innerHTML='<i class="fas fa-qrcode"></i> Mulai Koneksi WhatsApp';const bn=document.getElementById('cbanner');bn.className='csb2 disc';bn.querySelector('.csi2').innerHTML='<i class="fas fa-unlink"></i>';document.getElementById('ctitle').textContent='Belum Terhubung';document.getElementById('cdesc').textContent='Klik tombol di bawah untuk mulai';botOn=false;document.getElementById('btog').checked=false;document.getElementById('bsd').classList.remove('on');document.getElementById('bstxt').textContent='Off';document.getElementById('bstxt').style.color='var(--fgd)';emit('disconnect-wa');toast('Koneksi diputus','w')}
+function startUp(){if(upI)clearInterval(upI);upI=setInterval(()=>{if(!connT)return;const e=Math.floor((Date.now()-connT)/1000),m=Math.floor(e/60).toString().padStart(2,'0'),s=(e%60).toString().padStart(2,'0');document.getElementById('cpUp').textContent=m+':'+s},1000)}
+
+// ==================== CHART ====================
+let aChart;const cD={week:{l:['Sen','Sel','Rab','Kam','Jum','Sab','Min'],r:[520,610,480,720,560,430,571],a:[120,145,98,178,132,89,130]},month:{l:['Mg1','Mg2','Mg3','Mg4'],r:[3200,3800,3500,3891],a:[780,890,810,892]}};
+function initChart(){const x=document.getElementById('aChart').getContext('2d');aChart=new Chart(x,{type:'bar',data:{labels:cD.week.l,datasets:[{label:'Diterima',data:cD.week.r,backgroundColor:'rgba(37,211,102,.2)',borderColor:'rgba(37,211,102,.6)',borderWidth:1,borderRadius:5,barPercentage:.55},{label:'Dibalas',data:cD.week.a,backgroundColor:'rgba(30,144,255,.2)',borderColor:'rgba(30,144,255,.6)',borderWidth:1,borderRadius:5,barPercentage:.55}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top',align:'end',labels:{color:'#7a9489',font:{family:'Space Grotesk',size:10},boxWidth:10,boxHeight:10,borderRadius:2,useBorderRadius:true}}},scales:{x:{grid:{color:'rgba(30,48,41,.5)'},ticks:{color:'#4a6b5e',font:{family:'Space Grotesk',size:10}}},y:{grid:{color:'rgba(30,48,41,.5)'},ticks:{color:'#4a6b5e',font:{family:'Space Grotesk',size:10}}}}}})}
+function uchart(p,btn){btn.parentElement.querySelectorAll('.tb').forEach(b=>b.classList.remove('act'));btn.classList.add('act');const d=cD[p];aChart.data.labels=d.l;aChart.data.datasets[0].data=d.r;aChart.data.datasets[1].data=d.a;aChart.update()}
+
+// ==================== RENDER ====================
+function renderTopKw(){const k=[{w:'harga',c:189,p:100},{w:'halo',c:156,p:82},{w:'pesanan',c:134,p:71},{w:'terima kasih',c:112,p:59},{w:'komplain',c:67,p:35},{w:'tracking',c:45,p:24},{w:'promo',c:38,p:20}];document.getElementById('topKw').innerHTML=k.map(x=>`<div style="margin-bottom:12px"><div style="display:flex;justify-content:space-between;margin-bottom:3px"><span style="font-size:12px;font-weight:500">${x.w}</span><span style="font-size:11px;color:var(--fgd);font-family:'JetBrains Mono',monospace">${x.c}</span></div><div style="height:5px;background:var(--bg);border-radius:3px;overflow:hidden"><div style="height:100%;width:${x.p}%;background:linear-gradient(90deg,var(--acc),#128C7E);border-radius:3px"></div></div></div>`).join('')}
+function renderRecent(){document.getElementById('recTbl').innerHTML=logs.slice(0,5).map(l=>`<tr><td style="color:var(--fg);font-weight:500">${l.sender}</td><td style="max-width:180px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${l.incoming}</td><td style="max-width:160px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${l.reply}</td><td style="font-family:'JetBrains Mono',monospace;font-size:11px">${l.time}</td><td><span class="tg ${l.status==='replied'?'g':l.status==='error'?'r':'o'}">${l.status==='replied'?'Dibalas':l.status==='error'?'Error':'Missed'}</span></td></tr>`).join('')}
+
+function renderRules(){
+    const c=document.getElementById('ruleList');document.getElementById('rc').textContent=rules.length;
+    if(!rules.length){c.innerHTML='<div class="es"><i class="fas fa-robot"></i><p>Belum ada aturan</p></div>';return}
+    const pc={high:'r',normal:'b',low:'o'},pl={high:'Tinggi',normal:'Normal',low:'Rendah'};
+    c.innerHTML=rules.map(r=>`<div class="rc"><div class="ric" style="${r.status==='paused'?'background:var(--wrnd);color:var(--wrn)':''}"><i class="fas ${r.status==='paused'?'fa-pause':'fa-bolt'}"></i></div><div class="ri"><div class="rn">${r.name} <span class="tg ${pc[r.priority]}" style="margin-left:4px">${pl[r.priority]}</span></div><div class="rd">Kata kunci: ${r.keywords.join(', ')} | Dipicu ${r.triggerCount}x</div></div><span class="tg ${r.status==='active'?'g':'o'}">${r.status==='active'?'Aktif':'Jeda'}</span><div class="ra"><button class="btn bs bi bsm" onclick="editRule(${r.id})"><i class="fas fa-pen"></i></button><button class="btn bs bi bsm" onclick="togRule(${r.id})"><i class="fas ${r.status==='active'?'fa-pause':'fa-play'}"></i></button><button class="btn bd bi bsm" onclick="delRule(${r.id})"><i class="fas fa-trash"></i></button></div></div>`).join('')}
+function saveRule(){const n=document.getElementById('rN').value.trim(),mt=document.getElementById('rMT').value,kw=document.getElementById('rKW').value.trim(),rp=document.getElementById('rRP').value.trim(),pr=document.getElementById('rPR').value,st=document.getElementById('rST').value;if(!n||!kw||!rp){toast('Lengkapi semua field','e');return}const ks=kw.split(',').map(k=>k.trim()).filter(k=>k);if(editId){const r=rules.find(r=>r.id===editId);if(r)Object.assign(r,{name:n,matchType:mt,keywords:ks,reply:rp,priority:pr,status:st});emit('update-rule',r);editId=null;toast('Aturan diperbarui','s')}else{const nr={id:Date.now(),name:n,matchType:mt,keywords:ks,reply:rp,priority:pr,status:st,triggerCount:0};rules.push(nr);emit('add-rule',nr);toast('Aturan ditambahkan','s')}document.getElementById('rN').value='';document.getElementById('rKW').value='';document.getElementById('rRP').value='';clM('ruleM');renderRules()}
+function editRule(id){const r=rules.find(r=>r.id===id);if(!r)return;editId=id;document.getElementById('ruleMT').textContent='Edit Aturan';document.getElementById('rN').value=r.name;document.getElementById('rMT').value=r.matchType;document.getElementById('rKW').value=r.keywords.join(', ');document.getElementById('rRP').value=r.reply;document.getElementById('rPR').value=r.priority;document.getElementById('rST').value=r.status;openM('ruleM')}
+function togRule(id){const r=rules.find(r=>r.id===id);if(r)r.status=r.status==='active'?'paused':'active';emit('toggle-rule',id);renderRules()}
+function delRule(id){const r=rules.find(r=>r.id===id);rules=rules.filter(r=>r.id!==id);emit('delete-rule',id);toast('Aturan dihapus','w');renderRules()}
+
+function renderScheds(){const c=document.getElementById('schedList');if(!schedules.length){c.innerHTML='<div class="es"><i class="fas fa-clock"></i><p>Belum ada jadwal</p></div>';return}const rl={none:'Sekali',daily:'Harian',weekly:'Mingguan',monthly:'Bulanan'};c.innerHTML=schedules.map(s=>`<div class="scc"><div class="sct"><div style="display:flex;align-items:center;gap:8px"><span class="scn">${s.name}</span><span class="tg ${s.status==='active'?'g':'o'}">${s.status==='active'?'Aktif':'Jeda'}</span></div><div class="ra"><button class="btn bs bi bsm" onclick="togSched(${s.id})"><i class="fas ${s.status==='active'?'fa-pause':'fa-play'}"></i></button><button class="btn bd bi bsm" onclick="delSched(${s.id})"><i class="fas fa-trash"></i></button></div></div><div class="scm"><span><i class="fas fa-user"></i> ${s.targetLabel||s.target}</span><span><i class="fas fa-calendar"></i> ${s.date} ${s.time}</span><span><i class="fas fa-redo"></i> ${rl[s.repeat]||s.repeat}</span></div><div class="scp">${s.message}</div></div>`).join('')}
+function saveSched(){const n=document.getElementById('scN').value.trim(),t=document.getElementById('scT').value,d=document.getElementById('scD').value,tm=document.getElementById('scTm').value,r=document.getElementById('scR').value,m=document.getElementById('scM').value.trim();if(!n||!d||!m){toast('Lengkapi semua field','e');return}const sel=document.getElementById('scT');schedules.push({id:Date.now(),name:n,target:t,targetLabel:sel.options[sel.selectedIndex].text,date:d,time:tm,repeat:r,message:m,status:'active'});emit('add-schedule',schedules[schedules.length-1]);document.getElementById('scN').value='';document.getElementById('scM').value='';clM('schedM');toast('Jadwal ditambahkan','s');renderScheds()}
+function togSched(id){const s=schedules.find(s=>s.id===id);if(s)s.status=s.status==='active'?'paused':'active';emit('toggle-schedule',id);renderScheds()}
+function delSched(id){schedules=schedules.filter(s=>s.id!==id);emit('delete-schedule',id);toast('Jadwal dihapus','w');renderScheds()}
+
+function renderLogs(f=null){const tb=document.getElementById('logTbl'),d=f||logs;if(!d.length){tb.innerHTML='<tr><td colspan="6"><div class="es"><i class="fas fa-inbox"></i><p>Tidak ada log</p></div></td></tr>';return}tb.innerHTML=d.map(l=>{const st=l.status==='replied'?'g':l.status==='error'?'r':'o',sl=l.status==='replied'?'Dibalas':l.status==='error'?'Error':'Missed';return`<tr><td style="font-family:'JetBrains Mono',monospace;font-size:11px">${l.time}</td><td style="color:var(--fg);font-weight:500">${l.sender}</td><td style="max-width:160px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${l.incoming}</td><td style="max-width:160px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${l.reply}</td><td>${l.rule!=='-'?`<span class="tg b">${l.rule}</span>`:'-'}</td><td><span class="tg ${st}">${sl}</span></td></tr>`}).join('')}
+function fLogs(){const s=document.getElementById('logS').value.toLowerCase(),f=document.getElementById('logF').value;let d=logs;if(s)d=d.filter(l=>l.sender.toLowerCase().includes(s)||l.incoming.toLowerCase().includes(s)||l.reply.toLowerCase().includes(s));if(f!=='all')d=d.filter(l=>l.status===f);renderLogs(d)}
+function clrLogs(){logs=[];emit('clear-logs');renderLogs();toast('Log dihapus','s')}
+
+function renderContacts(f=null){const c=document.getElementById('ctList'),d=f||contacts;if(!d.length){c.innerHTML='<div class="es"><i class="fas fa-address-book"></i><p>Tidak ada kontak</p></div>';return}const lc={customer:'#25D366',partner:'#1e90ff',internal:'#ffa502',vip:'#ff6b81'},ln={customer:'Customer',partner:'Partner',internal:'Internal',vip:'VIP'};c.innerHTML=d.map(ct=>`<div class="ci"><div class="ca" style="background:${lc[ct.label]}22;color:${lc[ct.label]}">${ct.name.split(' ').map(n=>n[0]).join('').slice(0,2)}</div><div class="cif"><div class="cn">${ct.name} <span class="tg" style="background:${lc[ct.label]}22;color:${lc[ct.label]};font-size:9px">${ln[ct.label]||ct.label}</span></div><div class="cp">${ct.phone} &middot; ${ct.messages} pesan</div></div></div>`).join('')}
+function fCt(){const s=document.getElementById('ctS').value.toLowerCase();if(!s){renderContacts();return}renderContacts(contacts.filter(c=>c.name.toLowerCase().includes(s)||c.phone.includes(s)))}
+
+function renderGroups(){const c=document.getElementById('grpList');if(!groups.length){c.innerHTML='<div class="es"><i class="fas fa-users"></i><p>Tidak ada grup</p></div>';return}c.innerHTML=groups.map(g=>`<div class="rc"><div class="ric" style="${g.botActive?'':'background:var(--wrnd);color:var(--wrn)'}"><i class="fas fa-users"></i></div><div class="ri"><div class="rn">${g.name} ${g.botActive?'<span class="tg g" style="margin-left:4px">Bot Aktif</span>':'<span class="tg o" style="margin-left:4px">Nonaktif</span>'}</div><div class="rd">${g.desc} &middot; ${g.members} anggota</div></div></div>`).join('')}
+
+// ==================== INIT ====================
+function setDefDate(){const t=new Date();t.setDate(t.getDate()+1);const d=document.getElementById('scD');if(d)d.value=t.toISOString().split('T')[0]}
+document.addEventListener('DOMContentLoaded',()=>{initWS();initChart();renderTopKw();renderRecent();renderRules();renderScheds();renderLogs();renderContacts();renderGroups();setDefDate();applySettings()});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')document.querySelectorAll('.mo.sh').forEach(m=>m.classList.remove('sh'))});
+</script>
 </body>
 </html>
