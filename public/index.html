@@ -15,8 +15,6 @@
         body::before{content:'';position:fixed;top:-50%;left:-50%;width:200%;height:200%;background:radial-gradient(ellipse at 20% 20%,rgba(37,211,102,.04) 0%,transparent 50%),radial-gradient(ellipse at 80% 80%,rgba(37,211,102,.03) 0%,transparent 50%);z-index:0;pointer-events:none;animation:bgs 20s ease-in-out infinite alternate}
         @keyframes bgs{0%{transform:translate(0,0)}100%{transform:translate(-2%,-1%) rotate(2deg)}}
         .app{display:flex;min-height:100vh;position:relative;z-index:1}
-
-        /* Sidebar */
         .sb{width:260px;background:var(--bg2);border-right:1px solid var(--brd);display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:100;transition:transform .3s}
         .sb-hd{padding:20px;border-bottom:1px solid var(--brd)}
         .sb-logo{display:flex;align-items:center;gap:12px}
@@ -45,14 +43,10 @@
         .tsl::before{content:'';position:absolute;width:18px;height:18px;border-radius:50%;background:var(--fgm);top:3px;left:3px;transition:all .3s}
         .ts input:checked+.tsl{background:var(--acc)}
         .ts input:checked+.tsl::before{transform:translateX(18px);background:#fff}
-
-        /* Connection status bar */
         .csb{display:flex;align-items:center;gap:6px;padding:8px 12px;border-radius:var(--rs);font-size:10px;font-weight:600;margin-top:8px}
         .csb.real{background:var(--accd);color:var(--acc)}
         .csb.sim{background:var(--wrnd);color:var(--wrn)}
         .csb.off{background:var(--dngd);color:var(--dng)}
-
-        /* Main */
         .mc{flex:1;margin-left:260px;min-height:100vh}
         .tb{padding:14px 28px;border-bottom:1px solid var(--brd);display:flex;align-items:center;justify-content:space-between;background:rgba(10,15,13,.85);backdrop-filter:blur(12px);position:sticky;top:0;z-index:50}
         .tbl{display:flex;align-items:center;gap:14px}
@@ -60,55 +54,40 @@
         .pt{font-size:18px;font-weight:700}
         .pst{font-size:12px;color:var(--fgm)}
         .tbr{display:flex;align-items:center;gap:10px}
-        .tbb{width:36px;height:36px;border-radius:var(--rs);background:var(--bgc);border:1px solid var(--brd);color:var(--fgm);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;font-size:13px;position:relative}
+        .tbb{width:36px;height:36px;border-radius:var(--rs);background:var(--bgc);border:1px solid var(--brd);color:var(--fgm);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;font-size:13px}
         .tbb:hover{background:var(--bgch);color:var(--fg);border-color:var(--brl)}
         .pc{padding:24px 28px}
         .pg{display:none}.pg.act{display:block;animation:fi .3s ease}
         @keyframes fi{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
-
-        /* Cards */
         .cd{background:var(--bgc);border:1px solid var(--brd);border-radius:var(--r);padding:18px;transition:all .25s}
         .cd:hover{border-color:var(--brl)}
         .cdh{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
         .cdt{font-size:14px;font-weight:600}
-
-        /* Stats */
         .sg{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px}
         .sc{background:var(--bgc);border:1px solid var(--brd);border-radius:var(--r);padding:18px;position:relative;overflow:hidden;transition:all .3s}
-        .sc::after{content:'';position:absolute;top:0;right:0;width:70px;height:70px;border-radius:50%;filter:blur(35px);opacity:.15;transition:opacity .3s}
+        .sc::after{content:'';position:absolute;top:0;right:0;width:70px;height:70px;border-radius:50%;filter:blur(35px);opacity:.15}
         .sc:hover::after{opacity:.25}.sc:hover{border-color:var(--brl);transform:translateY(-2px)}
         .sc.g::after{background:var(--acc)}.sc.b::after{background:var(--inf)}.sc.o::after{background:var(--wrn)}.sc.r::after{background:var(--dng)}
         .si{width:38px;height:38px;border-radius:var(--rs);display:flex;align-items:center;justify-content:center;font-size:15px;margin-bottom:12px}
         .si.g{background:var(--accd);color:var(--acc)}.si.b{background:var(--infd);color:var(--inf)}.si.o{background:var(--wrnd);color:var(--wrn)}.si.r{background:var(--dngd);color:var(--dng)}
         .sv{font-size:26px;font-weight:700;margin-bottom:3px;font-family:'JetBrains Mono',monospace}
         .sl{font-size:12px;color:var(--fgm)}
-        .sch{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:600;margin-top:6px;padding:2px 7px;border-radius:5px}
-        .sch.up{background:var(--accd);color:var(--acc)}.sch.dn{background:var(--dngd);color:var(--dng)}
-
         .g2{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:24px}
         .g3{display:grid;grid-template-columns:2fr 1fr;gap:18px;margin-bottom:24px}
-
-        /* Buttons */
         .btn{display:inline-flex;align-items:center;gap:7px;padding:9px 16px;border-radius:var(--rs);font-family:'Space Grotesk',sans-serif;font-size:12px;font-weight:600;cursor:pointer;transition:all .2s;border:1px solid transparent}
         .bp{background:var(--acc);color:var(--bg);border-color:var(--acc)}.bp:hover{background:#20c05c;box-shadow:var(--sha);transform:translateY(-1px)}
         .bs{background:var(--bgc);color:var(--fg);border-color:var(--brd)}.bs:hover{background:var(--bgch);border-color:var(--brl)}
         .bd{background:var(--dngd);color:var(--dng);border-color:rgba(255,71,87,.3)}.bd:hover{background:rgba(255,71,87,.25)}
         .bsm{padding:5px 10px;font-size:11px}
         .bi{width:32px;height:32px;padding:0;justify-content:center}
-
-        /* Table */
         .tw{overflow-x:auto}
         table{width:100%;border-collapse:collapse}
         thead th{text-align:left;padding:10px 14px;font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--fgd);font-weight:600;border-bottom:1px solid var(--brd)}
         tbody td{padding:12px 14px;font-size:12px;border-bottom:1px solid var(--brd);color:var(--fgm)}
         tbody tr{transition:background .15s}tbody tr:hover{background:rgba(37,211,102,.03)}
         tbody tr:last-child td{border-bottom:none}
-
-        /* Tags */
         .tg{display:inline-flex;align-items:center;gap:3px;padding:2px 9px;border-radius:5px;font-size:10px;font-weight:600}
         .tg.g{background:var(--accd);color:var(--acc)}.tg.r{background:var(--dngd);color:var(--dng)}.tg.o{background:var(--wrnd);color:var(--wrn)}.tg.b{background:var(--infd);color:var(--inf)}
-
-        /* Forms */
         .fg{margin-bottom:14px}
         .fl{display:block;font-size:11px;font-weight:600;color:var(--fgm);margin-bottom:5px;text-transform:uppercase;letter-spacing:.5px}
         .fi,.fs,.ft{width:100%;padding:9px 12px;background:var(--bg);border:1px solid var(--brd);border-radius:var(--rs);color:var(--fg);font-family:'Space Grotesk',sans-serif;font-size:13px;transition:all .2s;outline:none}
@@ -118,14 +97,10 @@
         .fs option{background:var(--bgc);color:var(--fg)}
         .fr{display:grid;grid-template-columns:1fr 1fr;gap:10px}
         .sbx{position:relative}.sbx i{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--fgd);font-size:12px}.sbx input{padding-left:32px}
-
-        /* Range slider */
-        .range-wrap{display:flex;align-items:center;gap:12px}
-        .range-wrap input[type=range]{flex:1;-webkit-appearance:none;height:6px;background:var(--brl);border-radius:3px;outline:none}
-        .range-wrap input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:var(--acc);cursor:pointer;box-shadow:0 0 6px var(--accg)}
-        .range-val{font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:700;color:var(--acc);min-width:40px;text-align:right}
-
-        /* Modal */
+        .rw{display:flex;align-items:center;gap:12px}
+        .rw input[type=range]{flex:1;-webkit-appearance:none;height:6px;background:var(--brl);border-radius:3px;outline:none}
+        .rw input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:var(--acc);cursor:pointer;box-shadow:0 0 6px var(--accg)}
+        .rv{font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:700;color:var(--acc);min-width:40px;text-align:right}
         .mo{position:fixed;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(4px);z-index:1000;display:none;align-items:center;justify-content:center}
         .mo.sh{display:flex}
         .md{background:var(--bgc);border:1px solid var(--brd);border-radius:var(--rl);width:500px;max-width:90vw;max-height:85vh;overflow-y:auto;box-shadow:var(--sh);animation:mi .3s ease}
@@ -135,8 +110,6 @@
         .mdc{width:30px;height:30px;border-radius:var(--rs);background:none;border:1px solid var(--brd);color:var(--fgm);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s}
         .mdc:hover{background:var(--dngd);color:var(--dng);border-color:rgba(255,71,87,.3)}
         .mdb{padding:22px}.mdf{padding:14px 22px;border-top:1px solid var(--brd);display:flex;justify-content:flex-end;gap:8px}
-
-        /* Toast */
         .tc{position:fixed;top:16px;right:16px;z-index:2000;display:flex;flex-direction:column;gap:6px}
         .tt{background:var(--bgc);border:1px solid var(--brd);border-radius:var(--r);padding:12px 16px;display:flex;align-items:center;gap:9px;box-shadow:var(--sh);animation:ti .3s ease,to .3s ease 2.7s forwards;min-width:280px}
         .tt.s{border-left:3px solid var(--acc)}.tt.e{border-left:3px solid var(--dng)}.tt.w{border-left:3px solid var(--wrn)}
@@ -144,8 +117,6 @@
         .tm{font-size:12px;color:var(--fg)}
         @keyframes ti{from{opacity:0;transform:translateX(30px)}to{opacity:1;transform:translateX(0)}}
         @keyframes to{from{opacity:1}to{opacity:0;transform:translateX(30px)}}
-
-        /* Settings */
         .ss{margin-bottom:24px}
         .sst{font-size:15px;font-weight:700;margin-bottom:3px;display:flex;align-items:center;gap:8px}
         .ssd{font-size:12px;color:var(--fgm);margin-bottom:14px}
@@ -153,14 +124,11 @@
         .stx h4{font-size:13px;font-weight:600;margin-bottom:2px}
         .stx p{font-size:11px;color:var(--fgm)}
         .sti.col{flex-direction:column;align-items:stretch}
-
-        /* Rule/Schedule cards */
         .rc{background:var(--bgc);border:1px solid var(--brd);border-radius:var(--r);padding:14px 18px;display:flex;align-items:center;gap:14px;transition:all .2s;margin-bottom:8px}
         .rc:hover{border-color:var(--brl);background:var(--bgch)}
         .ric{width:40px;height:40px;border-radius:var(--rs);background:var(--accd);color:var(--acc);display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0}
         .ri{flex:1;min-width:0}.rn{font-size:13px;font-weight:600;margin-bottom:2px}.rd{font-size:11px;color:var(--fgm);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
         .ra{display:flex;gap:5px;flex-shrink:0}
-
         .scc{background:var(--bgc);border:1px solid var(--brd);border-radius:var(--r);padding:14px 18px;margin-bottom:8px;transition:all .2s}
         .scc:hover{border-color:var(--brl)}
         .sct{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
@@ -168,30 +136,25 @@
         .scm{display:flex;gap:14px;font-size:11px;color:var(--fgm);flex-wrap:wrap}
         .scm i{margin-right:3px;color:var(--fgd)}
         .scp{font-size:12px;color:var(--fgm);padding:9px;background:var(--bg);border-radius:var(--rs);border-left:3px solid var(--acc);line-height:1.5}
-
         .ci{display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:var(--rs);transition:background .15s;cursor:pointer}
         .ci:hover{background:var(--accd)}
         .ca{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;flex-shrink:0}
-        .cif{flex:1}.cn{font-size:13px;font-weight:600}.cp{font-size:11px;color:var(--fgm)}
-
+        .cif{flex:1}.cn{font-size:13px;font-weight:600}.cpp{font-size:11px;color:var(--fgm)}
         .es{text-align:center;padding:40px 18px;color:var(--fgd)}
         .es i{font-size:44px;margin-bottom:14px;opacity:.3}
         .es p{font-size:13px}
-
         .tabs{display:flex;gap:3px;background:var(--bg);border-radius:var(--rs);padding:3px;border:1px solid var(--brd)}
-        .tb{padding:6px 14px;border-radius:5px;font-size:11px;font-weight:600;cursor:pointer;transition:all .2s;background:none;border:none;color:var(--fgm);font-family:'Space Grotesk',sans-serif}
-        .tb.act{background:var(--acc);color:var(--bg)}.tb:hover:not(.act){color:var(--fg)}
-
-        /* Connection page */
+        .tbtn{padding:6px 14px;border-radius:5px;font-size:11px;font-weight:600;cursor:pointer;transition:all .2s;background:none;border:none;color:var(--fgm);font-family:'Space Grotesk',sans-serif}
+        .tbtn.act{background:var(--acc);color:var(--bg)}.tbtn:hover:not(.act){color:var(--fg)}
         .cf{display:flex;flex-direction:column;align-items:center;gap:20px;max-width:680px;margin:0 auto}
-        .csb2{width:100%;padding:18px 22px;border-radius:var(--r);display:flex;align-items:center;gap:14px;border:1px solid var(--brd)}
-        .csb2.disc{background:var(--dngd);border-color:rgba(255,71,87,.3)}
-        .csb2.conn{background:var(--wrnd);border-color:rgba(255,165,2,.3)}
-        .csb2.ok{background:var(--accd);border-color:rgba(37,211,102,.3)}
-        .csi2{width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
-        .csb2.disc .csi2{background:rgba(255,71,87,.2);color:var(--dng)}
-        .csb2.conn .csi2{background:rgba(255,165,2,.2);color:var(--wrn);animation:sp 2s linear infinite}
-        .csb2.ok .csi2{background:rgba(37,211,102,.2);color:var(--acc)}
+        .cb2{width:100%;padding:18px 22px;border-radius:var(--r);display:flex;align-items:center;gap:14px;border:1px solid var(--brd)}
+        .cb2.disc{background:var(--dngd);border-color:rgba(255,71,87,.3)}
+        .cb2.conn{background:var(--wrnd);border-color:rgba(255,165,2,.3)}
+        .cb2.ok{background:var(--accd);border-color:rgba(37,211,102,.3)}
+        .ci2{width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+        .cb2.disc .ci2{background:rgba(255,71,87,.2);color:var(--dng)}
+        .cb2.conn .ci2{background:rgba(255,165,2,.2);color:var(--wrn);animation:sp 2s linear infinite}
+        .cb2.ok .ci2{background:rgba(37,211,102,.2);color:var(--acc)}
         @keyframes sp{from{transform:rotate(0)}to{transform:rotate(360deg)}}
         .cst h3{font-size:15px;font-weight:700;margin-bottom:2px}.cst p{font-size:12px}
         .qra{background:#fff;border-radius:var(--rl);padding:28px;display:flex;flex-direction:column;align-items:center;gap:14px;position:relative;overflow:hidden}
@@ -202,23 +165,39 @@
         .qro i{font-size:44px;color:var(--acc)}.qro span{font-size:15px;font-weight:700;color:#1a1a1a}
         .cpi{width:100%;background:var(--bgc);border:1px solid var(--brd);border-radius:var(--r);padding:18px;display:none}
         .cpi.sh{display:block;animation:fi .3s ease}
-        .cpr{display:flex;align-items:center;gap:14px}
-        .cpa{width:52px;height:52px;border-radius:50%;background:var(--accd);color:var(--acc);display:flex;align-items:center;justify-content:center;font-size:22px}
-        .cpn{font-size:17px;font-weight:700}.cpp{font-size:13px;color:var(--fgm);font-family:'JetBrains Mono',monospace}
         .cpm{display:flex;gap:18px;margin-top:12px;padding-top:12px;border-top:1px solid var(--brd)}
         .cpmi{text-align:center}.cpmi .v{font-size:18px;font-weight:700;font-family:'JetBrains Mono',monospace;color:var(--acc)}.cpmi .l{font-size:10px;color:var(--fgd);margin-top:2px}
         .wb{width:100%;padding:14px 18px;border-radius:var(--r);display:flex;align-items:flex-start;gap:10px}
         .wb.w{background:var(--wrnd);border:1px solid rgba(255,165,2,.3)}.wb.w i{color:var(--wrn)}
         .wb.i{background:var(--infd);border:1px solid rgba(30,144,255,.3)}.wb.i i{color:var(--inf)}
+        .wb.s{background:var(--accd);border:1px solid rgba(37,211,102,.3)}.wb.s i{color:var(--acc)}
         .wb i{font-size:16px;margin-top:2px;flex-shrink:0}
         .wb p{font-size:12px;color:var(--fgm);line-height:1.5}
-        .wb strong{color:var(--wrn)}
-        .wb.i strong{color:var(--inf)}
-
-        /* Blacklist tags */
+        .wb strong{color:var(--wrn)}.wb.i strong{color:var(--inf)}.wb.s strong{color:var(--acc)}
         .bl-list{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
         .bl-tag{display:inline-flex;align-items:center;gap:4px;background:var(--dngd);color:var(--dng);padding:4px 10px;border-radius:5px;font-size:11px;font-weight:600}
         .bl-tag button{background:none;border:none;color:var(--dng);cursor:pointer;font-size:10px;padding:0;margin-left:2px}
+
+        /* Radio buttons untuk grup */
+        .radio-group{display:flex;flex-direction:column;gap:6px;width:100%}
+        .radio-item{display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--bg);border:1px solid var(--brd);border-radius:var(--rs);cursor:pointer;transition:all .2s}
+        .radio-item:hover{border-color:var(--brl)}
+        .radio-item.sel{border-color:var(--acc);background:var(--accd)}
+        .radio-item input[type=radio]{display:none}
+        .radio-dot{width:18px;height:18px;border-radius:50%;border:2px solid var(--brl);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s}
+        .radio-dot::after{content:'';width:8px;height:8px;border-radius:50%;background:var(--acc);transform:scale(0);transition:transform .2s}
+        .radio-item.sel .radio-dot{border-color:var(--acc)}
+        .radio-item.sel .radio-dot::after{transform:scale(1)}
+        .radio-lbl h4{font-size:13px;font-weight:600}.radio-lbl p{font-size:11px;color:var(--fgm)}
+
+        /* Grup whitelist */
+        .grp-wl{max-height:260px;overflow-y:auto;border:1px solid var(--brd);border-radius:var(--rs);margin-top:10px}
+        .grp-wl-item{display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:1px solid var(--brd);transition:background .15s}
+        .grp-wl-item:last-child{border-bottom:none}
+        .grp-wl-item:hover{background:rgba(37,211,102,.03)}
+        .grp-wl-item label{display:flex;align-items:center;gap:10px;cursor:pointer;flex:1;font-size:13px}
+        .grp-wl-item input[type=checkbox]{accent-color:var(--acc);width:16px;height:16px}
+        .grp-wl-item .grp-meta{font-size:11px;color:var(--fgd)}
 
         ::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--brl);border-radius:3px}
         @media(max-width:1024px){.sg{grid-template-columns:repeat(2,1fr)}.g2,.g3{grid-template-columns:1fr}}
@@ -228,14 +207,8 @@
 </head>
 <body>
 <div class="app">
-    <!-- SIDEBAR -->
     <aside class="sb" id="sb">
-        <div class="sb-hd">
-            <div class="sb-logo">
-                <div class="sb-ico"><i class="fab fa-whatsapp"></i></div>
-                <div class="sb-txt"><span>WABot Manager</span><span>Control Panel</span></div>
-            </div>
-        </div>
+        <div class="sb-hd"><div class="sb-logo"><div class="sb-ico"><i class="fab fa-whatsapp"></i></div><div class="sb-txt"><span>WABot Manager</span><span>Control Panel</span></div></div></div>
         <nav class="sb-nav">
             <div class="nl">Koneksi</div>
             <div class="ni act" data-p="connection" onclick="go('connection',this)"><i class="fas fa-plug"></i> Hubungkan WA</div>
@@ -246,9 +219,6 @@
             <div class="nl">Monitoring</div>
             <div class="ni" data-p="dashboard" onclick="go('dashboard',this)"><i class="fas fa-chart-pie"></i> Dashboard</div>
             <div class="ni" data-p="logs" onclick="go('logs',this)"><i class="fas fa-list-ul"></i> Log Pesan</div>
-            <div class="nl">Data</div>
-            <div class="ni" data-p="contacts" onclick="go('contacts',this)"><i class="fas fa-address-book"></i> Kontak</div>
-            <div class="ni" data-p="groups" onclick="go('groups',this)"><i class="fas fa-users"></i> Grup</div>
         </nav>
         <div class="sb-ft">
             <div class="bsc">
@@ -259,39 +229,31 @@
         </div>
     </aside>
 
-    <!-- MAIN -->
     <main class="mc">
         <div class="tb">
             <div class="tbl">
                 <button class="mb" onclick="document.getElementById('sb').classList.toggle('op')"><i class="fas fa-bars"></i></button>
                 <div><div class="pt" id="ptitle">Hubungkan WhatsApp</div><div class="pst" id="psub">Sambungkan bot ke akun WhatsApp</div></div>
             </div>
-            <div class="tbr">
-                <button class="tbb" onclick="toast('Tidak ada notifikasi baru','w')"><i class="fas fa-bell"></i></button>
-            </div>
         </div>
-
         <div class="pc">
 
-<!-- ===== KONEKSI ===== -->
+<!-- KONEKSI -->
 <div class="pg act" id="pg-connection">
 <div class="cf">
-    <div class="csb2 disc" id="cbanner">
-        <div class="csi2"><i class="fas fa-unlink"></i></div>
-        <div class="cst"><h3 id="ctitle">Belum Terhubung</h3><p id="cdesc">Klik tombol di bawah untuk mulai</p></div>
-    </div>
-    <div class="wb i"><i class="fas fa-info-circle"></i><p><strong style="color:var(--inf)">Mode Aktif:</strong> <span id="modeLabel">Mendeteksi koneksi backend...</span></p></div>
-    <div id="qrsec" style="width:100%;display:flex;flex-direction:column;align-items:center;gap:14px;">
+    <div class="cb2 disc" id="cbanner"><div class="ci2"><i class="fas fa-unlink"></i></div><div class="cst"><h3 id="ctitle">Belum Terhubung</h3><p id="cdesc">Klik tombol di bawah untuk mulai</p></div></div>
+    <div class="wb i"><i class="fas fa-info-circle"></i><p><strong style="color:var(--inf)">Status:</strong> <span id="modeLabel">Mendeteksi backend...</span></p></div>
+    <div id="qrsec" style="width:100%;display:flex;flex-direction:column;align-items:center;gap:14px">
         <button class="btn bp" onclick="startQR()" id="btnQR"><i class="fas fa-qrcode"></i> Mulai Koneksi WhatsApp</button>
-        <div class="qra" id="qrArea" style="display:none;">
+        <div class="qra" id="qrArea" style="display:none">
             <canvas id="qrCvs" width="280" height="280"></canvas>
             <div class="qrl" id="qrLbl">Scan QR Code dengan WhatsApp</div>
-            <div class="qrsl">WhatsApp → Menu → Perangkat Tertaut → Tautkan Perangkat</div>
-            <div class="qro" id="qrOv" style="display:none;"><i class="fas fa-check-circle"></i><span>Terhubung!</span></div>
+            <div class="qrsl">WhatsApp → Menu (3 titik) → Perangkat Tertaut → Tautkan Perangkat</div>
+            <div class="qro" id="qrOv" style="display:none"><i class="fas fa-check-circle"></i><span>Terhubung!</span></div>
         </div>
     </div>
     <div class="cpi" id="cpInfo">
-        <div class="cpr"><div class="cpa"><i class="fab fa-whatsapp"></i></div><div><div class="cpn" id="cpName">WABot</div><div class="cpp" id="cpPhone">-</div></div></div>
+        <div style="display:flex;align-items:center;gap:14px"><div style="width:52px;height:52px;border-radius:50%;background:var(--accd);color:var(--acc);display:flex;align-items:center;justify-content:center;font-size:22px"><i class="fab fa-whatsapp"></i></div><div><div style="font-size:17px;font-weight:700">WhatsApp Terhubung</div><div style="font-size:13px;color:var(--fgm);font-family:'JetBrains Mono',monospace" id="cpPhone">-</div></div></div>
         <div class="cpm">
             <div class="cpmi"><div class="v" id="cpUp">00:00</div><div class="l">Uptime</div></div>
             <div class="cpmi"><div class="v" id="cpMsg">0</div><div class="l">Pesan Hari Ini</div></div>
@@ -299,113 +261,130 @@
         </div>
         <div style="margin-top:12px"><button class="btn bd bsm" onclick="discWA()"><i class="fas fa-power-off"></i> Putuskan Koneksi</button></div>
     </div>
-    <div class="wb w"><i class="fas fa-exclamation-triangle"></i><p><strong>Peringatan:</strong> Akun WhatsApp bisa diblokir jika automasi berlebihan. Gunakan nomor sekunder, berikan delay, jangan spam. Untuk bisnis serius, gunakan WhatsApp Cloud API resmi.</p></div>
+    <div class="wb w"><i class="fas fa-exclamation-triangle"></i><p><strong>Peringatan:</strong> Gunakan nomor sekunder, bukan nomor utama. Berikan delay antar balasan. Jangan spam. Akun bisa diblokir oleh Meta jika melanggar ToS.</p></div>
 </div>
 </div>
 
-<!-- ===== PENGATURAN BOT ===== -->
+<!-- PENGATURAN -->
 <div class="pg" id="pg-settings">
     <div class="ss">
         <div class="sst"><i class="fas fa-server" style="color:var(--inf)"></i> Koneksi Backend</div>
-        <div class="ssd">Status koneksi real-time ke server Node.js</div>
-        <div class="sti"><div class="stx"><h4>Status WebSocket</h4><p>Koneksi ke backend server</p></div><span class="tg r" id="wsStat">Tidak Terhubung</span></div>
+        <div class="ssd">Status koneksi real-time ke server</div>
+        <div class="sti"><div class="stx"><h4>WebSocket</h4><p>Koneksi ke backend server</p></div><span class="tg r" id="wsStat">Tidak Terhubung</span></div>
     </div>
 
     <div class="ss">
-        <div class="sst"><i class="fas fa-id-card" style="color:var(--acc)"></i> Identitas Bot</div>
-        <div class="ssd">Informasi dasar bot Anda</div>
-        <div class="sti"><div class="stx"><h4>Nama Bot</h4><p>Nama yang muncul saat membalas</p></div><input class="fi" style="width:200px" id="sBotName" value="WABot Assistant" onchange="pushSetting('botName',this.value)"></div>
-        <div class="sti"><div class="stx"><h4>Nomor WhatsApp</h4><p>Nomor yang terhubung</p></div><input class="fi" style="width:200px" id="sBotPhone" value="+62 812-xxxx-7890" onchange="pushSetting('botPhone',this.value)"></div>
-        <div class="sti"><div class="stx"><h4>Zona Waktu</h4><p>Untuk penjadwalan pesan</p></div>
-            <select class="fs" style="width:160px" id="sTimezone" onchange="pushSetting('timezone',this.value)">
-                <option value="WIB" selected>WIB (UTC+7)</option><option value="WITA">WITA (UTC+8)</option><option value="WIT">WIT (UTC+9)</option>
-            </select>
+        <div class="sst"><i class="fas fa-users" style="color:var(--dng)"></i> Kontrol Grup</div>
+        <div class="ssd">Atur apakah bot ikut campur di grup WhatsApp Anda</div>
+        <div class="sti col">
+            <div class="radio-group" id="grpMode">
+                <div class="radio-item sel" onclick="setGrpMode('none',this)">
+                    <input type="radio" name="gm" value="none" checked>
+                    <div class="radio-dot"></div>
+                    <div class="radio-lbl"><h4>Tidak Balas Grup</h4><p>Bot HANYA merespon chat pribadi (DM). Grup diabaikan total.</p></div>
+                </div>
+                <div class="radio-item" onclick="setGrpMode('all',this)">
+                    <input type="radio" name="gm" value="all">
+                    <div class="radio-dot"></div>
+                    <div class="radio-lbl"><h4>Balas Semua Grup</h4><p>Bot merespon di semua grup yang diikuti. Berisiko mengganggu.</p></div>
+                </div>
+                <div class="radio-item" onclick="setGrpMode('whitelist',this)">
+                    <input type="radio" name="gm" value="whitelist">
+                    <div class="radio-dot"></div>
+                    <div class="radio-lbl"><h4>Hanya Grup Tertentu</h4><p>Bot hanya merespon di grup yang Anda pilih di daftar whitelist.</p></div>
+                </div>
+            </div>
         </div>
+        <div class="sti col" id="grpWLWrap" style="display:none">
+            <div style="display:flex;align-items:center;justify-content:space-between;width:100%">
+                <div class="stx"><h4>Daftar Grup yang Diizinkan</h4><p>Pilih grup mana yang boleh bot respon. Daftar diambil dari akun WhatsApp Anda.</p></div>
+                <button class="btn bs bsm" onclick="emit('fetch-groups')"><i class="fas fa-sync"></i> Refresh</button>
+            </div>
+            <div class="grp-wl" id="grpWL">
+                <div class="es" style="padding:20px"><p>Hubungkan WhatsApp terlebih dahulu, lalu klik Refresh.</p></div>
+            </div>
+            <div style="font-size:11px;color:var(--fgd);margin-top:6px" id="grpWLCount">0 grup dipilih</div>
+        </div>
+    </div>
+
+    <div class="ss">
+        <div class="sst"><i class="fas fa-at" style="color:var(--inf)"></i> Tag Mention di Grup</div>
+        <div class="ssd">Jika bot aktif di grup, apakah harus di-tag dulu?</div>
+        <div class="sti"><div class="stx"><h4>Hanya Balas Jika Di-tag</h4><p>Bot hanya membalas jika ada @mention di pesan grup</p></div><label class="ts"><input type="checkbox" id="sGrpTag" onchange="push('groupTagOnly',this.checked)"><div class="tsl"></div></label></div>
     </div>
 
     <div class="ss">
         <div class="sst"><i class="fas fa-hourglass-half" style="color:var(--wrn)"></i> Delay Balasan</div>
-        <div class="ssd">Atur jeda waktu sebelum bot membalas pesan — penting agar terlihat natural</div>
+        <div class="ssd">Jeda sebelum bot membalas — penting agar terlihat natural</div>
         <div class="sti col">
-            <div style="display:flex;align-items:center;justify-content:space-between;width:100%"><div class="stx"><h4>Delay Balasan Utama</h4><p>Jeda dasar sebelum membalas (detik)</p></div></div>
-            <div class="range-wrap" style="width:100%;margin-top:4px">
-                <input type="range" min="0" max="30" step="1" id="sDelay" value="2" oninput="document.getElementById('sDelayV').textContent=this.value+'s';pushSetting('delayReply',+this.value)">
-                <div class="range-val" id="sDelayV">2s</div>
+            <div style="display:flex;align-items:center;justify-content:space-between;width:100%"><div class="stx"><h4>Delay Utama</h4><p>Jeda dasar sebelum membalas (detik)</p></div></div>
+            <div class="rw" style="width:100%;margin-top:4px">
+                <input type="range" min="0" max="30" step="1" id="sDelay" value="2" oninput="document.getElementById('sDelayV').textContent=this.value+'s';push('delayReply',+this.value);updEff()">
+                <div class="rv" id="sDelayV">2s</div>
             </div>
         </div>
-        <div class="sti">
-            <div class="stx"><h4>Delay Acak Tambahan</h4><p>Tambahkan jeda acak agar tidak terlihat robot (0 - max detik)</p></div>
-            <label class="ts"><input type="checkbox" id="sRandDelay" checked onchange="pushSetting('randomDelay',this.checked)"><div class="tsl"></div></label>
-        </div>
-        <div class="sti col" id="randDelayWrap">
-            <div style="display:flex;align-items:center;justify-content:space-between;width:100%"><div class="stx"><h4>Max Delay Acak</h4><p>Batas atas delay acak tambahan (detik)</p></div></div>
-            <div class="range-wrap" style="width:100%;margin-top:4px">
-                <input type="range" min="0" max="10" step="1" id="sRandMax" value="3" oninput="document.getElementById('sRandMaxV').textContent=this.value+'s';pushSetting('randomDelayMax',+this.value)">
-                <div class="range-val" id="sRandMaxV">3s</div>
+        <div class="sti"><div class="stx"><h4>Tambah Delay Acak</h4><p>Agar tidak terlihat robot (0 - max detik)</p></div><label class="ts"><input type="checkbox" id="sRandDelay" checked onchange="push('randomDelay',this.checked);togEl('rdWrap',this.checked);updEff()"><div class="tsl"></div></label></div>
+        <div class="sti col" id="rdWrap">
+            <div style="display:flex;align-items:center;justify-content:space-between;width:100%"><div class="stx"><h4>Max Delay Acak</h4><p>Batas atas tambahan acak (detik)</p></div></div>
+            <div class="rw" style="width:100%;margin-top:4px">
+                <input type="range" min="0" max="10" step="1" id="sRandMax" value="3" oninput="document.getElementById('sRandMaxV').textContent=this.value+'s';push('randomDelayMax',+this.value);updEff()">
+                <div class="rv" id="sRandMaxV">3s</div>
             </div>
         </div>
-        <div class="sti">
-            <div class="stx"><h4>Total Delay Efektif</h4><p>Estimasi: delay utama + acak</p></div>
-            <span style="font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:700;color:var(--acc)" id="effDelay">2 - 5 detik</span>
-        </div>
+        <div class="sti"><div class="stx"><h4>Delay Efektif</h4></div><span style="font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:700;color:var(--acc)" id="effD">2 - 5 detik</span></div>
     </div>
 
     <div class="ss">
-        <div class="sst"><i class="fas fa-shield-alt" style="color:var(--dng)"></i> Rate Limiting & Cooldown</div>
+        <div class="sst"><i class="fas fa-shield-alt" style="color:var(--dng)"></i> Rate Limiting</div>
         <div class="ssd">Cegah spam dan deteksi oleh WhatsApp</div>
-        <div class="sti">
-            <div class="stx"><h4>Cooldown Per Nomor</h4><p>Bot tidak membalas nomor yang sama jika dalam cooldown</p></div>
-            <label class="ts"><input type="checkbox" id="sCooldown" checked onchange="pushSetting('cooldownEnabled',this.checked);toggleEl('cooldownWrap',this.checked)"><div class="tsl"></div></label>
-        </div>
-        <div class="sti col" id="cooldownWrap">
-            <div style="display:flex;align-items:center;justify-content:space-between;width:100%"><div class="stx"><h4>Durasi Cooldown</h4><p>Jeda antar balasan ke nomor yang sama (detik)</p></div></div>
-            <div class="range-wrap" style="width:100%;margin-top:4px">
-                <input type="range" min="5" max="300" step="5" id="sCooldownSec" value="30" oninput="document.getElementById('sCooldownV').textContent=this.value+'s';pushSetting('cooldownSeconds',+this.value)">
-                <div class="range-val" id="sCooldownV">30s</div>
+        <div class="sti"><div class="stx"><h4>Cooldown Per Nomor</h4><p>Tidak membalas nomor yang sama jika dalam cooldown</p></div><label class="ts"><input type="checkbox" id="sCD" checked onchange="push('cooldownEnabled',this.checked);togEl('cdWrap',this.checked)"><div class="tsl"></div></label></div>
+        <div class="sti col" id="cdWrap">
+            <div style="display:flex;align-items:center;justify-content:space-between;width:100%"><div class="stx"><h4>Durasi Cooldown</h4></div></div>
+            <div class="rw" style="width:100%;margin-top:4px">
+                <input type="range" min="5" max="300" step="5" id="sCDS" value="30" oninput="document.getElementById('sCDSV').textContent=this.value+'s';push('cooldownSeconds',+this.value)">
+                <div class="rv" id="sCDSV">30s</div>
             </div>
         </div>
         <div class="sti col">
-            <div style="display:flex;align-items:center;justify-content:space-between;width:100%"><div class="stx"><h4>Max Balasan Per Jam</h4><p>Batas total balasan bot per jam (0 = tanpa batas)</p></div></div>
-            <div class="range-wrap" style="width:100%;margin-top:4px">
-                <input type="range" min="0" max="500" step="10" id="sMaxHr" value="100" oninput="document.getElementById('sMaxHrV').textContent=this.value==0?'Unlimited':this.value;pushSetting('maxRepliesPerHour',+this.value)">
-                <div class="range-val" id="sMaxHrV">100</div>
+            <div style="display:flex;align-items:center;justify-content:space-between;width:100%"><div class="stx"><h4>Max Balasan Per Jam</h4><p>0 = tanpa batas</p></div></div>
+            <div class="rw" style="width:100%;margin-top:4px">
+                <input type="range" min="0" max="500" step="10" id="sMaxHr" value="100" oninput="document.getElementById('sMaxHrV').textContent=this.value==0?'Unlimited':this.value;push('maxRepliesPerHour',+this.value)">
+                <div class="rv" id="sMaxHrV">100</div>
             </div>
         </div>
     </div>
 
     <div class="ss">
-        <div class="sst"><i class="fas fa-robot" style="color:var(--acc)"></i> Perilaku Balasan</div>
+        <div class="sst"><i class="fas fa-robot" style="color:var(--acc)"></i> Perilaku</div>
         <div class="ssd">Kapan dan bagaimana bot membalas</div>
-        <div class="sti"><div class="stx"><h4>Balas Chat Pribadi</h4><p>Aktifkan auto-reply untuk DM</p></div><label class="ts"><input type="checkbox" id="sReplyPriv" checked onchange="pushSetting('replyPrivate',this.checked)"><div class="tsl"></div></label></div>
-        <div class="sti"><div class="stx"><h4>Balas Pesan Grup</h4><p>Aktifkan auto-reply untuk grup</p></div><label class="ts"><input type="checkbox" id="sReplyGrp" checked onchange="pushSetting('replyGroup',this.checked)"><div class="tsl"></div></label></div>
-        <div class="sti"><div class="stx"><h4>Hanya Balas Jika Di-tag di Grup</h4><p>Bot hanya membalas jika ada @mention di grup</p></div><label class="ts"><input type="checkbox" id="sGrpTag" onchange="pushSetting('groupTagOnly',this.checked)"><div class="tsl"></div></label></div>
-        <div class="sti"><div class="stx"><h4>Case-Sensitive</h4><p>Pencocokan kata kunci membedakan huruf besar/kecil</p></div><label class="ts"><input type="checkbox" id="sCase" onchange="pushSetting('caseSensitive',this.checked)"><div class="tsl"></div></label></div>
-        <div class="sti"><div class="stx"><h4>Balas Pesan Media</h4><p>Balas juga pesan berupa gambar/video/stiker (menggunakan aturan khusus)</p></div><label class="ts"><input type="checkbox" id="sReplyMedia" onchange="pushSetting('replyMedia',this.checked)"><div class="tsl"></div></label></div>
+        <div class="sti"><div class="stx"><h4>Balas Chat Pribadi</h4><p>Auto-reply untuk DM</p></div><label class="ts"><input type="checkbox" id="sPriv" checked onchange="push('replyPrivate',this.checked)"><div class="tsl"></div></label></div>
+        <div class="sti"><div class="stx"><h4>Case-Sensitive</h4><p>Bedakan huruf besar/kecil saat cocokkan kata kunci</p></div><label class="ts"><input type="checkbox" id="sCase" onchange="push('caseSensitive',this.checked)"><div class="tsl"></div></label></div>
+        <div class="sti"><div class="stx"><h4>Balas Pesan Media</h4><p>Balasi juga pesan gambar/video/stiker</p></div><label class="ts"><input type="checkbox" id="sMedia" onchange="push('replyMedia',this.checked)"><div class="tsl"></div></label></div>
     </div>
 
     <div class="ss">
-        <div class="sst"><i class="fas fa-font" style="color:var(--inf)"></i> Format Pesan Balasan</div>
-        <div class="ssd">Tambahkan prefix/suffix otomatis di setiap balasan bot</div>
-        <div class="sti"><div class="stx"><h4>Aktifkan Prefix</h4><p>Tambahkan teks di awal setiap balasan</p></div><label class="ts"><input type="checkbox" id="sPreEn" onchange="pushSetting('prefixEnabled',this.checked);toggleEl('preWrap',this.checked)"><div class="tsl"></div></label></div>
-        <div class="sti" id="preWrap" style="display:none"><div class="stx"><h4>Teks Prefix</h4></div><input class="fi" style="width:200px" id="sPreTxt" value="[BOT] " onchange="pushSetting('prefixText',this.value)"></div>
-        <div class="sti"><div class="stx"><h4>Aktifkan Suffix</h4><p>Tambahkan teks di akhir setiap balasan</p></div><label class="ts"><input type="checkbox" id="sSufEn" onchange="pushSetting('suffixEnabled',this.checked);toggleEl('sufWrap',this.checked)"><div class="tsl"></div></label></div>
-        <div class="sti" id="sufWrap" style="display:none"><div class="stx"><h4>Teks Suffix</h4></div><input class="fi" style="width:200px" id="sSufTxt" value="" onchange="pushSetting('suffixText',this.value)"></div>
-        <div class="sti col"><div class="stx"><h4>Preview Format</h4><p>Contoh tampilan balasan bot</p></div><div style="background:var(--bg);border:1px solid var(--brd);border-radius:var(--rs);padding:10px;font-size:13px;color:var(--acc);font-family:'JetBrains Mono',monospace;margin-top:4px" id="fmtPreview">[BOT] Halo! Ada yang bisa dibantu?</div></div>
+        <div class="sst"><i class="fas fa-font" style="color:var(--inf)"></i> Format Balasan</div>
+        <div class="ssd">Prefix/suffix otomatis di setiap balasan</div>
+        <div class="sti"><div class="stx"><h4>Aktifkan Prefix</h4></div><label class="ts"><input type="checkbox" id="sPreEn" onchange="push('prefixEnabled',this.checked);togEl('preW',this.checked);updFmt()"><div class="tsl"></div></label></div>
+        <div class="sti" id="preW" style="display:none"><div class="stx"><h4>Teks Prefix</h4></div><input class="fi" style="width:200px" id="sPreTxt" value="[BOT] " onchange="push('prefixText',this.value);updFmt()"></div>
+        <div class="sti"><div class="stx"><h4>Aktifkan Suffix</h4></div><label class="ts"><input type="checkbox" id="sSufEn" onchange="push('suffixEnabled',this.checked);togEl('sufW',this.checked);updFmt()"><div class="tsl"></div></label></div>
+        <div class="sti" id="sufW" style="display:none"><div class="stx"><h4>Teks Suffix</h4></div><input class="fi" style="width:200px" id="sSufTxt" value="" onchange="push('suffixText',this.value);updFmt()"></div>
+        <div class="sti col"><div class="stx"><h4>Preview</h4></div><div style="background:var(--bg);border:1px solid var(--brd);border-radius:var(--rs);padding:10px;font-size:13px;color:var(--acc);font-family:'JetBrains Mono',monospace;margin-top:4px" id="fmtP">Halo! Ada yang bisa dibantu?</div></div>
     </div>
 
     <div class="ss">
         <div class="sst"><i class="fas fa-comment-dots" style="color:var(--acc)"></i> Pesan Default</div>
-        <div class="ssd">Dikirim saat tidak ada aturan yang cocok</div>
-        <div class="sti"><div class="stx"><h4>Aktifkan Pesan Default</h4><p>Kirim pesan default jika tidak ada aturan cocok</p></div><label class="ts"><input type="checkbox" id="sDefEn" checked onchange="pushSetting('defaultReplyEnabled',this.checked);toggleEl('defWrap',this.checked)"><div class="tsl"></div></label></div>
-        <div class="sti col" id="defWrap"><textarea class="ft" id="sDefTxt" rows="3" onchange="pushSetting('defaultReplyText',this.value)">Terima kasih telah menghubungi kami. Pesan Anda akan segera diproses. Jam operasional: Senin-Jumat, 08.00-17.00 WIB.</textarea></div>
+        <div class="ssd">Dikirim jika tidak ada aturan yang cocok</div>
+        <div class="sti"><div class="stx"><h4>Aktifkan</h4></div><label class="ts"><input type="checkbox" id="sDefEn" checked onchange="push('defaultReplyEnabled',this.checked);togEl('defW',this.checked)"><div class="tsl"></div></label></div>
+        <div class="sti col" id="defW"><textarea class="ft" id="sDefTxt" rows="3" onchange="push('defaultReplyText',this.value)">Terima kasih telah menghubungi kami. Pesan Anda akan segera diproses. Jam operasional: Senin-Jumat, 08.00-17.00 WIB.</textarea></div>
     </div>
 
     <div class="ss">
-        <div class="sst"><i class="fas fa-ban" style="color:var(--dng)"></i> Blacklist</div>
-        <div class="ssd">Nomor yang tidak akan dibalas oleh bot</div>
+        <div class="sst"><i class="fas fa-ban" style="color:var(--dng)"></i> Blacklist Nomor</div>
+        <div class="ssd">Nomor yang TIDAK akan dibalas bot</div>
         <div class="sti col">
             <div style="display:flex;gap:8px;width:100%">
-                <input class="fi" id="blInput" placeholder="Masukkan nomor, contoh: 6281234567890" style="flex:1">
+                <input class="fi" id="blIn" placeholder="6281234567890" style="flex:1">
                 <button class="btn bd bsm" onclick="addBL()"><i class="fas fa-plus"></i> Tambah</button>
             </div>
             <div class="bl-list" id="blList"></div>
@@ -413,12 +392,12 @@
     </div>
 
     <div style="display:flex;gap:8px;margin-top:8px">
-        <button class="btn bp" onclick="saveAllSettings()"><i class="fas fa-save"></i> Simpan Semua Pengaturan</button>
-        <button class="btn bs" onclick="loadSettings()"><i class="fas fa-sync"></i> Muat Ulang dari Backend</button>
+        <button class="btn bp" onclick="saveAll()"><i class="fas fa-save"></i> Simpan Semua</button>
+        <button class="btn bs" onclick="emit('get-settings')"><i class="fas fa-sync"></i> Muat dari Backend</button>
     </div>
 </div>
 
-<!-- ===== AUTO-REPLY ===== -->
+<!-- AUTO-REPLY -->
 <div class="pg" id="pg-autoreply">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;flex-wrap:wrap;gap:8px">
         <p style="font-size:13px;color:var(--fgm)">Aturan balasan otomatis berdasarkan kata kunci</p>
@@ -427,49 +406,35 @@
     <div id="ruleList"></div>
 </div>
 
-<!-- ===== JADWAL ===== -->
+<!-- JADWAL -->
 <div class="pg" id="pg-schedule">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;flex-wrap:wrap;gap:8px">
-        <p style="font-size:13px;color:var(--fgm)">Pesan yang dikirim otomatis pada waktu tertentu</p>
+        <p style="font-size:13px;color:var(--fgm)">Pesan otomatis pada waktu tertentu</p>
         <button class="btn bp" onclick="openM('schedM')"><i class="fas fa-plus"></i> Jadwalkan Pesan</button>
     </div>
     <div id="schedList"></div>
 </div>
 
-<!-- ===== DASHBOARD ===== -->
+<!-- DASHBOARD -->
 <div class="pg" id="pg-dashboard">
     <div class="sg">
-        <div class="sc g"><div class="si g"><i class="fas fa-paper-plane"></i></div><div class="sv" id="stS">0</div><div class="sl">Terkirim</div><div class="sch up"><i class="fas fa-arrow-up"></i> 12.5%</div></div>
-        <div class="sc b"><div class="si b"><i class="fas fa-inbox"></i></div><div class="sv" id="stR">0</div><div class="sl">Diterima</div><div class="sch up"><i class="fas fa-arrow-up"></i> 8.2%</div></div>
-        <div class="sc o"><div class="si o"><i class="fas fa-robot"></i></div><div class="sv" id="stA">0</div><div class="sl">Auto-Reply</div><div class="sch up"><i class="fas fa-arrow-up"></i> 15.3%</div></div>
-        <div class="sc r"><div class="si r"><i class="fas fa-exclamation-triangle"></i></div><div class="sv" id="stE">0</div><div class="sl">Error</div><div class="sch dn"><i class="fas fa-arrow-down"></i> 23%</div></div>
+        <div class="sc g"><div class="si g"><i class="fas fa-paper-plane"></i></div><div class="sv" id="stS">0</div><div class="sl">Terkirim</div></div>
+        <div class="sc b"><div class="si b"><i class="fas fa-inbox"></i></div><div class="sv" id="stR">0</div><div class="sl">Diterima</div></div>
+        <div class="sc o"><div class="si o"><i class="fas fa-robot"></i></div><div class="sv" id="stA">0</div><div class="sl">Auto-Reply</div></div>
+        <div class="sc r"><div class="si r"><i class="fas fa-exclamation-triangle"></i></div><div class="sv" id="stE">0</div><div class="sl">Error</div></div>
     </div>
-    <div class="g3"><div class="cd"><div class="cdh"><span class="cdt">Aktivitas 7 Hari</span><div class="tabs"><button class="tb act" onclick="uchart('week',this)">Minggu</button><button class="tb" onclick="uchart('month',this)">Bulan</button></div></div><canvas id="aChart" height="230"></canvas></div><div class="cd"><div class="cdh"><span class="cdt">Top Kata Kunci</span></div><div id="topKw"></div></div></div>
-    <div class="cd"><div class="cdh"><span class="cdt">Aktivitas Terbaru</span><button class="btn bs bsm" onclick="go('logs',document.querySelector('[data-p=logs]'))">Lihat Semua <i class="fas fa-arrow-right"></i></button></div><div class="tw"><table><thead><tr><th>Pengirim</th><th>Pesan</th><th>Respon</th><th>Waktu</th><th>Status</th></tr></thead><tbody id="recTbl"></tbody></table></div></div>
+    <div class="g3"><div class="cd"><div class="cdh"><span class="cdt">Aktivitas 7 Hari</span><div class="tabs"><button class="tbtn act" onclick="uchart('week',this)">Minggu</button><button class="tbtn" onclick="uchart('month',this)">Bulan</button></div></div><canvas id="aChart" height="230"></canvas></div><div class="cd"><div class="cdh"><span class="cdt">Top Kata Kunci</span></div><div id="topKw"></div></div></div>
+    <div class="cd"><div class="cdh"><span class="cdt">Terbaru</span><button class="btn bs bsm" onclick="go('logs',document.querySelector('[data-p=logs]'))">Lihat Semua <i class="fas fa-arrow-right"></i></button></div><div class="tw"><table><thead><tr><th>Pengirim</th><th>Pesan</th><th>Respon</th><th>Waktu</th><th>Status</th></tr></thead><tbody id="recTbl"></tbody></table></div></div>
 </div>
 
-<!-- ===== LOGS ===== -->
+<!-- LOGS -->
 <div class="pg" id="pg-logs">
     <div style="display:flex;align-items:center;gap:10px;margin-bottom:18px;flex-wrap:wrap">
-        <div class="sbx" style="flex:1;min-width:180px"><i class="fas fa-search"></i><input class="fi" placeholder="Cari log..." id="logS" oninput="fLogs()"></div>
-        <select class="fs" style="width:140px" id="logF" onchange="fLogs()"><option value="all">Semua</option><option value="replied">Dibalas</option><option value="missed">Missed</option><option value="error">Error</option></select>
+        <div class="sbx" style="flex:1;min-width:180px"><i class="fas fa-search"></i><input class="fi" placeholder="Cari..." id="logS" oninput="fLogs()"></div>
+        <select class="fs" style="width:130px" id="logF" onchange="fLogs()"><option value="all">Semua</option><option value="replied">Dibalas</option><option value="missed">Missed</option></select>
         <button class="btn bs bsm" onclick="clrLogs()"><i class="fas fa-trash"></i> Hapus</button>
     </div>
     <div class="cd"><div class="tw"><table><thead><tr><th>Waktu</th><th>Pengirim</th><th>Pesan</th><th>Balasan</th><th>Aturan</th><th>Status</th></tr></thead><tbody id="logTbl"></tbody></table></div></div>
-</div>
-
-<!-- ===== KONTAK ===== -->
-<div class="pg" id="pg-contacts">
-    <div style="display:flex;align-items:center;gap:10px;margin-bottom:18px;flex-wrap:wrap">
-        <div class="sbx" style="flex:1;min-width:180px"><i class="fas fa-search"></i><input class="fi" placeholder="Cari kontak..." id="ctS" oninput="fCt()"></div>
-    </div>
-    <div class="cd"><div id="ctList"></div></div>
-</div>
-
-<!-- ===== GRUP ===== -->
-<div class="pg" id="pg-groups">
-    <div style="margin-bottom:18px"><p style="font-size:13px;color:var(--fgm)">Grup yang dipantau bot</p></div>
-    <div id="grpList"></div>
 </div>
 
         </div>
@@ -477,203 +442,96 @@
 </div>
 
 <!-- MODALS -->
-<div class="mo" id="ruleM"><div class="md"><div class="mdh"><span class="mdt" id="ruleMT">Tambah Aturan</span><button class="mdc" onclick="clM('ruleM')"><i class="fas fa-times"></i></button></div><div class="mdb"><div class="fg"><label class="fl">Nama Aturan</label><input class="fi" id="rN" placeholder="Sapaan Pelanggan"></div><div class="fg"><label class="fl">Tipe Pencocokan</label><select class="fs" id="rMT"><option value="contains">Mengandung kata</option><option value="exact">Persis sama</option><option value="startswith">Dimulai dengan</option><option value="regex">Regex</option></select></div><div class="fg"><label class="fl">Kata Kunci (koma)</label><input class="fi" id="rKW" placeholder="halo, hai, pagi"></div><div class="fg"><label class="fl">Pesan Balasan</label><textarea class="ft" id="rRP" rows="4" placeholder="Tulis balasan..."></textarea></div><div class="fr"><div class="fg"><label class="fl">Prioritas</label><select class="fs" id="rPR"><option value="normal">Normal</option><option value="high">Tinggi</option><option value="low">Rendah</option></select></div><div class="fg"><label class="fl">Status</label><select class="fs" id="rST"><option value="active">Aktif</option><option value="paused">Jeda</option></select></div></div></div><div class="mdf"><button class="btn bs" onclick="clM('ruleM')">Batal</button><button class="btn bp" onclick="saveRule()"><i class="fas fa-save"></i> Simpan</button></div></div></div>
-
-<div class="mo" id="schedM"><div class="md"><div class="mdh"><span class="mdt">Jadwalkan Pesan</span><button class="mdc" onclick="clM('schedM')"><i class="fas fa-times"></i></button></div><div class="mdb"><div class="fg"><label class="fl">Nama</label><input class="fi" id="scN" placeholder="Reminder Meeting"></div><div class="fg"><label class="fl">Target</label><select class="fs" id="scT"><option value="all">Semua Kontak</option></select></div><div class="fr"><div class="fg"><label class="fl">Tanggal</label><input class="fi" type="date" id="scD"></div><div class="fg"><label class="fl">Waktu</label><input class="fi" type="time" id="scTm" value="09:00"></div></div><div class="fg"><label class="fl">Ulangi</label><select class="fs" id="scR"><option value="none">Sekali</option><option value="daily">Harian</option><option value="weekly">Mingguan</option><option value="monthly">Bulanan</option></select></div><div class="fg"><label class="fl">Isi Pesan</label><textarea class="ft" id="scM" rows="4" placeholder="Pesan..."></textarea></div></div><div class="mdf"><button class="btn bs" onclick="clM('schedM')">Batal</button><button class="btn bp" onclick="saveSched()"><i class="fas fa-save"></i> Simpan</button></div></div></div>
+<div class="mo" id="ruleM"><div class="md"><div class="mdh"><span class="mdt" id="ruleMT">Tambah Aturan</span><button class="mdc" onclick="clM('ruleM')"><i class="fas fa-times"></i></button></div><div class="mdb"><div class="fg"><label class="fl">Nama Aturan</label><input class="fi" id="rN" placeholder="Sapaan"></div><div class="fg"><label class="fl">Tipe Pencocokan</label><select class="fs" id="rMT"><option value="contains">Mengandung kata</option><option value="exact">Persis sama</option><option value="startswith">Dimulai dengan</option><option value="regex">Regex</option></select></div><div class="fg"><label class="fl">Kata Kunci (koma)</label><input class="fi" id="rKW" placeholder="halo, hai, pagi"></div><div class="fg"><label class="fl">Pesan Balasan</label><textarea class="ft" id="rRP" rows="4"></textarea></div><div class="fr"><div class="fg"><label class="fl">Prioritas</label><select class="fs" id="rPR"><option value="normal">Normal</option><option value="high">Tinggi</option><option value="low">Rendah</option></select></div><div class="fg"><label class="fl">Status</label><select class="fs" id="rST"><option value="active">Aktif</option><option value="paused">Jeda</option></select></div></div></div><div class="mdf"><button class="btn bs" onclick="clM('ruleM')">Batal</button><button class="btn bp" onclick="saveRule()"><i class="fas fa-save"></i> Simpan</button></div></div></div>
+<div class="mo" id="schedM"><div class="md"><div class="mdh"><span class="mdt">Jadwalkan Pesan</span><button class="mdc" onclick="clM('schedM')"><i class="fas fa-times"></i></button></div><div class="mdb"><div class="fg"><label class="fl">Nama</label><input class="fi" id="scN" placeholder="Reminder"></div><div class="fg"><label class="fl">Target</label><select class="fs" id="scT"><option value="all">Semua Kontak</option></select></div><div class="fr"><div class="fg"><label class="fl">Tanggal</label><input class="fi" type="date" id="scD"></div><div class="fg"><label class="fl">Waktu</label><input class="fi" type="time" id="scTm" value="09:00"></div></div><div class="fg"><label class="fl">Ulangi</label><select class="fs" id="scR"><option value="none">Sekali</option><option value="daily">Harian</option><option value="weekly">Mingguan</option><option value="monthly">Bulanan</option></select></div><div class="fg"><label class="fl">Isi Pesan</label><textarea class="ft" id="scM" rows="4"></textarea></div></div><div class="mdf"><button class="btn bs" onclick="clM('schedM')">Batal</button><button class="btn bp" onclick="saveSched()"><i class="fas fa-save"></i> Simpan</button></div></div></div>
 
 <div class="tc" id="tC"></div>
 
 <script>
-// ==================== STATE ====================
-let botOn=false, waConn=false, realMode=false, editId=null, connT=null, upI=null;
-let sock=null;
-
-// Settings (default, akan di-overwrite oleh backend)
+let botOn=false,waConn=false,realMode=false,editId=null,connT=null,upI=null,sock=null;
 let S={
-    botName:'WABot Assistant',botPhone:'+62 812-xxxx-7890',timezone:'WIB',
+    botName:'WABot Assistant',timezone:'WIB',
     delayReply:2,randomDelay:true,randomDelayMax:3,
     cooldownEnabled:true,cooldownSeconds:30,maxRepliesPerHour:100,
-    replyPrivate:true,replyGroup:true,groupTagOnly:false,caseSensitive:false,replyMedia:false,
+    replyPrivate:true,groupMode:'none',groupWhitelist:[],groupTagOnly:false,
+    caseSensitive:false,replyMedia:false,
     prefixEnabled:false,prefixText:'[BOT] ',suffixEnabled:false,suffixText:'',
-    defaultReplyEnabled:true,defaultReplyText:'Terima kasih telah menghubungi kami. Pesan Anda akan segera diproses. Jam operasional: Senin-Jumat, 08.00-17.00 WIB.',
-    whitelistMode:false,blacklist:[]
+    defaultReplyEnabled:true,defaultReplyText:'Terima kasih telah menghubungi kami. Pesan Anda akan segera diproses.',
+    blacklist:[]
 };
+let rules=[{id:1,name:'Sapaan',matchType:'contains',keywords:['halo','hai','selamat pagi','selamat siang','selamat malam'],reply:'Halo! Terima kasih telah menghubungi kami. Ada yang bisa kami bantu?',priority:'high',status:'active',triggerCount:0},{id:2,name:'Info Harga',matchType:'contains',keywords:['harga','biaya','ongkir'],reply:'Untuk info harga, silakan hubungi tim sales kami.',priority:'normal',status:'active',triggerCount:0},{id:3,name:'Cek Pesanan',matchType:'contains',keywords:['pesanan','order','status','tracking'],reply:'Kirim nomor pesanan (INV-xxxxx) untuk cek status.',priority:'normal',status:'active',triggerCount:0},{id:4,name:'Komplain',matchType:'contains',keywords:['komplain','keluhan','rusak','salah'],reply:'Mohon maaf. Tim kami akan menindaklanjuti. Sertakan foto dan nomor pesanan.',priority:'high',status:'active',triggerCount:0},{id:5,name:'Terima Kasih',matchType:'contains',keywords:['terima kasih','makasih','thanks'],reply:'Sama-sama! Senang bisa membantu.',priority:'low',status:'active',triggerCount:0}];
+let schedules=[],logs=[],waGroups=[];
 
-let rules=[
-    {id:1,name:'Sapaan',matchType:'contains',keywords:['halo','hai','selamat pagi','selamat siang','selamat malam'],reply:'Halo! Terima kasih telah menghubungi kami. Ada yang bisa kami bantu?',priority:'high',status:'active',triggerCount:0},
-    {id:2,name:'Info Harga',matchType:'contains',keywords:['harga','biaya','ongkir','murah'],reply:'Untuk info harga, silakan kunjungi katalog kami atau hubungi tim sales.',priority:'normal',status:'active',triggerCount:0},
-    {id:3,name:'Cek Pesanan',matchType:'contains',keywords:['pesanan','order','status','tracking'],reply:'Untuk cek status pesanan, kirim nomor pesanan (INV-xxxxx).',priority:'normal',status:'active',triggerCount:0},
-    {id:4,name:'Komplain',matchType:'contains',keywords:['komplain','keluhan','rusak','salah'],reply:'Mohon maaf atas ketidaknyamanan. Tim kami akan menindaklanjuti. Sertakan foto dan nomor pesanan.',priority:'high',status:'active',triggerCount:0},
-    {id:5,name:'Terima Kasih',matchType:'contains',keywords:['terima kasih','makasih','thanks','thx'],reply:'Sama-sama! Senang bisa membantu.',priority:'low',status:'active',triggerCount:0}
-];
-let schedules=[],logs=[],contacts=[],groups=[];
-let hourlyReplyCount=0;
-let cooldownMap={};// phone -> timestamp
+function initWS(){try{sock=io({transports:['websocket','polling'],timeout:8000,reconnection:true,reconnectionAttempts:10,reconnectionDelay:3000});sock.on('connect',()=>{realMode=true;updMode();sock.emit('get-settings');sock.emit('get-rules');sock.emit('get-logs');sock.emit('get-schedules')});sock.on('disconnect',()=>{realMode=false;updMode()});sock.on('connect_error',()=>{realMode=false;updMode()});
+sock.on('settings-updated',d=>{S={...S,...d};applyS();toast('Pengaturan diterima','s')});
+sock.on('rules-updated',d=>{rules=d;renderRules();document.getElementById('rc').textContent=d.length});
+sock.on('logs-updated',d=>{logs=d;renderLogs();renderRecent()});
+sock.on('schedules-updated',d=>{schedules=d;renderScheds()});
+sock.on('groups-list',d=>{waGroups=d;renderGrpWL()});
+sock.on('wa-qr',d=>{if(d.qr){const c=document.getElementById('qrCvs'),x=c.getContext('2d'),img=new Image();img.onload=()=>{c.width=280;c.height=280;x.drawImage(img,0,0,280,280)};img.src=d.qr}document.getElementById('qrOv').style.display='none'});
+sock.on('wa-status',d=>{const b=document.getElementById('cbanner'),i=b.querySelector('.ci2'),t=document.getElementById('ctitle'),ds=document.getElementById('cdesc');if(d.status==='connected'){b.className='cb2 ok';i.innerHTML='<i class="fas fa-link"></i>';t.textContent='Terhubung';ds.textContent='Bot siap menerima pesan';document.getElementById('qrOv').style.display='flex';document.getElementById('qrOv').querySelector('span').textContent='Terhubung!';document.getElementById('btnQR').style.display='none';document.getElementById('cpInfo').classList.add('sh');waConn=true;connT=Date.now();startUp();toast('WhatsApp terhubung!','s');emit('fetch-groups')}else if(d.status==='qr-ready'){b.className='cb2 conn';i.innerHTML='<i class="fas fa-qrcode"></i>';t.textContent='QR Siap';ds.textContent='Scan dengan WhatsApp'}else if(d.status==='reconnecting'){b.className='cb2 conn';i.innerHTML='<i class="fas fa-spinner fa-spin"></i>';t.textContent='Reconnecting...';ds.textContent=''}else{b.className='cb2 disc';i.innerHTML='<i class="fas fa-unlink"></i>';t.textContent='Tidak Terhubung';ds.textContent=d.reason||''}});
+sock.on('wa-message',l=>{logs.unshift(l);if(logs.length>500)logs=logs.slice(0,500);const r=parseInt(document.getElementById('stR').textContent.replace(/,/g,''))+1;document.getElementById('stR').textContent=r.toLocaleString();if(l.status==='replied'){document.getElementById('stS').textContent=(parseInt(document.getElementById('stS').textContent.replace(/,/g,''))+1).toLocaleString();document.getElementById('stA').textContent=(parseInt(document.getElementById('stA').textContent.replace(/,/g,''))+1).toLocaleString();document.getElementById('cpReply').textContent=parseInt(document.getElementById('cpReply').textContent)+1}document.getElementById('cpMsg').textContent=parseInt(document.getElementById('cpMsg').textContent)+1;const ap=document.querySelector('.pg.act');if(ap&&ap.id==='pg-logs')fLogs();if(ap&&ap.id==='pg-dashboard')renderRecent()});
+sock.on('schedule-sent',d=>toast(`Jadwal "${d.name}" terkirim`,'s'))}catch(e){realMode=false;updMode()}}
+function updMode(){const b=document.getElementById('modeBar'),t=document.getElementById('modeTxt'),w=document.getElementById('wsStat'),m=document.getElementById('modeLabel');if(realMode){b.className='csb real';t.textContent='Backend OK';w.textContent='Terhubung';w.className='tg g';m.textContent='Terhubung ke backend — semua perubahan langsung berlaku'}else{b.className='csb off';t.textContent='Offline';w.textContent='Tidak Terhubung';w.className='tg r';m.textContent='Backend tidak terdeteksi — mode offline'}}
+function emit(ev,d){if(realMode&&sock&&sock.connected)sock.emit(ev,d)}
+function push(k,v){S[k]=v;emit('update-setting',{key:k,value:v})}
+function saveAll(){emit('update-settings',S);toast('Semua pengaturan dikirim','s')}
+function applyS(){const m={sDelay:S.delayReply,sRandDelay:S.randomDelay,sRandMax:S.randomDelayMax,sCD:S.cooldownEnabled,sCDS:S.cooldownSeconds,sMaxHr:S.maxRepliesPerHour,sPriv:S.replyPrivate,sCase:S.caseSensitive,sMedia:S.replyMedia,sGrpTag:S.groupTagOnly,sPreEn:S.prefixEnabled,sPreTxt:S.prefixText,sSufEn:S.suffixEnabled,sSufTxt:S.suffixText,sDefEn:S.defaultReplyEnabled,sDefTxt:S.defaultReplyText};for(const[id,v]of Object.entries(m)){const el=document.getElementById(id);if(!el)continue;if(el.type==='checkbox')el.checked=v;else el.value=v}document.getElementById('sDelayV').textContent=S.delayReply+'s';document.getElementById('sRandMaxV').textContent=S.randomDelayMax+'s';document.getElementById('sCDSV').textContent=S.cooldownSeconds+'s';document.getElementById('sMaxHrV').textContent=S.maxRepliesPerHour==0?'Unlimited':S.maxRepliesPerHour;togEl('rdWrap',S.randomDelay);togEl('cdWrap',S.cooldownEnabled);togEl('preW',S.prefixEnabled);togEl('sufW',S.suffixEnabled);togEl('defW',S.defaultReplyEnabled);updEff();updFmt();renderBL();applyGrpMode()}
+function updEff(){const mn=S.delayReply,mx=S.randomDelay?S.delayReply+S.randomDelayMax:S.delayReply;document.getElementById('effD').textContent=mn===mx?mn+' detik':mn+' - '+mx+' detik'}
+function updFmt(){let t='Halo! Ada yang bisa dibantu?';if(S.prefixEnabled)t=S.prefixText+t;if(S.suffixEnabled&&S.suffixText)t=t+S.suffixText;document.getElementById('fmtP').textContent=t}
+function togEl(id,show){const e=document.getElementById(id);if(e)e.style.display=show?'':'none'}
 
-// ==================== WEBSOCKET ====================
-function initWS(){
-    try{
-        sock=io({transports:['websocket','polling'],timeout:8000,reconnection:true,reconnectionAttempts:10,reconnectionDelay:3000});
-        sock.on('connect',()=>{realMode=true;updMode();sock.emit('get-settings');sock.emit('get-rules');sock.emit('get-logs');sock.emit('get-schedules')});
-        sock.on('disconnect',()=>{realMode=false;updMode()});
-        sock.on('connect_error',()=>{realMode=false;updMode()});
-
-        sock.on('settings-updated',d=>{S={...S,...d};applySettings();toast('Pengaturan diterima dari backend','s')});
-        sock.on('rules-updated',d=>{rules=d;renderRules();document.getElementById('rc').textContent=d.length});
-        sock.on('logs-updated',d=>{logs=d;renderLogs();renderRecent()});
-        sock.on('schedules-updated',d=>{schedules=d;renderScheds()});
-
-        sock.on('wa-qr',d=>{
-            if(d.qr){const c=document.getElementById('qrCvs'),ctx=c.getContext('2d'),img=new Image();img.onload=()=>{c.width=280;c.height=280;ctx.drawImage(img,0,0,280,280)};img.src=d.qr}
-            document.getElementById('qrOv').style.display='none';
-        });
-        sock.on('wa-status',d=>{
-            const b=document.getElementById('cbanner'),i=b.querySelector('.csi2'),t=document.getElementById('ctitle'),ds=document.getElementById('cdesc');
-            if(d.status==='connected'){
-                b.className='csb2 ok';i.innerHTML='<i class="fas fa-link"></i>';t.textContent='Terhubung ke WhatsApp';ds.textContent='Bot siap menerima dan membalas pesan';
-                document.getElementById('qrOv').style.display='flex';document.getElementById('qrOv').querySelector('span').textContent='Terhubung!';
-                document.getElementById('btnQR').style.display='none';document.getElementById('cpInfo').classList.add('sh');
-                waConn=true;connT=Date.now();startUp();toast('WhatsApp terhubung!','s');
-            }else if(d.status==='qr-ready'){
-                b.className='csb2 conn';i.innerHTML='<i class="fas fa-qrcode"></i>';t.textContent='QR Code Siap';ds.textContent='Scan dengan WhatsApp Anda';
-            }else if(d.status==='reconnecting'){
-                b.className='csb2 conn';i.innerHTML='<i class="fas fa-spinner fa-spin"></i>';t.textContent='Reconnecting...';ds.textContent='';
-            }else{
-                b.className='csb2 disc';i.innerHTML='<i class="fas fa-unlink"></i>';t.textContent='Tidak Terhubung';ds.textContent=d.reason||'';
-            }
-        });
-        sock.on('wa-message',l=>{
-            logs.unshift(l);if(logs.length>500)logs=logs.slice(0,500);
-            const r=parseInt(document.getElementById('stR').textContent.replace(/,/g,''))+1;
-            document.getElementById('stR').textContent=r.toLocaleString();
-            if(l.status==='replied'){document.getElementById('stS').textContent=(parseInt(document.getElementById('stS').textContent.replace(/,/g,''))+1).toLocaleString();document.getElementById('stA').textContent=(parseInt(document.getElementById('stA').textContent.replace(/,/g,''))+1).toLocaleString();document.getElementById('cpReply').textContent=parseInt(document.getElementById('cpReply').textContent)+1}
-            document.getElementById('cpMsg').textContent=parseInt(document.getElementById('cpMsg').textContent)+1;
-            const ap=document.querySelector('.pg.act');
-            if(ap&&ap.id==='pg-logs')fLogs();if(ap&&ap.id==='pg-dashboard')renderRecent();
-        });
-        sock.on('schedule-sent',d=>toast(`Jadwal "${d.name}" terkirim`,'s'));
-    }catch(e){realMode=false;updMode()}
-}
-
-function updMode(){
-    const bar=document.getElementById('modeBar'),txt=document.getElementById('modeTxt'),ws=document.getElementById('wsStat'),ml=document.getElementById('modeLabel');
-    if(realMode){bar.className='csb real';txt.textContent='Backend terhubung';ws.textContent='Terhubung';ws.className='tg g';ml.textContent='Terhubung ke backend — semua perubahan langsung berlaku'}
-    else{bar.className='csb off';txt.textContent='Backend offline';ws.textContent='Tidak Terhubung';ws.className='tg r';ml.textContent='Backend tidak terdeteksi — mode offline (perubahan disimpan lokal saja)'}
-}
-
-function emit(ev,data){if(realMode&&sock&&sock.connected)sock.emit(ev,data)}
-
-// ==================== SETTINGS ====================
-function pushSetting(k,v){S[k]=v;emit('update-setting',{key:k,value:v});updEffDelay();updFmtPreview()}
-function saveAllSettings(){emit('update-settings',S);toast('Semua pengaturan dikirim ke backend','s')}
-function loadSettings(){emit('get-settings');toast('Memuat pengaturan dari backend...','w')}
-
-function applySettings(){
-    const m={
-        sBotName:S.botName,sBotPhone:S.botPhone,sTimezone:S.timezone,
-        sDelay:S.delayReply,sRandDelay:S.randomDelay,sRandMax:S.randomDelayMax,
-        sCooldown:S.cooldownEnabled,sCooldownSec:S.cooldownSeconds,sMaxHr:S.maxRepliesPerHour,
-        sReplyPriv:S.replyPrivate,sReplyGrp:S.replyGroup,sGrpTag:S.groupTagOnly,sCase:S.caseSensitive,sReplyMedia:S.replyMedia,
-        sPreEn:S.prefixEnabled,sPreTxt:S.prefixText,sSufEn:S.suffixEnabled,sSufTxt:S.suffixText,
-        sDefEn:S.defaultReplyEnabled,sDefTxt:S.defaultReplyText
-    };
-    for(const[id,v]of Object.entries(m)){
-        const el=document.getElementById(id);if(!el)continue;
-        if(el.type==='checkbox')el.checked=v;else el.value=v;
-    }
-    document.getElementById('sDelayV').textContent=S.delayReply+'s';
-    document.getElementById('sRandMaxV').textContent=S.randomDelayMax+'s';
-    document.getElementById('sCooldownV').textContent=S.cooldownSeconds+'s';
-    document.getElementById('sMaxHrV').textContent=S.maxRepliesPerHour==0?'Unlimited':S.maxRepliesPerHour;
-    toggleEl('randDelayWrap',S.randomDelay);toggleEl('cooldownWrap',S.cooldownEnabled);
-    toggleEl('preWrap',S.prefixEnabled);toggleEl('sufWrap',S.suffixEnabled);toggleEl('defWrap',S.defaultReplyEnabled);
-    updEffDelay();updFmtPreview();renderBL();
-}
-function updEffDelay(){
-    const mn=S.delayReply,mx=S.randomDelay?S.delayReply+S.randomDelayMax:S.delayReply;
-    document.getElementById('effDelay').textContent=mn===mx?mn+' detik':mn+' - '+mx+' detik';
-}
-function updFmtPreview(){
-    let t='Halo! Ada yang bisa dibantu?';
-    if(S.prefixEnabled)t=S.prefixText+t;if(S.suffixEnabled&&S.suffixText)t=t+S.suffixText;
-    document.getElementById('fmtPreview').textContent=t;
-}
-function toggleEl(id,show){const e=document.getElementById(id);if(e)e.style.display=show?'':'none'}
+// Grup mode
+function setGrpMode(mode,el){document.querySelectorAll('#grpMode .radio-item').forEach(r=>r.classList.remove('sel'));el.classList.add('sel');S.groupMode=mode;emit('update-setting',{key:'groupMode',value:mode});togEl('grpWLWrap',mode==='whitelist');if(mode==='whitelist')emit('fetch-groups');toast(mode==='none'?'Bot tidak akan merespon grup':mode==='all'?'Bot merespon semua grup':'Mode whitelist grup','s')}
+function applyGrpMode(){document.querySelectorAll('#grpMode .radio-item').forEach(r=>{r.classList.toggle('sel',r.querySelector('input').value===S.groupMode)});togEl('grpWLWrap',S.groupMode==='whitelist')}
+function renderGrpWL(){const c=document.getElementById('grpWL');if(!waGroups.length){c.innerHTML='<div class="es" style="padding:20px"><p>Tidak ada grup ditemukan. Pastikan WhatsApp terhubung lalu klik Refresh.</p></div>';return}c.innerHTML=waGroups.map(g=>{const jid=g.id;const checked=S.groupWhitelist.includes(jid)?'checked':'';return`<div class="grp-wl-item"><label><input type="checkbox" ${checked} onchange="togGrpWL('${jid}',this.checked)"><span>${g.subject||'Grup Tanpa Nama'}</span></label><span class="grp-meta">${g.participants?g.participants.length:'?'} anggota</span></div>`}).join('');updGrpWLCount()}
+function togGrpWL(jid,checked){if(checked){if(!S.groupWhitelist.includes(jid))S.groupWhitelist.push(jid)}else{S.groupWhitelist=S.groupWhitelist.filter(x=>x!==jid)}emit('update-setting',{key:'groupWhitelist',value:S.groupWhitelist});updGrpWLCount()}
+function updGrpWLCount(){document.getElementById('grpWLCount').textContent=S.groupWhitelist.length+' grup dipilih'}
 
 // Blacklist
-function addBL(){const v=document.getElementById('blInput').value.replace(/[^0-9]/g,'');if(!v){toast('Masukkan nomor yang valid','e');return}if(S.blacklist.includes(v)){toast('Nomor sudah ada di blacklist','w');return}S.blacklist.push(v);document.getElementById('blInput').value='';emit('update-settings',S);renderBL();toast('Nomor ditambahkan ke blacklist','s')}
-function rmBL(n){S.blacklist=S.blacklist.filter(x=>x!==n);emit('update-settings',S);renderBL();toast('Nomor dihapus dari blacklist','s')}
+function addBL(){const v=document.getElementById('blIn').value.replace(/[^0-9]/g,'');if(!v){toast('Masukkan nomor valid','e');return}if(S.blacklist.includes(v)){toast('Sudah ada','w');return}S.blacklist.push(v);document.getElementById('blIn').value='';emit('update-settings',S);renderBL();toast('Ditambahkan ke blacklist','s')}
+function rmBL(n){S.blacklist=S.blacklist.filter(x=>x!==n);emit('update-settings',S);renderBL()}
 function renderBL(){document.getElementById('blList').innerHTML=S.blacklist.map(n=>`<span class="bl-tag">${n} <button onclick="rmBL('${n}')"><i class="fas fa-times"></i></button></span>`).join('')}
 
-// ==================== NAV ====================
-const PT={connection:['Hubungkan WhatsApp','Sambungkan bot ke akun WhatsApp'],settings:['Pengaturan Bot','Konfigurasi lengkap bot Anda'],autoreply:['Auto-Reply','Kelola aturan balasan otomatis'],schedule:['Pesan Terjadwal','Pengiriman pesan otomatis'],dashboard:['Dashboard','Ringkasan aktivitas bot'],logs:['Log Pesan','Riwayat pesan masuk dan keluar'],contacts:['Kontak','Daftar kontak'],groups:['Grup','Kelola grup WhatsApp']};
+// Nav
+const PT={connection:['Hubungkan WhatsApp','Sambungkan bot ke akun WhatsApp'],settings:['Pengaturan Bot','Konfigurasi lengkap bot'],autoreply:['Auto-Reply','Kelola aturan balasan otomatis'],schedule:['Pesan Terjadwal','Pengiriman otomatis'],dashboard:['Dashboard','Ringkasan aktivitas'],logs:['Log Pesan','Riwayat pesan']};
 function go(p,el){document.querySelectorAll('.ni').forEach(n=>n.classList.remove('act'));if(el)el.classList.add('act');document.querySelectorAll('.pg').forEach(x=>x.classList.remove('act'));document.getElementById('pg-'+p).classList.add('act');document.getElementById('ptitle').textContent=PT[p][0];document.getElementById('psub').textContent=PT[p][1];document.getElementById('sb').classList.remove('op')}
 
-// ==================== TOAST ====================
 function toast(m,t='s'){const c=document.getElementById('tC'),ic={s:'fa-check-circle',e:'fa-times-circle',w:'fa-exclamation-circle'},d=document.createElement('div');d.className='tt '+t;d.innerHTML=`<i class="fas ${ic[t]}"></i><span class="tm">${m}</span>`;c.appendChild(d);setTimeout(()=>d.remove(),3000)}
-
-// ==================== MODAL ====================
 function openM(id){document.getElementById(id).classList.add('sh')}
 function clM(id){document.getElementById(id).classList.remove('sh');editId=null}
 document.querySelectorAll('.mo').forEach(o=>o.addEventListener('click',e=>{if(e.target===o)o.classList.remove('sh')}));
 
-// ==================== BOT TOGGLE ====================
-function togBot(){
-    if(!waConn){document.getElementById('btog').checked=false;toast('Hubungkan WhatsApp dulu di halaman Koneksi','e');return}
-    botOn=document.getElementById('btog').checked;
-    const d=document.getElementById('bsd'),t=document.getElementById('bstxt');
-    if(botOn){d.classList.add('on');t.textContent='On';t.style.color='var(--acc)';emit('toggle-bot',true);toast('Bot diaktifkan','s')}
-    else{d.classList.remove('on');t.textContent='Off';t.style.color='var(--fgd)';emit('toggle-bot',false);toast('Bot dimatikan','w')}
-}
+function togBot(){if(!waConn){document.getElementById('btog').checked=false;toast('Hubungkan WhatsApp dulu','e');return}botOn=document.getElementById('btog').checked;const d=document.getElementById('bsd'),t=document.getElementById('bstxt');if(botOn){d.classList.add('on');t.textContent='On';t.style.color='var(--acc)';emit('toggle-bot',true);toast('Bot diaktifkan','s')}else{d.classList.remove('on');t.textContent='Off';t.style.color='var(--fgd)';emit('toggle-bot',false);toast('Bot dimatikan','w')}}
 
-// ==================== KONEKSI ====================
-function startQR(){
-    const qa=document.getElementById('qrArea'),btn=document.getElementById('btnQR'),bn=document.getElementById('cbanner');
-    qa.style.display='flex';document.getElementById('qrOv').style.display='none';btn.disabled=true;btn.innerHTML='<i class="fas fa-spinner fa-spin"></i> Menunggu...';
-    bn.className='csb2 conn';bn.querySelector('.csi2').innerHTML='<i class="fas fa-spinner fa-spin"></i>';document.getElementById('ctitle').textContent='Menghubungkan...';document.getElementById('cdesc').textContent='Menunggu QR dari WhatsApp';
-    if(realMode){emit('request-qr')}
-    else{genFakeQR();setTimeout(()=>{document.getElementById('qrOv').style.display='flex';document.getElementById('qrOv').querySelector('span').textContent='Simulasi';bn.className='csb2 ok';bn.querySelector('.csi2').innerHTML='<i class="fas fa-link"></i>';document.getElementById('ctitle').textContent='Terhubung (Offline)';document.getElementById('cdesc').textContent='Backend tidak tersedia — mode simulasi';btn.style.display='none';waConn=true;connT=Date.now();startUp();toast('Mode simulasi — hubungkan ke backend untuk koneksi nyata','w')},3500)}
-}
+// Koneksi
+function startQR(){const qa=document.getElementById('qrArea'),btn=document.getElementById('btnQR'),bn=document.getElementById('cbanner');qa.style.display='flex';document.getElementById('qrOv').style.display='none';btn.disabled=true;btn.innerHTML='<i class="fas fa-spinner fa-spin"></i> Menunggu...';bn.className='cb2 conn';bn.querySelector('.ci2').innerHTML='<i class="fas fa-spinner fa-spin"></i>';document.getElementById('ctitle').textContent='Menghubungkan...';document.getElementById('cdesc').textContent='Menunggu QR dari WhatsApp';if(realMode){emit('request-qr')}else{genFakeQR();setTimeout(()=>{document.getElementById('qrOv').style.display='flex';document.getElementById('qrOv').querySelector('span').textContent='Simulasi';bn.className='cb2 ok';bn.querySelector('.ci2').innerHTML='<i class="fas fa-link"></i>';document.getElementById('ctitle').textContent='Terhubung (Offline)';document.getElementById('cdesc').textContent='Backend tidak tersedia';btn.style.display='none';waConn=true;connT=Date.now();startUp();toast('Mode simulasi — hubungkan ke backend','w')},3500)}}
 function genFakeQR(){const c=document.getElementById('qrCvs'),x=c.getContext('2d'),s=280,md=25,ms=s/md;x.fillStyle='#fff';x.fillRect(0,0,s,s);function fp(px,py){x.fillStyle='#000';x.fillRect(px,py,7*ms,7*ms);x.fillStyle='#fff';x.fillRect(px+ms,py+ms,5*ms,5*ms);x.fillStyle='#000';x.fillRect(px+2*ms,py+2*ms,3*ms,3*ms)}fp(0,0);fp((md-7)*ms,0);fp(0,(md-7)*ms);x.fillStyle='#000';for(let r=0;r<md;r++)for(let c=0;c<md;c++){if(r<8&&c<8)continue;if(r<8&&c>md-9)continue;if(r>md-9&&c<8)continue;if(Math.random()>.55)x.fillRect(c*ms,r*ms,ms,ms)}for(let i=8;i<md-8;i++){if(i%2===0){x.fillRect(i*ms,6*ms,ms,ms);x.fillRect(6*ms,i*ms,ms,ms)}}}
-function discWA(){waConn=false;connT=null;if(upI)clearInterval(upI);document.getElementById('cpInfo').classList.remove('sh');document.getElementById('qrArea').style.display='none';const btn=document.getElementById('btnQR');btn.style.display='inline-flex';btn.disabled=false;btn.innerHTML='<i class="fas fa-qrcode"></i> Mulai Koneksi WhatsApp';const bn=document.getElementById('cbanner');bn.className='csb2 disc';bn.querySelector('.csi2').innerHTML='<i class="fas fa-unlink"></i>';document.getElementById('ctitle').textContent='Belum Terhubung';document.getElementById('cdesc').textContent='Klik tombol di bawah untuk mulai';botOn=false;document.getElementById('btog').checked=false;document.getElementById('bsd').classList.remove('on');document.getElementById('bstxt').textContent='Off';document.getElementById('bstxt').style.color='var(--fgd)';emit('disconnect-wa');toast('Koneksi diputus','w')}
-function startUp(){if(upI)clearInterval(upI);upI=setInterval(()=>{if(!connT)return;const e=Math.floor((Date.now()-connT)/1000),m=Math.floor(e/60).toString().padStart(2,'0'),s=(e%60).toString().padStart(2,'0');document.getElementById('cpUp').textContent=m+':'+s},1000)}
+function discWA(){waConn=false;connT=null;if(upI)clearInterval(upI);document.getElementById('cpInfo').classList.remove('sh');document.getElementById('qrArea').style.display='none';const btn=document.getElementById('btnQR');btn.style.display='inline-flex';btn.disabled=false;btn.innerHTML='<i class="fas fa-qrcode"></i> Mulai Koneksi WhatsApp';const bn=document.getElementById('cbanner');bn.className='cb2 disc';bn.querySelector('.ci2').innerHTML='<i class="fas fa-unlink"></i>';document.getElementById('ctitle').textContent='Belum Terhubung';document.getElementById('cdesc').textContent='Klik tombol di bawah';botOn=false;document.getElementById('btog').checked=false;document.getElementById('bsd').classList.remove('on');document.getElementById('bstxt').textContent='Off';document.getElementById('bstxt').style.color='var(--fgd)';emit('disconnect-wa');toast('Diputus','w')}
+function startUp(){if(upI)clearInterval(upI);upI=setInterval(()=>{if(!connT)return;const e=Math.floor((Date.now()-connT)/1000);document.getElementById('cpUp').textContent=Math.floor(e/60).toString().padStart(2,'0')+':'+(e%60).toString().padStart(2,'0')},1000)}
 
-// ==================== CHART ====================
+// Chart
 let aChart;const cD={week:{l:['Sen','Sel','Rab','Kam','Jum','Sab','Min'],r:[520,610,480,720,560,430,571],a:[120,145,98,178,132,89,130]},month:{l:['Mg1','Mg2','Mg3','Mg4'],r:[3200,3800,3500,3891],a:[780,890,810,892]}};
 function initChart(){const x=document.getElementById('aChart').getContext('2d');aChart=new Chart(x,{type:'bar',data:{labels:cD.week.l,datasets:[{label:'Diterima',data:cD.week.r,backgroundColor:'rgba(37,211,102,.2)',borderColor:'rgba(37,211,102,.6)',borderWidth:1,borderRadius:5,barPercentage:.55},{label:'Dibalas',data:cD.week.a,backgroundColor:'rgba(30,144,255,.2)',borderColor:'rgba(30,144,255,.6)',borderWidth:1,borderRadius:5,barPercentage:.55}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top',align:'end',labels:{color:'#7a9489',font:{family:'Space Grotesk',size:10},boxWidth:10,boxHeight:10,borderRadius:2,useBorderRadius:true}}},scales:{x:{grid:{color:'rgba(30,48,41,.5)'},ticks:{color:'#4a6b5e',font:{family:'Space Grotesk',size:10}}},y:{grid:{color:'rgba(30,48,41,.5)'},ticks:{color:'#4a6b5e',font:{family:'Space Grotesk',size:10}}}}}})}
-function uchart(p,btn){btn.parentElement.querySelectorAll('.tb').forEach(b=>b.classList.remove('act'));btn.classList.add('act');const d=cD[p];aChart.data.labels=d.l;aChart.data.datasets[0].data=d.r;aChart.data.datasets[1].data=d.a;aChart.update()}
+function uchart(p,btn){btn.parentElement.querySelectorAll('.tbtn').forEach(b=>b.classList.remove('act'));btn.classList.add('act');const d=cD[p];aChart.data.labels=d.l;aChart.data.datasets[0].data=d.r;aChart.data.datasets[1].data=d.a;aChart.update()}
 
-// ==================== RENDER ====================
-function renderTopKw(){const k=[{w:'harga',c:189,p:100},{w:'halo',c:156,p:82},{w:'pesanan',c:134,p:71},{w:'terima kasih',c:112,p:59},{w:'komplain',c:67,p:35},{w:'tracking',c:45,p:24},{w:'promo',c:38,p:20}];document.getElementById('topKw').innerHTML=k.map(x=>`<div style="margin-bottom:12px"><div style="display:flex;justify-content:space-between;margin-bottom:3px"><span style="font-size:12px;font-weight:500">${x.w}</span><span style="font-size:11px;color:var(--fgd);font-family:'JetBrains Mono',monospace">${x.c}</span></div><div style="height:5px;background:var(--bg);border-radius:3px;overflow:hidden"><div style="height:100%;width:${x.p}%;background:linear-gradient(90deg,var(--acc),#128C7E);border-radius:3px"></div></div></div>`).join('')}
-function renderRecent(){document.getElementById('recTbl').innerHTML=logs.slice(0,5).map(l=>`<tr><td style="color:var(--fg);font-weight:500">${l.sender}</td><td style="max-width:180px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${l.incoming}</td><td style="max-width:160px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${l.reply}</td><td style="font-family:'JetBrains Mono',monospace;font-size:11px">${l.time}</td><td><span class="tg ${l.status==='replied'?'g':l.status==='error'?'r':'o'}">${l.status==='replied'?'Dibalas':l.status==='error'?'Error':'Missed'}</span></td></tr>`).join('')}
-
-function renderRules(){
-    const c=document.getElementById('ruleList');document.getElementById('rc').textContent=rules.length;
-    if(!rules.length){c.innerHTML='<div class="es"><i class="fas fa-robot"></i><p>Belum ada aturan</p></div>';return}
-    const pc={high:'r',normal:'b',low:'o'},pl={high:'Tinggi',normal:'Normal',low:'Rendah'};
-    c.innerHTML=rules.map(r=>`<div class="rc"><div class="ric" style="${r.status==='paused'?'background:var(--wrnd);color:var(--wrn)':''}"><i class="fas ${r.status==='paused'?'fa-pause':'fa-bolt'}"></i></div><div class="ri"><div class="rn">${r.name} <span class="tg ${pc[r.priority]}" style="margin-left:4px">${pl[r.priority]}</span></div><div class="rd">Kata kunci: ${r.keywords.join(', ')} | Dipicu ${r.triggerCount}x</div></div><span class="tg ${r.status==='active'?'g':'o'}">${r.status==='active'?'Aktif':'Jeda'}</span><div class="ra"><button class="btn bs bi bsm" onclick="editRule(${r.id})"><i class="fas fa-pen"></i></button><button class="btn bs bi bsm" onclick="togRule(${r.id})"><i class="fas ${r.status==='active'?'fa-pause':'fa-play'}"></i></button><button class="btn bd bi bsm" onclick="delRule(${r.id})"><i class="fas fa-trash"></i></button></div></div>`).join('')}
-function saveRule(){const n=document.getElementById('rN').value.trim(),mt=document.getElementById('rMT').value,kw=document.getElementById('rKW').value.trim(),rp=document.getElementById('rRP').value.trim(),pr=document.getElementById('rPR').value,st=document.getElementById('rST').value;if(!n||!kw||!rp){toast('Lengkapi semua field','e');return}const ks=kw.split(',').map(k=>k.trim()).filter(k=>k);if(editId){const r=rules.find(r=>r.id===editId);if(r)Object.assign(r,{name:n,matchType:mt,keywords:ks,reply:rp,priority:pr,status:st});emit('update-rule',r);editId=null;toast('Aturan diperbarui','s')}else{const nr={id:Date.now(),name:n,matchType:mt,keywords:ks,reply:rp,priority:pr,status:st,triggerCount:0};rules.push(nr);emit('add-rule',nr);toast('Aturan ditambahkan','s')}document.getElementById('rN').value='';document.getElementById('rKW').value='';document.getElementById('rRP').value='';clM('ruleM');renderRules()}
+// Render
+function renderTopKw(){const k=[{w:'harga',c:189,p:100},{w:'halo',c:156,p:82},{w:'pesanan',c:134,p:71},{w:'terima kasih',c:112,p:59},{w:'komplain',c:67,p:35}];document.getElementById('topKw').innerHTML=k.map(x=>`<div style="margin-bottom:12px"><div style="display:flex;justify-content:space-between;margin-bottom:3px"><span style="font-size:12px;font-weight:500">${x.w}</span><span style="font-size:11px;color:var(--fgd);font-family:'JetBrains Mono',monospace">${x.c}</span></div><div style="height:5px;background:var(--bg);border-radius:3px;overflow:hidden"><div style="height:100%;width:${x.p}%;background:linear-gradient(90deg,var(--acc),#128C7E);border-radius:3px"></div></div></div>`).join('')}
+function renderRecent(){document.getElementById('recTbl').innerHTML=logs.slice(0,5).map(l=>`<tr><td style="color:var(--fg);font-weight:500">${l.sender}</td><td style="max-width:160px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${l.incoming}</td><td style="max-width:140px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${l.reply}</td><td style="font-family:'JetBrains Mono',monospace;font-size:11px">${l.time}</td><td><span class="tg ${l.status==='replied'?'g':'o'}">${l.status==='replied'?'Dibalas':'Missed'}</span></td></tr>`).join('')}
+function renderRules(){const c=document.getElementById('ruleList');document.getElementById('rc').textContent=rules.length;if(!rules.length){c.innerHTML='<div class="es"><i class="fas fa-robot"></i><p>Belum ada aturan</p></div>';return}const pc={high:'r',normal:'b',low:'o'},pl={high:'Tinggi',normal:'Normal',low:'Rendah'};c.innerHTML=rules.map(r=>`<div class="rc"><div class="ric" style="${r.status==='paused'?'background:var(--wrnd);color:var(--wrn)':''}"><i class="fas ${r.status==='paused'?'fa-pause':'fa-bolt'}"></i></div><div class="ri"><div class="rn">${r.name} <span class="tg ${pc[r.priority]}">${pl[r.priority]}</span></div><div class="rd">${r.keywords.join(', ')} | ${r.triggerCount}x</div></div><span class="tg ${r.status==='active'?'g':'o'}">${r.status==='active'?'Aktif':'Jeda'}</span><div class="ra"><button class="btn bs bi bsm" onclick="editRule(${r.id})"><i class="fas fa-pen"></i></button><button class="btn bs bi bsm" onclick="togRule(${r.id})"><i class="fas ${r.status==='active'?'fa-pause':'fa-play'}"></i></button><button class="btn bd bi bsm" onclick="delRule(${r.id})"><i class="fas fa-trash"></i></button></div></div>`).join('')}
+function saveRule(){const n=document.getElementById('rN').value.trim(),mt=document.getElementById('rMT').value,kw=document.getElementById('rKW').value.trim(),rp=document.getElementById('rRP').value.trim(),pr=document.getElementById('rPR').value,st=document.getElementById('rST').value;if(!n||!kw||!rp){toast('Lengkapi semua field','e');return}const ks=kw.split(',').map(k=>k.trim()).filter(k=>k);if(editId){const r=rules.find(r=>r.id===editId);if(r)Object.assign(r,{name:n,matchType:mt,keywords:ks,reply:rp,priority:pr,status:st});emit('update-rule',r);editId=null;toast('Diperbarui','s')}else{const nr={id:Date.now(),name:n,matchType:mt,keywords:ks,reply:rp,priority:pr,status:st,triggerCount:0};rules.push(nr);emit('add-rule',nr);toast('Ditambahkan','s')}document.getElementById('rN').value='';document.getElementById('rKW').value='';document.getElementById('rRP').value='';clM('ruleM');renderRules()}
 function editRule(id){const r=rules.find(r=>r.id===id);if(!r)return;editId=id;document.getElementById('ruleMT').textContent='Edit Aturan';document.getElementById('rN').value=r.name;document.getElementById('rMT').value=r.matchType;document.getElementById('rKW').value=r.keywords.join(', ');document.getElementById('rRP').value=r.reply;document.getElementById('rPR').value=r.priority;document.getElementById('rST').value=r.status;openM('ruleM')}
 function togRule(id){const r=rules.find(r=>r.id===id);if(r)r.status=r.status==='active'?'paused':'active';emit('toggle-rule',id);renderRules()}
-function delRule(id){const r=rules.find(r=>r.id===id);rules=rules.filter(r=>r.id!==id);emit('delete-rule',id);toast('Aturan dihapus','w');renderRules()}
-
-function renderScheds(){const c=document.getElementById('schedList');if(!schedules.length){c.innerHTML='<div class="es"><i class="fas fa-clock"></i><p>Belum ada jadwal</p></div>';return}const rl={none:'Sekali',daily:'Harian',weekly:'Mingguan',monthly:'Bulanan'};c.innerHTML=schedules.map(s=>`<div class="scc"><div class="sct"><div style="display:flex;align-items:center;gap:8px"><span class="scn">${s.name}</span><span class="tg ${s.status==='active'?'g':'o'}">${s.status==='active'?'Aktif':'Jeda'}</span></div><div class="ra"><button class="btn bs bi bsm" onclick="togSched(${s.id})"><i class="fas ${s.status==='active'?'fa-pause':'fa-play'}"></i></button><button class="btn bd bi bsm" onclick="delSched(${s.id})"><i class="fas fa-trash"></i></button></div></div><div class="scm"><span><i class="fas fa-user"></i> ${s.targetLabel||s.target}</span><span><i class="fas fa-calendar"></i> ${s.date} ${s.time}</span><span><i class="fas fa-redo"></i> ${rl[s.repeat]||s.repeat}</span></div><div class="scp">${s.message}</div></div>`).join('')}
-function saveSched(){const n=document.getElementById('scN').value.trim(),t=document.getElementById('scT').value,d=document.getElementById('scD').value,tm=document.getElementById('scTm').value,r=document.getElementById('scR').value,m=document.getElementById('scM').value.trim();if(!n||!d||!m){toast('Lengkapi semua field','e');return}const sel=document.getElementById('scT');schedules.push({id:Date.now(),name:n,target:t,targetLabel:sel.options[sel.selectedIndex].text,date:d,time:tm,repeat:r,message:m,status:'active'});emit('add-schedule',schedules[schedules.length-1]);document.getElementById('scN').value='';document.getElementById('scM').value='';clM('schedM');toast('Jadwal ditambahkan','s');renderScheds()}
+function delRule(id){rules=rules.filter(r=>r.id!==id);emit('delete-rule',id);toast('Dihapus','w');renderRules()}
+function renderScheds(){const c=document.getElementById('schedList');if(!schedules.length){c.innerHTML='<div class="es"><i class="fas fa-clock"></i><p>Belum ada jadwal</p></div>';return}const rl={none:'Sekali',daily:'Harian',weekly:'Mingguan',monthly:'Bulanan'};c.innerHTML=schedules.map(s=>`<div class="scc"><div class="sct"><div style="display:flex;align-items:center;gap:8px"><span class="scn">${s.name}</span><span class="tg ${s.status==='active'?'g':'o'}">${s.status==='active'?'Aktif':'Jeda'}</span></div><div class="ra"><button class="btn bs bi bsm" onclick="togSched(${s.id})"><i class="fas ${s.status==='active'?'fa-pause':'fa-play'}"></i></button><button class="btn bd bi bsm" onclick="delSched(${s.id})"><i class="fas fa-trash"></i></button></div></div><div class="scm"><span><i class="fas fa-calendar"></i> ${s.date} ${s.time}</span><span><i class="fas fa-redo"></i> ${rl[s.repeat]||s.repeat}</span></div><div class="scp">${s.message}</div></div>`).join('')}
+function saveSched(){const n=document.getElementById('scN').value.trim(),t=document.getElementById('scT').value,d=document.getElementById('scD').value,tm=document.getElementById('scTm').value,r=document.getElementById('scR').value,m=document.getElementById('scM').value.trim();if(!n||!d||!m){toast('Lengkapi semua field','e');return}const sel=document.getElementById('scT');schedules.push({id:Date.now(),name:n,target:t,targetLabel:sel.options[sel.selectedIndex].text,date:d,time:tm,repeat:r,message:m,status:'active'});emit('add-schedule',schedules[schedules.length-1]);document.getElementById('scN').value='';document.getElementById('scM').value='';clM('schedM');toast('Ditambahkan','s');renderScheds()}
 function togSched(id){const s=schedules.find(s=>s.id===id);if(s)s.status=s.status==='active'?'paused':'active';emit('toggle-schedule',id);renderScheds()}
-function delSched(id){schedules=schedules.filter(s=>s.id!==id);emit('delete-schedule',id);toast('Jadwal dihapus','w');renderScheds()}
+function delSched(id){schedules=schedules.filter(s=>s.id!==id);emit('delete-schedule',id);toast('Dihapus','w');renderScheds()}
+function renderLogs(f=null){const tb=document.getElementById('logTbl'),d=f||logs;if(!d.length){tb.innerHTML='<tr><td colspan="6"><div class="es"><i class="fas fa-inbox"></i><p>Kosong</p></div></td></tr>';return}tb.innerHTML=d.map(l=>{const st=l.status==='replied'?'g':'o';return`<tr><td style="font-family:'JetBrains Mono',monospace;font-size:11px">${l.time}</td><td style="color:var(--fg);font-weight:500">${l.sender}</td><td style="max-width:140px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${l.incoming}</td><td style="max-width:140px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${l.reply}</td><td>${l.rule!=='-'?`<span class="tg b">${l.rule}</span>`:'-'}</td><td><span class="tg ${st}">${l.status==='replied'?'Dibalas':'Missed'}</span></td></tr>`}).join('')}
+function fLogs(){const s=document.getElementById('logS').value.toLowerCase(),f=document.getElementById('logF').value;let d=logs;if(s)d=d.filter(l=>l.sender.toLowerCase().includes(s)||l.incoming.toLowerCase().includes(s));if(f!=='all')d=d.filter(l=>l.status===f);renderLogs(d)}
+function clrLogs(){logs=[];emit('clear-logs');renderLogs();toast('Dihapus','s')}
 
-function renderLogs(f=null){const tb=document.getElementById('logTbl'),d=f||logs;if(!d.length){tb.innerHTML='<tr><td colspan="6"><div class="es"><i class="fas fa-inbox"></i><p>Tidak ada log</p></div></td></tr>';return}tb.innerHTML=d.map(l=>{const st=l.status==='replied'?'g':l.status==='error'?'r':'o',sl=l.status==='replied'?'Dibalas':l.status==='error'?'Error':'Missed';return`<tr><td style="font-family:'JetBrains Mono',monospace;font-size:11px">${l.time}</td><td style="color:var(--fg);font-weight:500">${l.sender}</td><td style="max-width:160px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${l.incoming}</td><td style="max-width:160px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${l.reply}</td><td>${l.rule!=='-'?`<span class="tg b">${l.rule}</span>`:'-'}</td><td><span class="tg ${st}">${sl}</span></td></tr>`}).join('')}
-function fLogs(){const s=document.getElementById('logS').value.toLowerCase(),f=document.getElementById('logF').value;let d=logs;if(s)d=d.filter(l=>l.sender.toLowerCase().includes(s)||l.incoming.toLowerCase().includes(s)||l.reply.toLowerCase().includes(s));if(f!=='all')d=d.filter(l=>l.status===f);renderLogs(d)}
-function clrLogs(){logs=[];emit('clear-logs');renderLogs();toast('Log dihapus','s')}
-
-function renderContacts(f=null){const c=document.getElementById('ctList'),d=f||contacts;if(!d.length){c.innerHTML='<div class="es"><i class="fas fa-address-book"></i><p>Tidak ada kontak</p></div>';return}const lc={customer:'#25D366',partner:'#1e90ff',internal:'#ffa502',vip:'#ff6b81'},ln={customer:'Customer',partner:'Partner',internal:'Internal',vip:'VIP'};c.innerHTML=d.map(ct=>`<div class="ci"><div class="ca" style="background:${lc[ct.label]}22;color:${lc[ct.label]}">${ct.name.split(' ').map(n=>n[0]).join('').slice(0,2)}</div><div class="cif"><div class="cn">${ct.name} <span class="tg" style="background:${lc[ct.label]}22;color:${lc[ct.label]};font-size:9px">${ln[ct.label]||ct.label}</span></div><div class="cp">${ct.phone} &middot; ${ct.messages} pesan</div></div></div>`).join('')}
-function fCt(){const s=document.getElementById('ctS').value.toLowerCase();if(!s){renderContacts();return}renderContacts(contacts.filter(c=>c.name.toLowerCase().includes(s)||c.phone.includes(s)))}
-
-function renderGroups(){const c=document.getElementById('grpList');if(!groups.length){c.innerHTML='<div class="es"><i class="fas fa-users"></i><p>Tidak ada grup</p></div>';return}c.innerHTML=groups.map(g=>`<div class="rc"><div class="ric" style="${g.botActive?'':'background:var(--wrnd);color:var(--wrn)'}"><i class="fas fa-users"></i></div><div class="ri"><div class="rn">${g.name} ${g.botActive?'<span class="tg g" style="margin-left:4px">Bot Aktif</span>':'<span class="tg o" style="margin-left:4px">Nonaktif</span>'}</div><div class="rd">${g.desc} &middot; ${g.members} anggota</div></div></div>`).join('')}
-
-// ==================== INIT ====================
-function setDefDate(){const t=new Date();t.setDate(t.getDate()+1);const d=document.getElementById('scD');if(d)d.value=t.toISOString().split('T')[0]}
-document.addEventListener('DOMContentLoaded',()=>{initWS();initChart();renderTopKw();renderRecent();renderRules();renderScheds();renderLogs();renderContacts();renderGroups();setDefDate();applySettings()});
+document.addEventListener('DOMContentLoaded',()=>{initWS();initChart();renderTopKw();renderRecent();renderRules();renderScheds();renderLogs();applyS();const t=new Date();t.setDate(t.getDate()+1);document.getElementById('scD').value=t.toISOString().split('T')[0]});
 document.addEventListener('keydown',e=>{if(e.key==='Escape')document.querySelectorAll('.mo.sh').forEach(m=>m.classList.remove('sh'))});
 </script>
 </body>
