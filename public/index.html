@@ -141,15 +141,16 @@
         .cb2.disc .ci2 { color: var(--dng); } .cb2.conn .ci2 { color: var(--wrn); } .cb2.ok .ci2 { color: var(--acc); }
         .cst h3 { font-size: 18px; font-weight: 700; margin-bottom: 4px; } .cst p { font-size: 13px; color: var(--fgm); }
         
-        .qra { background: #fff; border-radius: var(--rl); padding: 32px; display: flex; flex-direction: column; align-items: center; gap: 18px; position: relative; overflow: hidden; box-shadow: 0 10px 40px rgba(0,0,0,.3); }
-        .qra canvas { border-radius: 8px; image-rendering: pixelated; }
-        .qrl { font-size: 14px; font-weight: 700; color: #111; }
-        .qrsl { font-size: 12px; color: #666; text-align: center; max-width: 300px; line-height: 1.6; }
-        .qro { position: absolute; inset: 0; background: rgba(255,255,255,.95); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; border-radius: var(--rl); backdrop-filter: blur(4px); }
-        .qro i { font-size: 48px; color: var(--acc); } .qro span { font-size: 16px; font-weight: 700; color: #1a1a1a; }
+        .cpInfo { width: 100%; padding: 20px; background: var(--bgch); border: 1px solid var(--brd); border-radius: var(--r); display: none; }
+
+        /* QR Modal Specifics */
+        .qr-mod .mdb { background: #fff; color: #111; padding: 30px; text-align: center; border-radius: var(--rl); }
+        #qrCanvas { background: #fff; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); max-width: 100%; }
+        .qr-inst { color: #555; margin-top: 15px; font-size: 13px; line-height: 1.5; }
+        .qr-inst strong { color: #128C7E; }
 
         /* Modals & Toasts */
-        .mo { position: fixed; inset: 0; background: rgba(0,0,0,.6); backdrop-filter: blur(4px); z-index: 1000; display: none; align-items: center; justify-content: center; opacity: 0; transition: opacity .3s; }
+        .mo { position: fixed; inset: 0; background: rgba(0,0,0,.7); backdrop-filter: blur(5px); z-index: 2000; display: none; align-items: center; justify-content: center; opacity: 0; transition: opacity .3s; }
         .mo.sh { display: flex; opacity: 1; }
         .md { background: var(--bgc); border: 1px solid var(--brd); border-radius: var(--rl); width: 540px; max-width: 95vw; max-height: 90vh; overflow-y: auto; box-shadow: var(--sh); transform: scale(.95); transition: transform .3s; }
         .mo.sh .md { transform: scale(1); }
@@ -160,7 +161,7 @@
         .mdb { padding: 24px; }
         .mdf { padding: 16px 24px; border-top: 1px solid var(--brd); display: flex; justify-content: flex-end; gap: 10px; position: sticky; bottom: 0; background: var(--bgc); }
         
-        .tc { position: fixed; top: 24px; right: 24px; z-index: 2000; display: flex; flex-direction: column; gap: 10px; pointer-events: none; }
+        .tc { position: fixed; top: 24px; right: 24px; z-index: 3000; display: flex; flex-direction: column; gap: 10px; pointer-events: none; }
         .tt { background: var(--bgc); border: 1px solid var(--brd); border-radius: var(--r); padding: 14px 18px; display: flex; align-items: center; gap: 12px; box-shadow: var(--sh); pointer-events: all; animation: slideIn .3s cubic-bezier(0.18, 0.89, 0.32, 1.28); min-width: 300px; }
         .tt.s { border-left: 3px solid var(--acc); } .tt.e { border-left: 3px solid var(--dng); } .tt.w { border-left: 3px solid var(--wrn); }
         .tt i { font-size: 16px; } .tt.s i { color: var(--acc); } .tt.e i { color: var(--dng); } .tt.w i { color: var(--wrn); }
@@ -257,26 +258,16 @@
                         <div class="cst"><h3 id="ctitle">Terputus</h3><p id="cdesc">Bot belum terhubung ke server WhatsApp</p></div>
                     </div>
                     
-                    <div class="qra" id="qrArea" style="display:none">
-                        <canvas id="qrCvs" width="260" height="260"></canvas>
-                        <div class="qrl">Scan QR Code</div>
-                        <div class="qrsl">Buka WhatsApp > Menu > Perangkat Tertaut > Tautkan</div>
-                        <div class="qro" id="qrOv" style="display:none">
-                            <i class="fas fa-check-circle"></i>
-                            <span>Berhasil Terhubung!</span>
-                        </div>
-                    </div>
-
-                    <div style="display:flex;gap:12px;width:100%">
-                        <button class="btn bp" style="flex:1;padding:14px" id="btnConn" onclick="toggleConn()">
-                            <i class="fas fa-qrcode"></i> <span id="btnConnTxt">Hubungkan</span>
+                    <div style="display:flex;gap:12px;width:100">
+                        <button class="btn bp" style="flex:1;padding:14px" id="btnConn" onclick="openQRModal()">
+                            <i class="fas fa-qrcode"></i> <span id="btnConnTxt">Scan Barcode</span>
                         </button>
                         <button class="btn bd" id="btnDisc" style="display:none" onclick="discWA()">
                             <i class="fas fa-power-off"></i> Putuskan
                         </button>
                     </div>
 
-                    <div class="cd" id="cpInfo" style="width:100%;display:none">
+                    <div class="cd" id="cpInfo">
                         <div style="display:flex;align-items:center;gap:16px;margin-bottom:16px">
                             <div style="width:48px;height:48px;background:var(--accd);color:var(--acc);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px"><i class="fab fa-whatsapp"></i></div>
                             <div>
@@ -434,6 +425,26 @@
 </div>
 
 <!-- MODALS -->
+
+<!-- QR MODAL (Pop Up) -->
+<div class="mo" id="qrModal" onclick="if(event.target===this)closeQRModal()">
+    <div class="md qr-mod" style="width:400px">
+        <div class="mdh">
+            <span class="mdt">Scan QR Code</span>
+            <button class="mdc" onclick="closeQRModal()"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="mdb">
+            <canvas id="qrCanvas" width="260" height="260"></canvas>
+            <div class="qr-inst">
+                <strong>Buka WhatsApp</strong> di ponsel Anda<br>
+                Menu > Perangkat Tertaut > Tautkan Perangkat<br>
+                Scan kode di atas.
+            </div>
+            <div id="qrStatus" style="margin-top:10px;color:var(--wrn);font-size:12px;display:none">Menghubungkan...</div>
+        </div>
+    </div>
+</div>
+
 <div class="mo" id="ruleM" onclick="if(event.target===this)clM('ruleM')">
     <div class="md">
         <div class="mdh"><span class="mdt">Edit Aturan</span><button class="mdc" onclick="clM('ruleM')"><i class="fas fa-times"></i></button></div>
@@ -517,7 +528,6 @@ function loadLocal() {
     if (d) {
         const parsed = JSON.parse(d);
         state = { ...state, ...parsed }; // Merge safely
-        // Deep merge settings if needed
     }
 }
 
@@ -574,12 +584,11 @@ function connectSocket() {
 
         // Listeners from Server
         socket.on('qr', (data) => {
-            if(document.getElementById('pg-connection').classList.contains('act')) {
-                drawQR(data.qr);
-            }
+            drawRealQR(data.qr);
         });
 
         socket.on('ready', (info) => {
+            closeQRModal();
             setWAConnected(info);
         });
 
@@ -627,62 +636,45 @@ function nav(page, el) {
 }
 
 // --- CONNECTION PAGE LOGIC ---
-function toggleConn() {
-    if (connected) return; // Handled by Disc button
+function openQRModal() {
+    if (connected) return; 
     
-    const btn = document.getElementById('btnConn');
-    const banner = document.getElementById('cbanner');
-    const status = document.getElementById('ctitle');
+    // Show Modal
+    document.getElementById('qrModal').classList.add('sh');
     
-    // UI Feedback
-    btn.disabled = true;
-    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Meminta QR...';
-    banner.className = 'cb2 conn';
-    banner.querySelector('.ci2').innerHTML = '<i class="fas fa-circle-notch fa-spin"></i>';
-    status.textContent = 'Menghubungkan...';
+    // Update UI text
+    const status = document.getElementById('qrStatus');
+    status.style.display = 'block';
+    status.textContent = 'Membuat QR Code...';
     
-    document.getElementById('qrArea').style.display = 'flex';
-    document.getElementById('qrOv').style.display = 'none';
-    
-    // Logic
-    if(connected) {
+    // Simulate Connection Process
+    if(connected && socket) {
         socket.emit('get-qr');
     } else {
-        // Simulated for Offline Mode or Real Request
-        if(connected) {
-            socket.emit('get-qr');
-        } else {
-            // Simulate QR Generation if backend is offline for demo
-            setTimeout(() => {
-                generateFakeQR();
-                btn.style.display = 'none';
-                document.getElementById('btnDisc').style.display = 'flex';
-                banner.className = 'cb2 conn';
-                status.textContent = 'Scan QR Code';
-                banner.querySelector('.ci2').innerHTML = '<i class="fas fa-qrcode"></i>';
-            }, 1500);
-        }
+        // Simulasi visual jika offline/demo
+        setTimeout(() => {
+            generateFakeQR();
+            status.textContent = 'Silakan scan kode di atas';
+        }, 1000);
     }
 }
 
-function drawQR(url) {
-    const cvs = document.getElementById('qrCvs');
-    // Ideally use a QR library here, but for this constraint we'll use the canvas drawing simulation or image load
-    // Simulating the visual change:
-    generateFakeQR(); // Using existing logic for visual consistency in single file
-    
-    document.getElementById('btnConn').style.display = 'none';
-    document.getElementById('btnDisc').style.display = 'flex';
-    document.getElementById('cbanner').querySelector('.ci2').innerHTML = '<i class="fas fa-qrcode"></i>';
-    document.getElementById('ctitle').textContent = 'Siap Scan';
+function closeQRModal() {
+    document.getElementById('qrModal').classList.remove('sh');
+}
+
+function drawRealQR(url) {
+    // Ideally render a real QR library here. For demo, we simulate.
+    // If using a library like qrcode.js: new QRCode(document.getElementById("qrCanvas"), url);
+    generateFakeQR(); 
 }
 
 function generateFakeQR() {
-    const c = document.getElementById('qrCvs');
+    const c = document.getElementById('qrCanvas');
     const ctx = c.getContext('2d');
-    ctx.clearRect(0,0,c.width,c.height);
+    // Force white background for high contrast
     ctx.fillStyle = '#fff';
-    ctx.fillRect(0,0,c.width,c.height);
+    ctx.fillRect(0, 0, c.width, c.height);
     
     // Simple Matrix Logic
     const size = 25; // 25x25 grid
@@ -707,16 +699,19 @@ function generateFakeQR() {
 
 function setWAConnected(info) {
     const b = document.getElementById('cbanner');
-    const o = document.getElementById('qrOv');
     
     b.className = 'cb2 ok';
     b.querySelector('.ci2').innerHTML = '<i class="fas fa-link"></i>';
     document.getElementById('ctitle').textContent = 'Terhubung';
     document.getElementById('cdesc').textContent = info.phone || 'WhatsApp Web Session';
     
-    o.style.display = 'flex';
+    document.getElementById('btnConn').style.display = 'none';
+    document.getElementById('btnDisc').style.display = 'flex';
+    
     document.getElementById('cpInfo').style.display = 'block';
     document.getElementById('cpPhone').textContent = info.phone || '+62 812-xxxx-xxxx';
+    
+    document.getElementById('qrStatus').textContent = 'Berhasil Terhubung!';
     
     startUptime();
 }
@@ -725,10 +720,7 @@ function discWA() {
     if(socket && connected) socket.emit('disconnect-wa');
     
     // UI Reset
-    document.getElementById('qrArea').style.display = 'none';
     document.getElementById('btnConn').style.display = 'flex';
-    document.getElementById('btnConn').disabled = false;
-    document.getElementById('btnConn').innerHTML = '<i class="fas fa-qrcode"></i> Hubungkan';
     document.getElementById('btnDisc').style.display = 'none';
     
     const b = document.getElementById('cbanner');
