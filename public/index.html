@@ -3,11 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>WABot Manager Pro</title>
+    <title>WABot Manager - Railway Edition</title>
+    
+    <!-- Fonts & Icons -->
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    
+    <!-- Libraries -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <script src="https://cdn.socket.io/4.7.4/socket.io.min.js"></script>
+    <!-- Library QR Code (Wajib untuk Railway) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
     <style>
         :root {
             --bg: #050a08; --bg2: #0d1510; --bgc: #111e18; --bgch: #192620; --fg: #e8f2ed;
@@ -20,7 +27,6 @@
         * { margin: 0; padding: 0; box-sizing: border-box; outline: none; -webkit-tap-highlight-color: transparent; }
         body { font-family: 'Space Grotesk', sans-serif; background: var(--bg); color: var(--fg); min-height: 100vh; overflow-x: hidden; font-size: 14px; }
         
-        /* Latar Belakang Dinamis */
         body::before { content: ''; position: fixed; top: -50%; left: -50%; width: 200%; height: 200%; 
             background: radial-gradient(circle at 15% 15%, rgba(37,211,102,0.03), transparent 25%),
                         radial-gradient(circle at 85% 85%, rgba(37,211,102,0.02), transparent 25%);
@@ -143,9 +149,12 @@
         
         .cpInfo { width: 100%; padding: 20px; background: var(--bgch); border: 1px solid var(--brd); border-radius: var(--r); display: none; }
 
-        /* QR Modal Specifics */
+        /* QR Modal Specifics - PENTING UNTUK SCAN */
         .qr-mod .mdb { background: #fff; color: #111; padding: 30px; text-align: center; border-radius: var(--rl); }
-        #qrCanvas { background: #fff; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); max-width: 100%; }
+        #qrCanvas { background: #fff; border-radius: 8px; display: flex; justify-content: center; align-items: center; min-height: 260px; }
+        /* Styling tambahan untuk elemen yang dibuat library qrcode.js */
+        #qrCanvas img, #qrCanvas canvas { max-width: 100%; border: 1px solid #ddd; }
+        
         .qr-inst { color: #555; margin-top: 15px; font-size: 13px; line-height: 1.5; }
         .qr-inst strong { color: #128C7E; }
 
@@ -211,7 +220,7 @@
     <aside class="sb" id="sb">
         <div class="sb-hd">
             <div class="sb-ico"><i class="fab fa-whatsapp"></i></div>
-            <div class="sb-txt"><span>WABot Manager</span><span>Professional</span></div>
+            <div class="sb-txt"><span>WABot Manager</span><span>Railway Edition</span></div>
         </div>
         <nav class="sb-nav">
             <div class="nl">Koneksi</div>
@@ -240,11 +249,11 @@
         <div class="tb">
             <div class="tbl">
                 <button class="mb" onclick="document.getElementById('sb').classList.toggle('op')"><i class="fas fa-bars"></i></button>
-                <div><div class="pt" id="ptitle">Hubungkan WhatsApp</div><div class="pst" id="psub">Manajemen sesi dan koneksi</div></div>
+                <div><div class="pt" id="ptitle">Hubungkan WhatsApp</div><div class="pst" id="psub">Manajemen sesi Railway</div></div>
             </div>
             <div style="display:flex;gap:10px">
-                <button class="btn bs bi" title="Refresh Data" onclick="refreshData()"><i class="fas fa-sync"></i></button>
-                <button class="btn bs bi" title="Reset" onclick="resetData()"><i class="fas fa-trash-restore"></i></button>
+                <button class="btn bs bi" title="Refresh" onclick="refreshData()"><i class="fas fa-sync"></i></button>
+                <button class="btn bs bi" title="Clear Data" onclick="resetData()"><i class="fas fa-trash-restore"></i></button>
             </div>
         </div>
 
@@ -255,10 +264,10 @@
                 <div class="cf">
                     <div class="cb2 disc" id="cbanner">
                         <div class="ci2"><i class="fas fa-unlink"></i></div>
-                        <div class="cst"><h3 id="ctitle">Terputus</h3><p id="cdesc">Bot belum terhubung ke server WhatsApp</p></div>
+                        <div class="cst"><h3 id="ctitle">Terputus</h3><p id="cdesc">Klik tombol Scan Barcode untuk menghubungkan</p></div>
                     </div>
                     
-                    <div style="display:flex;gap:12px;width:100">
+                    <div style="display:flex;gap:12px;width:100%">
                         <button class="btn bp" style="flex:1;padding:14px" id="btnConn" onclick="openQRModal()">
                             <i class="fas fa-qrcode"></i> <span id="btnConnTxt">Scan Barcode</span>
                         </button>
@@ -271,14 +280,14 @@
                         <div style="display:flex;align-items:center;gap:16px;margin-bottom:16px">
                             <div style="width:48px;height:48px;background:var(--accd);color:var(--acc);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px"><i class="fab fa-whatsapp"></i></div>
                             <div>
-                                <div style="font-weight:700;color:var(--fg)">WhatsApp Web Session</div>
-                                <div style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--fgm)" id="cpPhone">Connected</div>
+                                <div style="font-weight:700;color:var(--fg)">WhatsApp Connected</div>
+                                <div style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--fgm)" id="cpPhone">Loading...</div>
                             </div>
                         </div>
                         <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;text-align:center">
                             <div><div style="font-size:18px;font-weight:700" id="cpUp">00:00</div><div style="font-size:10px;color:var(--fgd)">UPTIME</div></div>
-                            <div><div style="font-size:18px;font-weight:700" id="cpMsg">0</div><div style="font-size:10px;color:var(--fgd)">MSG/DAY</div></div>
-                            <div><div style="font-size:18px;font-weight:700" id="cpReply">0</div><div style="font-size:10px;color:var(--fgd)">REPLIED</div></div>
+                            <div><div style="font-size:18px;font-weight:700" id="cpMsg">0</div><div style="font-size:10px;color:var(--fgd)">MSG</div></div>
+                            <div><div style="font-size:18px;font-weight:700" id="cpReply">0</div><div style="font-size:10px;color:var(--fgd)">REPLY</div></div>
                         </div>
                     </div>
 
@@ -286,7 +295,7 @@
                         <div class="cdt"><i class="fas fa-server"></i> Status Server</div>
                         <div style="margin-top:12px;display:flex;align-items:center;justify-content:space-between">
                             <span class="tg" id="sockStat">Menunggu...</span>
-                            <span style="font-size:11px;color:var(--fgd)" id="sockUrl">Default Localhost</span>
+                            <span style="font-size:11px;color:var(--fgd)" id="sockUrl">Loading...</span>
                         </div>
                     </div>
                 </div>
@@ -294,16 +303,13 @@
 
             <!-- SETTINGS PAGE -->
             <div class="pg" id="pg-settings">
-                <div class="g3" style="grid-template-columns: 2fr 1fr; margin-bottom: 24px;">
+                <div class="g3" style="grid-template-columns: 1fr 1fr; margin-bottom: 24px;">
                     <div class="cd">
-                        <div class="cdh"><span class="cdt"><i class="fas fa-network-wired"></i> Konfigurasi Backend</span></div>
+                        <div class="cdh"><span class="cdt"><i class="fas fa-server"></i> Server Info</span></div>
                         <div class="fg">
-                            <label class="fl">Server URL (Socket.io)</label>
-                            <div style="display:flex;gap:8px">
-                                <input class="fi" id="srvUrl" value="http://localhost:3000" placeholder="http://ip-address:port">
-                                <button class="btn bs" onclick="changeServer()">Set</button>
-                            </div>
-                            <p style="font-size:11px;color:var(--fgd);margin-top:4px">Masukkan alamat server bot Node.js Anda. Kosongkan untuk mode Lokal/Simulasi.</p>
+                            <label class="fl">Socket URL</label>
+                            <input class="fi" id="srvUrl" disabled style="opacity:0.7">
+                            <p style="font-size:11px;color:var(--fgd);margin-top:4px">Otomatis terhubung ke Railway. Jangan diubah.</p>
                         </div>
                     </div>
                     <div class="cd">
@@ -315,40 +321,18 @@
                     </div>
                 </div>
 
-                <div class="g3" style="grid-template-columns: 1fr 1fr; margin-bottom: 24px;">
-                    <div class="cd">
-                        <div class="cdh"><span class="cdt"><i class="fas fa-tachometer-alt"></i> Kecepatan & Delay</span></div>
-                        <div class="fg" style="display:flex;align-items:center;gap:10px">
-                            <div style="flex:1"><label class="fl">Delay Utama (detik)</label><input type="range" class="fi" min="1" max="10" id="dDelay" oninput="updSetting('delayReply',this.value)"></div>
-                            <div class="sv" id="vDelay" style="font-size:16px">2s</div>
-                        </div>
-                        <div class="fg" style="display:flex;align-items:center;gap:10px">
-                            <div style="flex:1"><label class="fl">Random Max (+detik)</label><input type="range" class="fi" min="0" max="5" id="dRand" oninput="updSetting('randomDelayMax',this.value)"></div>
-                            <div class="sv" id="vRand" style="font-size:16px">3s</div>
-                        </div>
-                    </div>
-                    <div class="cd">
-                        <div class="cdh"><span class="cdt"><i class="fas fa-ban"></i> Keamanan</span></div>
-                        <div class="sti" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
-                            <span>Rate Limiting</span>
-                            <label class="ts"><input type="checkbox" id="cLimit" checked onchange="updSetting('cooldownEnabled',this.checked)"><div class="tsl"></div></label>
-                        </div>
-                        <div class="sti" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
-                            <span>Case Sensitive</span>
-                            <label class="ts"><input type="checkbox" id="cCase" onchange="updSetting('caseSensitive',this.checked)"><div class="tsl"></div></label>
-                        </div>
-                        <div class="sti" style="display:flex;justify-content:space-between;align-items:center">
-                            <span>Only Reply Tag</span>
-                            <label class="ts"><input type="checkbox" id="cTag" onchange="updSetting('groupTagOnly',this.checked)"><div class="tsl"></div></label>
-                        </div>
-                    </div>
-                </div>
-
                 <div class="cd">
-                    <div class="cdh"><span class="cdt"><i class="fas fa-comment-medical"></i> Pesan Default (Fallback)</span></div>
-                    <textarea class="ft" id="sDef" onchange="updSetting('defaultReplyText',this.value)" rows="3">Maaf, saya tidak mengerti pesan Anda. Silakan hubungi admin untuk bantuan lebih lanjut.</textarea>
-                    <div style="margin-top:10px;text-align:right">
-                        <button class="btn bp" onclick="toast('Pengaturan Disimpan', 's')">Simpan Perubahan</button>
+                    <div class="cdh"><span class="cdt"><i class="fas fa-sliders-h"></i> Konfigurasi Bot</span></div>
+                    <div class="g3" style="grid-template-columns: 1fr 1fr;">
+                        <div class="fg"><label class="fl">Delay Utama (detik)</label><input type="number" class="fi" id="sDelay" min="1" value="2"></div>
+                        <div class="fg"><label class="fl">Random Max (detik)</label><input type="number" class="fi" id="sRand" min="0" value="3"></div>
+                    </div>
+                    <div class="sti" style="display:flex;justify-content:space-between;align-items:center;margin-top:10px">
+                        <span>Only Reply Tag</span>
+                        <label class="ts"><input type="checkbox" id="cTag" onchange="saveSettings()"><div class="tsl"></div></label>
+                    </div>
+                    <div style="margin-top:16px;text-align:right">
+                        <button class="btn bp" onclick="saveSettings()">Simpan Perubahan</button>
                     </div>
                 </div>
             </div>
@@ -356,7 +340,7 @@
             <!-- AUTOREPLY PAGE -->
             <div class="pg" id="pg-autoreply">
                 <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
-                    <div><h2 style="font-size:18px;margin-bottom:4px">Aturan Auto-Reply</h2><p style="font-size:12px;color:var(--fgd)">Bot akan membalas berdasarkan prioritas (High > Normal)</p></div>
+                    <div><h2 style="font-size:18px;margin-bottom:4px">Aturan Auto-Reply</h2><p style="font-size:12px;color:var(--fgd)">Disimpan di Browser (LocalStorage)</p></div>
                     <button class="btn bp" onclick="openM('ruleM')"><i class="fas fa-plus"></i> Tambah Baru</button>
                 </div>
                 <div id="ruleList"></div>
@@ -365,7 +349,7 @@
             <!-- SCHEDULE PAGE -->
             <div class="pg" id="pg-schedule">
                 <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
-                    <div><h2 style="font-size:18px;margin-bottom:4px">Pesan Terjadwal</h2><p style="font-size:12px;color:var(--fgd)">Kirim pesan broadcast otomatis</p></div>
+                    <div><h2 style="font-size:18px;margin-bottom:4px">Pesan Terjadwal</h2><p style="font-size:12px;color:var(--fgd)">Disimpan di Browser</p></div>
                     <button class="btn bp" onclick="openM('schedM')"><i class="fas fa-calendar-plus"></i> Buat Jadwal</button>
                 </div>
                 <div id="schedList"></div>
@@ -381,25 +365,18 @@
                 </div>
                 <div class="g3">
                     <div class="cd">
-                        <div class="cdh">
-                            <span class="cdt">Statistik Pesan</span>
-                            <div class="tabs"><button class="tbtn act" onclick="updChart('w',this)">7 Hari</button><button class="tbtn" onclick="updChart('m',this)">30 Hari</button></div>
-                        </div>
+                        <div class="cdh"><span class="cdt">Aktivitas Pesan</span></div>
                         <div style="height:250px"><canvas id="aChart"></canvas></div>
                     </div>
                     <div class="cd">
                         <div class="cdh"><span class="cdt">Performa</span></div>
                         <div style="display:flex;flex-direction:column;gap:16px;padding:10px 0">
                             <div>
-                                <div style="display:flex;justify-content:space-between;margin-bottom:5px;font-size:12px"><span>Response Rate</span><span style="font-weight:700;color:var(--acc)">94%</span></div>
-                                <div style="height:6px;background:var(--bg);border-radius:3px;overflow:hidden"><div style="width:94%;height:100%;background:var(--acc)"></div></div>
+                                <div style="display:flex;justify-content:space-between;margin-bottom:5px;font-size:12px"><span>Response Rate</span><span style="font-weight:700;color:var(--acc)">100%</span></div>
+                                <div style="height:6px;background:var(--bg);border-radius:3px;overflow:hidden"><div style="width:100%;height:100%;background:var(--acc)"></div></div>
                             </div>
-                            <div>
-                                <div style="display:flex;justify-content:space-between;margin-bottom:5px;font-size:12px"><span>Server Uptime</span><span style="font-weight:700;color:var(--inf)">99.9%</span></div>
-                                <div style="height:6px;background:var(--bg);border-radius:3px;overflow:hidden"><div style="width:99.9%;height:100%;background:var(--inf)"></div></div>
-                            </div>
+                            <div class="es" style="padding:10px"><p style="font-size:11px">Live data from Railway</p></div>
                         </div>
-                        <div class="es" style="padding:10px;margin-top:auto"><p style="font-size:11px">Data real-time dari Socket.io</p></div>
                     </div>
                 </div>
             </div>
@@ -409,14 +386,9 @@
                 <div class="cd">
                     <div style="display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap">
                         <input class="fi" placeholder="Cari log..." id="logSearch" onkeyup="filterLogs()" style="flex:1;min-width:200px">
-                        <select class="fs" id="logFilter" onchange="filterLogs()" style="width:120px">
-                            <option value="all">Semua</option>
-                            <option value="in">Masuk</option>
-                            <option value="out">Keluar</option>
-                        </select>
-                        <button class="btn bs bsm" onclick="clearLogs()"><i class="fas fa-trash"></i> Hapus Log</button>
+                        <button class="btn bs bsm" onclick="clearLogs()"><i class="fas fa-trash"></i> Bersihkan</button>
                     </div>
-                    <div class="tw"><table><thead><tr><th>Waktu</th><th>Tipe</th><th>Pengirim</th><th>Pesan</th><th>Status</th></tr></thead><tbody id="logBody"></tbody></table></div>
+                    <div class="tw"><table><thead><tr><th>Waktu</th><th>Tipe</th><th>Pengirim</th><th>Pesan</th></tr></thead><tbody id="logBody"></tbody></table></div>
                 </div>
             </div>
 
@@ -426,7 +398,7 @@
 
 <!-- MODALS -->
 
-<!-- QR MODAL (Pop Up) -->
+<!-- QR MODAL -->
 <div class="mo" id="qrModal" onclick="if(event.target===this)closeQRModal()">
     <div class="md qr-mod" style="width:400px">
         <div class="mdh">
@@ -434,46 +406,46 @@
             <button class="mdc" onclick="closeQRModal()"><i class="fas fa-times"></i></button>
         </div>
         <div class="mdb">
-            <canvas id="qrCanvas" width="260" height="260"></canvas>
-            <div class="qr-inst">
-                <strong>Buka WhatsApp</strong> di ponsel Anda<br>
-                Menu > Perangkat Tertaut > Tautkan Perangkat<br>
-                Scan kode di atas.
+            <!-- Tempat Library QR Code menggambar -->
+            <div id="qrCanvas">
+                <span style="color:#999;font-size:14px">Memuat QR Code...</span>
             </div>
-            <div id="qrStatus" style="margin-top:10px;color:var(--wrn);font-size:12px;display:none">Menghubungkan...</div>
+            <div class="qr-inst">
+                <strong>1.</strong> Buka WhatsApp di HP<br>
+                <strong>2.</strong> Menu > Perangkat Tertaut<br>
+                <strong>3.</strong> Tautkan Perangkat > Scan kode
+            </div>
+            <div id="qrStatus" style="margin-top:10px;color:var(--wrn);font-size:12px;display:none">Menunggu koneksi...</div>
         </div>
     </div>
 </div>
 
+<!-- RULE MODAL -->
 <div class="mo" id="ruleM" onclick="if(event.target===this)clM('ruleM')">
     <div class="md">
         <div class="mdh"><span class="mdt">Edit Aturan</span><button class="mdc" onclick="clM('ruleM')"><i class="fas fa-times"></i></button></div>
         <div class="mdb">
             <input type="hidden" id="rid">
-            <div class="fg"><label class="fl">Nama Aturan</label><input class="fi" id="rName" placeholder="Contoh: Sapaan"></div>
-            <div class="fg"><label class="fl">Kata Kunci (Pisahkan dengan koma)</label><input class="fi" id="rKey" placeholder="halo, hai, selamat pagi"></div>
-            <div class="fg"><label class="fl">Respon</label><textarea class="ft" id="rResp" rows="3" placeholder="Halo! Ada yang bisa dibantu?"></textarea></div>
+            <div class="fg"><label class="fl">Nama Aturan</label><input class="fi" id="rName" placeholder="Sapaan"></div>
+            <div class="fg"><label class="fl">Kata Kunci (koma)</label><input class="fi" id="rKey" placeholder="halo, hai, pagi"></div>
+            <div class="fg"><label class="fl">Respon</label><textarea class="ft" id="rResp" rows="3">Halo! Ada yang bisa dibantu?</textarea></div>
             <div class="fg">
-                <label class="fl">Tipe Cocok</label>
-                <select class="fs" id="rType"><option value="contains">Mengandung</option><option value="exact">Persis</option><option value="regex">Regex</option></select>
-            </div>
-            <div class="fg">
-                <label class="fl">Prioritas</label>
-                <select class="fs" id="rPrio"><option value="low">Low</option><option value="normal">Normal</option><option value="high">High</option></select>
+                <label class="fl">Tipe</label>
+                <select class="fs" id="rType"><option value="contains">Mengandung</option><option value="exact">Persis</option></select>
             </div>
         </div>
         <div class="mdf"><button class="btn bs" onclick="clM('ruleM')">Batal</button><button class="btn bp" onclick="saveRule()">Simpan</button></div>
     </div>
 </div>
 
+<!-- SCHEDULE MODAL -->
 <div class="mo" id="schedM" onclick="if(event.target===this)clM('schedM')">
     <div class="md">
         <div class="mdh"><span class="mdt">Buat Jadwal</span><button class="mdc" onclick="clM('schedM')"><i class="fas fa-times"></i></button></div>
         <div class="mdb">
-            <div class="fg"><label class="fl">Nama Jadwal</label><input class="fi" id="sName" placeholder="Promosi Jumat"></div>
-            <div class="fg"><label class="fl">Waktu Eksekusi</label><div style="display:flex;gap:10px"><input type="date" class="fi" id="sDate"><input type="time" class="fi" id="sTime"></div></div>
-            <div class="fg"><label class="fl">Target</label><select class="fs" id="sTarget"><option value="all">All Contacts</option><option value="groups">All Groups</option></select></div>
-            <div class="fg"><label class="fl">Isi Pesan</label><textarea class="ft" id="sMsg" rows="4"></textarea></div>
+            <div class="fg"><label class="fl">Nama</label><input class="fi" id="sName" placeholder="Promosi"></div>
+            <div class="fg"><label class="fl">Waktu</label><div style="display:flex;gap:10px"><input type="date" class="fi" id="sDate"><input type="time" class="fi" id="sTime"></div></div>
+            <div class="fg"><label class="fl">Pesan</label><textarea class="ft" id="sMsg" rows="4"></textarea></div>
         </div>
         <div class="mdf"><button class="btn bs" onclick="clM('schedM')">Batal</button><button class="btn bp" onclick="saveSched()">Jadwalkan</button></div>
     </div>
@@ -483,30 +455,20 @@
 
 <script>
 // --- CORE STATE ---
-const ST_KEY = 'wabot_v2_data';
+const ST_KEY = 'wabot_railway_v3';
 let state = {
-    settings: {
-        srvUrl: 'http://localhost:3000',
-        delayReply: 2, randomDelayMax: 3,
-        cooldownEnabled: true, caseSensitive: false, groupTagOnly: false,
-        groupMode: 'none', defaultReplyText: 'Maaf, saya bot. Pesan Anda diterima.'
-    },
-    rules: [
-        { id: 1, name: 'Sapaan', keys: 'halo, hai, pagi, siang, malam', resp: 'Halo! Selamat datang di layanan kami.', type: 'contains', prio: 'high', active: true },
-        { id: 2, name: 'Info Harga', keys: 'harga, berapa, biaya', resp: 'Untuk info harga silakan cek katalog kami.', type: 'contains', prio: 'normal', active: true },
-        { id: 3, name: 'Terima Kasih', keys: 'terima kasih, makasih, thanks', resp: 'Sama-sama! Senang bisa membantu.', type: 'contains', prio: 'low', active: true }
-    ],
+    settings: { delay: 2, rand: 3, grpTag: false, grpMode: 'none' },
+    rules: [],
     schedules: [],
     logs: [],
-    stats: { sent: 120, recv: 340, reply: 115, err: 2 }
+    stats: { sent: 0, recv: 0, reply: 0, err: 0 }
 };
 
 let socket = null;
 let connected = false;
-let reconnectTimer = null;
 let uptimeInterval = null;
 
-// --- INIT & PERSISTENCE ---
+// --- INIT ---
 function init() {
     loadLocal();
     renderRules();
@@ -514,77 +476,71 @@ function init() {
     renderLogs();
     applySettings();
     initChart();
-    
-    // Auto-connect if server URL is set
-    if(state.settings.srvUrl && state.settings.srvUrl !== '') {
-        connectSocket();
-    } else {
-        updateConnStatus('disconnected', 'Local Mode');
-    }
+    connectSocket();
 }
 
 function loadLocal() {
     const d = localStorage.getItem(ST_KEY);
-    if (d) {
-        const parsed = JSON.parse(d);
-        state = { ...state, ...parsed }; // Merge safely
-    }
+    if (d) state = { ...state, ...JSON.parse(d) };
 }
 
 function saveLocal() {
     localStorage.setItem(ST_KEY, JSON.stringify(state));
 }
 
-function resetData() {
-    if(confirm('Reset semua data ke default?')) {
-        localStorage.removeItem(ST_KEY);
-        location.reload();
-    }
-}
-
-// --- SOCKET.IO LOGIC ---
+// --- SOCKET LOGIC ---
 function connectSocket() {
-    if(socket) socket.disconnect();
-    
-    const url = state.settings.srvUrl;
+    const url = window.location.origin; // Otomatis ambil domain Railway
     document.getElementById('sockUrl').textContent = url;
-    
+    document.getElementById('srvUrl').value = url;
+
     try {
-        socket = io(url, { 
-            transports: ['websocket', 'polling'], 
-            reconnection: true, 
-            reconnectionDelay: 2000,
-            timeout: 5000 
-        });
+        socket = io(url, { transports: ['websocket', 'polling'] });
 
         socket.on('connect', () => {
             connected = true;
             updateConnStatus('connected');
             document.getElementById('modeInd').className = 'tg g';
             document.getElementById('modeInd').textContent = 'Online';
-            toast('Terhubung ke Server', 's');
-            
-            // Sync initial data
-            socket.emit('init', { settings: state.settings });
-            socket.emit('get-stats');
+            toast('Terhubung ke Railway', 's');
         });
 
         socket.on('disconnect', () => {
             connected = false;
             updateConnStatus('reconnecting');
-            document.getElementById('modeInd').className = 'tg o';
-            document.getElementById('modeInd').textContent = 'Offline';
         });
 
         socket.on('connect_error', (err) => {
             connected = false;
             updateConnStatus('error');
-            console.error("Socket Error", err);
+            console.error(err);
         });
 
-        // Listeners from Server
+        // --- EVENT PENTING: QR CODE ---
         socket.on('qr', (data) => {
-            drawRealQR(data.qr);
+            // Hapus QR lama
+            const container = document.getElementById('qrCanvas');
+            container.innerHTML = '';
+            
+            // Update status
+            const status = document.getElementById('qrStatus');
+            status.style.display = 'block';
+            status.textContent = 'QR Code Terbaru';
+
+            // Generate REAL QR
+            try {
+                new QRCode(container, {
+                    text: data.qr,
+                    width: 256,
+                    height: 256,
+                    colorDark : "#000000",
+                    colorLight : "#ffffff",
+                    correctLevel : QRCode.CorrectLevel.H
+                });
+                status.textContent = 'Silakan scan sekarang';
+            } catch(e) {
+                container.innerHTML = '<span style="color:red">Gagal render QR</span>';
+            }
         });
 
         socket.on('ready', (info) => {
@@ -593,252 +549,124 @@ function connectSocket() {
         });
 
         socket.on('message', (msg) => {
-            addLog(msg);
-            updateStats();
+            state.stats.recv++;
+            document.getElementById('stR').textContent = state.stats.recv;
+            document.getElementById('cpMsg').textContent = state.stats.recv;
+            
+            addLog({ time: new Date().toLocaleTimeString(), type: 'in', sender: msg.from, msg: msg.body });
         });
 
-    } catch (e) {
-        console.error("Init Error", e);
-        toast('Gagal inisialisasi socket', 'e');
+    } catch(e) {
+        toast('Socket Error', 'e');
     }
 }
 
-function updateConnStatus(status, reason) {
+function updateConnStatus(s) {
     const el = document.getElementById('sockStat');
-    if (status === 'connected') el.className = 'tg g', el.textContent = 'Terhubung';
-    else if (status === 'reconnecting') el.className = 'tg o', el.textContent = 'Menghubungkan...';
-    else if (status === 'error') el.className = 'tg r', el.textContent = 'Error Koneksi';
-    else if (status === 'disconnected') el.className = 'tg o', el.textContent = reason || 'Terputus';
+    if (s === 'connected') el.className = 'tg g', el.textContent = 'Terhubung';
+    else if (s === 'reconnecting') el.className = 'tg o', el.textContent = 'Reconnecting...';
+    else if (s === 'error') el.className = 'tg r', el.textContent = 'Error';
 }
 
-// --- UI NAVIGATION ---
-const PT = {
-    connection: ['Hubungkan WhatsApp', 'Manajemen sesi'],
-    settings: ['Pengaturan', 'Konfigurasi bot'],
-    autoreply: ['Auto-Reply', 'Aturan balasan'],
-    schedule: ['Jadwal', 'Pesan terjadwal'],
-    dashboard: ['Dashboard', 'Statistik real-time'],
-    logs: ['Log Aktivitas', 'Riwayat pesan']
-};
-
-function nav(page, el) {
+// --- NAVIGATION ---
+function nav(p, el) {
     document.querySelectorAll('.ni').forEach(n => n.classList.remove('act'));
     if(el) el.classList.add('act');
-    
-    document.querySelectorAll('.pg').forEach(p => p.classList.remove('act'));
-    document.getElementById('pg-'+page).classList.add('act');
-    
-    const t = PT[page];
-    document.getElementById('ptitle').textContent = t[0];
-    document.getElementById('psub').textContent = t[1];
-    
-    if(window.innerWidth < 768) document.getElementById('sb').classList.remove('op');
+    document.querySelectorAll('.pg').forEach(pg => pg.classList.remove('act'));
+    document.getElementById('pg-'+p).classList.add('act');
+    document.getElementById('sb').classList.remove('op');
 }
 
-// --- CONNECTION PAGE LOGIC ---
+// --- QR MODAL ---
 function openQRModal() {
-    if (connected) return; 
-    
-    // Show Modal
+    if(connected) return toast('Bot sudah terhubung', 'w');
     document.getElementById('qrModal').classList.add('sh');
-    
-    // Update UI text
-    const status = document.getElementById('qrStatus');
-    status.style.display = 'block';
-    status.textContent = 'Membuat QR Code...';
-    
-    // Simulate Connection Process
-    if(connected && socket) {
-        socket.emit('get-qr');
-    } else {
-        // Simulasi visual jika offline/demo
-        setTimeout(() => {
-            generateFakeQR();
-            status.textContent = 'Silakan scan kode di atas';
-        }, 1000);
-    }
+    // Server Railway biasanya mengirim QR otomatis saat connect
 }
 
 function closeQRModal() {
     document.getElementById('qrModal').classList.remove('sh');
 }
 
-function drawRealQR(url) {
-    // Ideally render a real QR library here. For demo, we simulate.
-    // If using a library like qrcode.js: new QRCode(document.getElementById("qrCanvas"), url);
-    generateFakeQR(); 
-}
-
-function generateFakeQR() {
-    const c = document.getElementById('qrCanvas');
-    const ctx = c.getContext('2d');
-    // Force white background for high contrast
-    ctx.fillStyle = '#fff';
-    ctx.fillRect(0, 0, c.width, c.height);
-    
-    // Simple Matrix Logic
-    const size = 25; // 25x25 grid
-    const cell = c.width / size;
-    ctx.fillStyle = '#000';
-    
-    for(let i=0; i<size; i++) {
-        for(let j=0; j<size; j++) {
-            // Corners
-            if((i<7 && j<7) || (i>size-8 && j<7) || (i<7 && j>size-8)) {
-                if(i>1 && i<5 && j>1 && j<5) continue; // Hollow
-                if(i>2 && i<4 && j>2 && j<4) continue; // Dot
-                ctx.fillRect(i*cell, j*cell, cell, cell);
-            } 
-            // Random data
-            else if (Math.random() > 0.5) {
-                ctx.fillRect(i*cell, j*cell, cell, cell);
-            }
-        }
-    }
-}
-
+// --- CONNECTION LOGIC ---
 function setWAConnected(info) {
     const b = document.getElementById('cbanner');
-    
     b.className = 'cb2 ok';
-    b.querySelector('.ci2').innerHTML = '<i class="fas fa-link"></i>';
+    b.querySelector('.ci2').innerHTML = '<i class="fas fa-check-circle"></i>';
     document.getElementById('ctitle').textContent = 'Terhubung';
-    document.getElementById('cdesc').textContent = info.phone || 'WhatsApp Web Session';
+    document.getElementById('cdesc').textContent = 'Bot aktif dan siap menerima pesan';
     
     document.getElementById('btnConn').style.display = 'none';
     document.getElementById('btnDisc').style.display = 'flex';
-    
     document.getElementById('cpInfo').style.display = 'block';
-    document.getElementById('cpPhone').textContent = info.phone || '+62 812-xxxx-xxxx';
-    
-    document.getElementById('qrStatus').textContent = 'Berhasil Terhubung!';
+    document.getElementById('cpPhone').textContent = info.phone || '+62...';
     
     startUptime();
 }
 
 function discWA() {
-    if(socket && connected) socket.emit('disconnect-wa');
-    
-    // UI Reset
-    document.getElementById('btnConn').style.display = 'flex';
-    document.getElementById('btnDisc').style.display = 'none';
-    
-    const b = document.getElementById('cbanner');
-    b.className = 'cb2 disc';
-    b.querySelector('.ci2').innerHTML = '<i class="fas fa-unlink"></i>';
-    document.getElementById('ctitle').textContent = 'Terputus';
-    
-    document.getElementById('cpInfo').style.display = 'none';
-    if(uptimeInterval) clearInterval(uptimeInterval);
+    if(socket) socket.emit('disconnect-wa');
+    location.reload(); // Refresh halaman agar bersih
 }
 
-// --- SETTINGS LOGIC ---
-function changeServer() {
-    const url = document.getElementById('srvUrl').value.trim();
-    state.settings.srvUrl = url;
+function startUptime() {
+    let s = 0;
+    if(uptimeInterval) clearInterval(uptimeInterval);
+    uptimeInterval = setInterval(() => {
+        s++;
+        const h = Math.floor(s/3600).toString().padStart(2,'0');
+        const m = Math.floor((s%3600)/60).toString().padStart(2,'0');
+        const sec = (s%60).toString().padStart(2,'0');
+        document.getElementById('cpUp').textContent = `${h}:${m}:${sec}`;
+    }, 1000);
+}
+
+// --- DATA MANAGEMENT (LOCAL) ---
+function saveSettings() {
+    state.settings.delay = document.getElementById('sDelay').value;
+    state.settings.rand = document.getElementById('sRand').value;
+    state.settings.grpTag = document.getElementById('cTag').checked;
     saveLocal();
-    toast('URL Server disimpan. Menghubungkan ulang...', 'w');
-    setTimeout(() => location.reload(), 1000);
+    toast('Pengaturan disimpan', 's');
 }
 
 function applySettings() {
-    const s = state.settings;
-    document.getElementById('srvUrl').value = s.srvUrl;
-    document.getElementById('dDelay').value = s.delayReply;
-    document.getElementById('vDelay').textContent = s.delayReply + 's';
-    document.getElementById('dRand').value = s.randomDelayMax;
-    document.getElementById('vRand').textContent = s.randomDelayMax + 's';
-    document.getElementById('cLimit').checked = s.cooldownEnabled;
-    document.getElementById('cCase').checked = s.caseSensitive;
-    document.getElementById('cTag').checked = s.groupTagOnly;
-    document.getElementById('sDef').value = s.defaultReplyText;
-    
-    // Group Mode
-    document.querySelectorAll('.radio-item').forEach(el => el.classList.remove('sel'));
-    if(s.groupMode === 'none') setGm('none', document.querySelectorAll('.radio-item')[0]);
-    else if(s.groupMode === 'all') setGm('all', document.querySelectorAll('.radio-item')[1]);
+    document.getElementById('sDelay').value = state.settings.delay;
+    document.getElementById('sRand').value = state.settings.rand;
+    document.getElementById('cTag').checked = state.settings.grpTag;
 }
 
-function updSetting(k, v) {
-    state.settings[k] = v;
-    saveLocal();
-    // Update Labels
-    if(k === 'delayReply') document.getElementById('vDelay').textContent = v + 's';
-    if(k === 'randomDelayMax') document.getElementById('vRand').textContent = v + 's';
-}
-
-function setGm(mode, el) {
+function setGm(m, el) {
     document.querySelectorAll('.radio-item').forEach(i => i.classList.remove('sel'));
     el.classList.add('sel');
-    state.settings.groupMode = mode;
+    state.settings.grpMode = m;
     saveLocal();
 }
 
-function togBot() {
-    const cb = document.getElementById('btog');
-    const txt = document.getElementById('bstxt');
-    if(cb.checked) {
-        txt.textContent = 'ACTIVE';
-        txt.style.color = 'var(--acc)';
-        if(socket) socket.emit('bot-toggle', true);
-    } else {
-        txt.textContent = 'OFFLINE';
-        txt.style.color = 'var(--fgd)';
-        if(socket) socket.emit('bot-toggle', false);
-    }
-}
-
-// --- DATA MANAGEMENT (RULES, SCHEDS, LOGS) ---
-function renderRules() {
-    const c = document.getElementById('ruleList');
-    document.getElementById('rc').textContent = state.rules.length;
-    c.innerHTML = '';
-    
-    state.rules.forEach(r => {
-        const div = document.createElement('div');
-        div.className = 'rc';
-        div.innerHTML = `
-            <div class="ric"><i class="fas fa-bolt"></i></div>
-            <div class="ri">
-                <div class="rn">${r.name} <span class="tg ${r.prio==='high'?'r':r.prio==='low'?'o':'b'}">${r.prio}</span></div>
-                <div class="rd">${r.keys}</div>
-            </div>
-            <div class="ra">
-                <button class="btn bs bi bsm" onclick="editRule(${r.id})"><i class="fas fa-pen"></i></button>
-                <button class="btn bd bi bsm" onclick="delRule(${r.id})"><i class="fas fa-trash"></i></button>
-            </div>
-        `;
-        c.appendChild(div);
-    });
-}
-
+// Rules (Local Only)
 function saveRule() {
     const id = document.getElementById('rid').value;
-    const name = document.getElementById('rName').value;
-    const keys = document.getElementById('rKey').value;
-    const resp = document.getElementById('rResp').value;
-    const type = document.getElementById('rType').value;
-    const prio = document.getElementById('rPrio').value;
-    
-    if(!name || !keys || !resp) return toast('Lengkapi data', 'e');
+    const r = {
+        id: id || Date.now(),
+        name: document.getElementById('rName').value,
+        keys: document.getElementById('rKey').value,
+        resp: document.getElementById('rResp').value
+    };
     
     if(id) {
-        // Edit
-        const idx = state.rules.findIndex(r => r.id == id);
-        if(idx > -1) {
-            state.rules[idx] = { ...state.rules[idx], name, keys, resp, type, prio };
-        }
+        const idx = state.rules.findIndex(x => x.id == id);
+        if(idx>-1) state.rules[idx] = r;
     } else {
-        // Add
-        state.rules.push({
-            id: Date.now(), name, keys, resp, type, prio, active: true
-        });
+        state.rules.push(r);
     }
-    
-    saveLocal();
-    renderRules();
-    clM('ruleM');
-    toast('Aturan disimpan', 's');
+    saveLocal(); renderRules(); clM('ruleM');
+}
+
+function delRule(id) {
+    if(confirm('Hapus?')) {
+        state.rules = state.rules.filter(r => r.id !== id);
+        saveLocal(); renderRules();
+    }
 }
 
 function editRule(id) {
@@ -848,225 +676,119 @@ function editRule(id) {
     document.getElementById('rName').value = r.name;
     document.getElementById('rKey').value = r.keys;
     document.getElementById('rResp').value = r.resp;
-    document.getElementById('rType').value = r.type;
-    document.getElementById('rPrio').value = r.prio;
     openM('ruleM');
 }
 
-function delRule(id) {
-    if(confirm('Hapus aturan ini?')) {
-        state.rules = state.rules.filter(r => r.id !== id);
-        saveLocal();
-        renderRules();
-    }
+function renderRules() {
+    const c = document.getElementById('ruleList');
+    document.getElementById('rc').textContent = state.rules.length;
+    c.innerHTML = state.rules.map(r => `
+        <div class="rc">
+            <div class="ric"><i class="fas fa-bolt"></i></div>
+            <div class="ri"><div class="rn">${r.name}</div><div class="rd">${r.keys}</div></div>
+            <div class="ra"><button class="btn bs bi" onclick="editRule(${r.id})"><i class="fas fa-pen"></i></button><button class="btn bd bi" onclick="delRule(${r.id})"><i class="fas fa-trash"></i></button></div>
+        </div>
+    `).join('');
+}
+
+// Schedules (Local Only)
+function saveSched() {
+    const s = {
+        id: Date.now(),
+        name: document.getElementById('sName').value,
+        date: document.getElementById('sDate').value,
+        time: document.getElementById('sTime').value,
+        msg: document.getElementById('sMsg').value
+    };
+    state.schedules.push(s);
+    saveLocal(); renderScheds(); clM('schedM');
+}
+
+function delSched(id) {
+    state.schedules = state.schedules.filter(s => s.id !== id);
+    saveLocal(); renderScheds();
 }
 
 function renderScheds() {
     const c = document.getElementById('schedList');
-    c.innerHTML = '';
-    if(state.schedules.length === 0) {
-        c.innerHTML = '<div class="es"><i class="fas fa-clock"></i><p>Tidak ada jadwal</p></div>';
-        return;
-    }
-    
-    state.schedules.forEach(s => {
-        const div = document.createElement('div');
-        div.className = 'rc';
-        div.innerHTML = `
-            <div class="ric" style="background:var(--infd);color:var(--inf)"><i class="fas fa-calendar-check"></i></div>
-            <div class="ri">
-                <div class="rn">${s.name}</div>
-                <div class="rd">${s.date} @ ${s.time}</div>
-            </div>
-            <div class="ra">
-                <button class="btn bd bi bsm" onclick="delSched(${s.id})"><i class="fas fa-trash"></i></button>
-            </div>
-        `;
-        c.appendChild(div);
-    });
+    c.innerHTML = state.schedules.map(s => `
+        <div class="rc">
+            <div class="ric" style="background:var(--infd);color:var(--inf)"><i class="fas fa-calendar"></i></div>
+            <div class="ri"><div class="rn">${s.name}</div><div class="rd">${s.date} ${s.time}</div></div>
+            <button class="btn bd bi" onclick="delSched(${s.id})"><i class="fas fa-trash"></i></button>
+        </div>
+    `).join('');
 }
 
-function saveSched() {
-    const name = document.getElementById('sName').value;
-    const date = document.getElementById('sDate').value;
-    const time = document.getElementById('sTime').value;
-    const msg = document.getElementById('sMsg').value;
-    
-    if(!name || !date || !time || !msg) return toast('Lengkapi data', 'e');
-    
-    state.schedules.push({ id: Date.now(), name, date, time, msg });
-    saveLocal();
-    renderScheds();
-    clM('schedM');
-    toast('Jadwal dibuat', 's');
-}
-
-function delSched(id) {
-    if(confirm('Hapus jadwal?')) {
-        state.schedules = state.schedules.filter(s => s.id !== id);
-        saveLocal();
-        renderScheds();
-    }
+// Logs
+function addLog(l) {
+    state.logs.unshift(l);
+    if(state.logs.length > 50) state.logs.pop();
+    saveLocal(); renderLogs();
 }
 
 function renderLogs() {
     const c = document.getElementById('logBody');
-    c.innerHTML = '';
-    state.logs.slice().reverse().forEach(l => {
-        const tr = document.createElement('tr');
-        const badge = l.type === 'in' ? '<span class="tg b">In</span>' : '<span class="tg g">Out</span>';
-        tr.innerHTML = `
+    c.innerHTML = state.logs.map(l => `
+        <tr>
             <td style="font-family:'JetBrains Mono';font-size:11px">${l.time}</td>
-            <td>${badge}</td>
+            <td><span class="tg ${l.type=='in'?'b':'g'}">${l.type.toUpperCase()}</span></td>
             <td>${l.sender}</td>
-            <td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${l.msg}</td>
-            <td><span class="tg g">Sukses</span></td>
-        `;
-        c.appendChild(tr);
-    });
+            <td>${l.msg}</td>
+        </tr>
+    `).join('');
 }
 
-function addLog(msg) {
-    state.logs.push(msg);
-    if(state.logs.length > 100) state.logs.shift();
-    saveLocal();
-    renderLogs();
-}
-
+function clearLogs() { state.logs=[]; saveLocal(); renderLogs(); }
 function filterLogs() {
     const s = document.getElementById('logSearch').value.toLowerCase();
-    const f = document.getElementById('logFilter').value;
     const rows = document.querySelectorAll('#logBody tr');
-    
     rows.forEach(r => {
-        const t = r.textContent.toLowerCase();
-        const type = r.cells[1].textContent.trim(); // In/Out
-        let show = true;
-        
-        if(s && !t.includes(s)) show = false;
-        if(f !== 'all' && !type.includes(f==='in'?'In':'Out')) show = false;
-        
-        r.style.display = show ? '' : 'none';
+        r.style.display = r.textContent.toLowerCase().includes(s) ? '' : 'none';
     });
 }
 
-function clearLogs() {
-    state.logs = [];
-    saveLocal();
-    renderLogs();
-    toast('Log dihapus', 'w');
-}
-
-// --- CHARTS & UTILS ---
-let chartInstance = null;
-
-function initChart() {
-    const ctx = document.getElementById('aChart').getContext('2d');
-    chartInstance = new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: ['Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab', 'Min'],
-            datasets: [{
-                label: 'Pesan Masuk',
-                data: [12, 19, 3, 5, 2, 3, 10],
-                borderColor: '#25D366',
-                backgroundColor: 'rgba(37, 211, 102, 0.1)',
-                fill: true,
-                tension: 0.4
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: { legend: { display: false } },
-            scales: {
-                y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#666' } },
-                x: { grid: { display: false }, ticks: { color: '#666' } }
-            }
-        }
-    });
-}
-
-function updChart(p, btn) {
-    document.querySelectorAll('.tbtn').forEach(b => b.classList.remove('act'));
-    btn.classList.add('act');
-    
-    if(p === 'm') {
-        chartInstance.data.labels = ['W1', 'W2', 'W3', 'W4'];
-        chartInstance.data.datasets[0].data = [45, 60, 75, 50];
-    } else {
-        chartInstance.data.labels = ['Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab', 'Min'];
-        chartInstance.data.datasets[0].data = [12, 19, 3, 5, 2, 3, 10];
+// --- UTILS ---
+function resetData() {
+    if(confirm('Reset data?')) {
+        localStorage.removeItem(ST_KEY);
+        location.reload();
     }
-    chartInstance.update();
-}
-
-function startUptime() {
-    let sec = 0;
-    if(uptimeInterval) clearInterval(uptimeInterval);
-    uptimeInterval = setInterval(() => {
-        sec++;
-        const h = Math.floor(sec / 3600).toString().padStart(2,'0');
-        const m = Math.floor((sec % 3600) / 60).toString().padStart(2,'0');
-        const s = (sec % 60).toString().padStart(2,'0');
-        document.getElementById('cpUp').textContent = `${h}:${m}:${s}`;
-    }, 1000);
-}
-
-function updateStats() {
-    // Simulated increment
-    state.stats.recv++;
-    document.getElementById('stR').textContent = state.stats.recv;
-    document.getElementById('cpMsg').textContent = state.stats.recv;
 }
 
 function refreshData() {
-    if(connected && socket) {
-        socket.emit('get-stats');
-        toast('Sinkronisasi...', 's');
-    } else {
-        toast('Tidak terhubung ke server', 'w');
-    }
+    if(socket) socket.emit('get-stats');
+    toast('Refreshed', 's');
 }
 
-// --- TOAST & MODAL ---
-function toast(m, t='s') {
+function toast(m,t='s') {
     const c = document.getElementById('toastArea');
     const d = document.createElement('div');
     d.className = `tt ${t}`;
     const ic = t==='s'?'fa-check-circle':t==='w'?'fa-exclamation-triangle':'fa-times-circle';
     d.innerHTML = `<i class="fas ${ic}"></i><span class="tm">${m}</span>`;
     c.appendChild(d);
-    setTimeout(() => {
-        d.style.opacity = '0';
-        d.style.transform = 'translateX(50px)';
-        setTimeout(() => d.remove(), 300);
-    }, 3000);
+    setTimeout(() => { d.style.opacity=0; d.style.transform='translateX(50px)'; setTimeout(()=>d.remove(),300) }, 3000);
 }
 
-function openM(id) {
-    document.getElementById(id).classList.add('sh');
-    // Reset form if it's create mode (no ID)
-    if(id === 'ruleM' && !document.getElementById('rid').value) {
-        document.getElementById('rName').value = '';
-        document.getElementById('rKey').value = '';
-        document.getElementById('rResp').value = '';
-    }
-    if(id === 'schedM') {
-        const now = new Date();
-        document.getElementById('sDate').valueAsDate = now;
-        document.getElementById('sTime').value = "09:00";
-    }
+function openM(id) { document.getElementById(id).classList.add('sh'); }
+function clM(id) { 
+    document.getElementById(id).classList.remove('sh'); 
+    if(id==='ruleM') document.getElementById('rid').value = '';
 }
 
-function clM(id) {
-    document.getElementById(id).classList.remove('sh');
-    if(id === 'ruleM') document.getElementById('rid').value = '';
+function initChart() {
+    new Chart(document.getElementById('aChart'), {
+        type: 'line',
+        data: {
+            labels: ['A','B','C','D','E','F','G'],
+            datasets: [{ label: 'Pesan', data: [5,12,3,8,15,6,10], borderColor:'#25D366', tension:.4, fill:true, backgroundColor:'rgba(37,211,102,.1)' }]
+        },
+        options: { responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}}, scales:{y:{grid:{color:'rgba(255,255,255,0.05)'},ticks:{color:'#666'}}, x:{grid:{display:false},ticks:{color:'#666'}}}}
+    });
 }
 
-// Start
 document.addEventListener('DOMContentLoaded', init);
-
 </script>
 </body>
 </html>
