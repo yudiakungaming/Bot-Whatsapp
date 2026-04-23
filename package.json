@@ -5,6 +5,8 @@
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
+    "docker-build": "docker build -t wabot-railway .",
+    "docker-run": "docker run -p 3000:3000 wabot-railway"
   },
   "dependencies": {
     "cors": "^2.8.5",
