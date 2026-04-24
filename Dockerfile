@@ -1,8 +1,6 @@
-# Menggunakan versi Node.js LTS yang ringan (Slim)
 FROM node:18-slim
 
-# 1. Update dan Install Library Sistem yang dibutuhkan Chromium/Puppeteer
-# Termasuk libglib-2.0-0 yang menyebabkan error Anda
+# 1. Update dan Install Library Sistem
 RUN apt-get update \
     && apt-get install -y wget gnupg \
     && apt-get install -y \
