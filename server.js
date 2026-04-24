@@ -4,25 +4,26 @@ const { Server } = require("socket.io");
 const cors = require('cors');
 const { Client, LocalAuth } = require('whatsapp-web.js');
 
-// --- LOGIKA RESET SESI (FIX RAILWAY) ---
+// --- LOGIKA RESET TOTAL ---
 const fs = require('fs');
 const path = require('path');
 
-// Cek apakah kita perlu merestart sesi (dari Environment Variable Railway)
-const shouldReset = process.env.RESTART_SESSION === 'YES';
-
-if (shouldReset) {
-    const sessionFolder = path.resolve(__dirname, '.wwebjs_auth');
-    if (fs.existsSync(sessionFolder)) {
-        console.log('------------------------------------------');
-        console.log('TERDETEKSI PERINTAH RESET SESI!');
-        console.log('Menghapus folder .wwebjs_auth secara paksa...');
-        fs.rmSync(sessionFolder, { recursive: true, force: true });
-        console.log('Sesi lama berhasil dihapus!');
-        console.log('------------------------------------------');
+// 1. Hapus semua folder sesi lama yang mungkin ada (bersih total)
+const rootDir = __dirname;
+fs.readdirSync(rootDir).forEach(file => {
+    if (file.startsWith('.wwebjs_auth')) {
+        const folderPath = path.join(rootDir, file);
+        console.log(`Menemukan folder sesi lama: ${file}. Menghapus...`);
+        fs.rmSync(folderPath, { recursive: true, force: true });
     }
-}
-// -----------------------------------------------
+});
+
+// 2. Gunakan Client ID BARU (PENTING!)
+// Ini memaksa bot menggunakan folder sesi baru yang bersih
+const NEW_CLIENT_ID = 'bot-wa-fresh-reset-v2'; 
+
+console.log(`Menggunakan Client ID: ${NEW_CLIENT_ID}`);
+// -------------------------------
 
 const app = express();
 app.use(cors());
@@ -41,7 +42,7 @@ const io = new Server(server, {
 
 // Inisialisasi Client WhatsApp
 const client = new Client({
-    authStrategy: new LocalAuth({ clientId: 'bot-wa' }),
+    authStrategy: new LocalAuth({ clientId: NEW_CLIENT_ID }),
     puppeteer: {
         headless: true,
         args: [
@@ -61,26 +62,23 @@ let isConnected = false;
 
 // --- EVENTS WHATSAPP ---
 
-// Saat QR Code muncul
 client.on('qr', (qr) => {
-    console.log('QR Code diterima, mengirim ke client...');
+    console.log('QR Code Baru Muncul! Mengirim ke client...');
     io.emit('qr', { qr: qr });
 });
 
-// Saat Siap (Terhubung)
 client.on('ready', () => {
-    console.log('Client is ready!');
+    console.log('Client is ready! Sesi berhasil dibuat.');
     isConnected = true;
     const info = client.info;
     io.emit('ready', { phone: info.wid.user });
 });
 
-// Saat Pesan Masuk
 client.on('message', async (msg) => {
     console.log('Pesan masuk:', msg.body);
     
     if (msg.body.toLowerCase() === 'halo') {
-        msg.reply('Halo! Bot ini sedang berjalan di Railway.');
+        msg.reply('Halo! Bot ini sudah fresh login baru.');
     }
     
     io.emit('message', {
@@ -91,7 +89,7 @@ client.on('message', async (msg) => {
 });
 
 client.on('authenticated', () => {
-    console.log('AUTHENTICATED');
+    console.log('AUTHENTICATED (Login Berhasil)');
 });
 
 client.on('auth_failure', msg => {
