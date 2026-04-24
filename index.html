@@ -1,0 +1,3596 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WhatsApp AI Enterprise - Platform Lengkap</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+    <style>
+        :root {
+            --primary: #25D366;
+            --dark: #128C7E;
+            --darker: #075E54;
+            --light: #DCF8C6;
+            --bg: #F0F2F5;
+            --white: #FFFFFF;
+            --text-dark: #1f2937;
+            --text-light: #6b7280;
+            --gradient-1: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --gradient-2: linear-gradient(135deg, #25D366 0%, #128C7E 100%);
+            --gradient-3: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --gradient-4: linear-gradient(135deg, #fc4a1a 0%, #f7b733 100%);
+            --shadow: 0 10px 40px rgba(0,0,0,0.1);
+            --radius: 16px;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--bg);
+            color: var(--text-dark);
+            line-height: 1.6;
+        }
+
+        /* ========== NAVBAR ========== */
+        .navbar {
+            background: white;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.08);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--darker);
+        }
+
+        .logo i { color: var(--primary); font-size: 2rem; }
+
+        .nav-links { display: flex; gap: 8px; flex-wrap: wrap; }
+
+        .nav-link {
+            padding: 10px 18px;
+            border-radius: 10px;
+            text-decoration: none;
+            color: var(--text-light);
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.3s;
+            cursor: pointer;
+            border: none;
+            background: transparent;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        /* ========== HERO ========== */
+        .hero {
+            background: linear-gradient(135deg, #075E54 0%, #128C7E 50%, #25D366 100%);
+            color: white;
+            padding: 100px 20px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            top: -200px;
+            right: -200px;
+            animation: float 10s infinite ease-in-out;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0); }
+            50% { transform: translate(-50px, 50px); }
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            font-weight: 900;
+            margin-bottom: 20px;
+            text-shadow: 2px 4px 20px rgba(0,0,0,0.3);
+        }
+
+        .hero p {
+            font-size: 1.25rem;
+            opacity: 0.95;
+            max-width: 700px;
+            margin: 0 auto 35px;
+        }
+
+        .hero-stats {
+            display: flex;
+            justify-content: center;
+            gap: 50px;
+            flex-wrap: wrap;
+            margin-top: 50px;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 3rem;
+            font-weight: 900;
+            display: block;
+        }
+
+        .stat-label {
+            font-size: 0.95rem;
+            opacity: 0.85;
+        }
+
+        /* ========== CONTAINER ========== */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* ========== TAB CONTENT ========== */
+        .tab-section {
+            display: none;
+            animation: fadeInUp 0.5s ease;
+        }
+
+        .tab-section.active { display: block; }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ========== CARDS ========== */
+        .card {
+            background: white;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 35px;
+            margin-bottom: 30px;
+            border: 1px solid #e5e7eb;
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            margin-bottom: 28px;
+            padding-bottom: 22px;
+            border-bottom: 2px solid #f3f4f6;
+        }
+
+        .card-icon {
+            width: 65px;
+            height: 65px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 30px;
+            color: white;
+            flex-shrink: 0;
+        }
+
+        .card-title {
+            font-size: 1.75rem;
+            font-weight: 800;
+            color: var(--text-dark);
+        }
+
+        .card-subtitle {
+            color: var(--text-light);
+            font-size: 0.95rem;
+            margin-top: 4px;
+        }
+
+        /* ========== CODE BLOCKS ========== */
+        .code-container {
+            position: relative;
+            margin: 20px 0;
+            border-radius: 14px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+        }
+
+        .code-header {
+            background: #1e1e1e;
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #333;
+        }
+
+        .code-filename {
+            color: #9ca3af;
+            font-family: 'Monaco', 'Consolas', monospace;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .copy-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 6px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 700;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .copy-btn:hover { background: var(--dark); transform: scale(1.05); }
+
+        pre[class*="language-"] {
+            margin: 0 !important;
+            border-radius: 0 !important;
+            max-height: 450px;
+            overflow: auto;
+        }
+
+        code[class*="language-"] {
+            font-size: 13.5px !important;
+            line-height: 1.7 !important;
+        }
+
+        /* ========== GRID LAYOUTS ========== */
+        .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 25px; }
+        .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 25px; }
+        .grid-4 { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
+
+        @media(max-width: 768px) {
+            .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+        }
+
+        /* ========== FEATURE BOXES ========== */
+        .feature-box {
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            border: 2px solid #e2e8f0;
+            border-radius: 16px;
+            padding: 28px;
+            transition: all 0.3s;
+        }
+
+        .feature-box:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary);
+            box-shadow: 0 15px 40px rgba(37,211,102,0.15);
+        }
+
+        .feature-box i {
+            font-size: 36px;
+            margin-bottom: 15px;
+            display: block;
+        }
+
+        .feature-box h4 {
+            font-size: 1.15rem;
+            margin-bottom: 10px;
+            color: var(--text-dark);
+        }
+
+        .feature-box p {
+            color: var(--text-light);
+            font-size: 0.93rem;
+        }
+
+        /* ========== STEPS ========== */
+        .step-list { counter-reset: steps; }
+
+        .step-item {
+            display: flex;
+            gap: 22px;
+            margin-bottom: 28px;
+            position: relative;
+        }
+
+        .step-number {
+            width: 55px;
+            height: 55px;
+            background: var(--gradient-1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 800;
+            font-size: 1.3rem;
+            flex-shrink: 0;
+            box-shadow: 0 6px 20px rgba(102,126,234,0.35);
+        }
+
+        .step-content {
+            flex: 1;
+            background: #f8fafc;
+            border-radius: 14px;
+            padding: 24px;
+            border-left: 4px solid var(--primary);
+        }
+
+        .step-content h4 { margin-bottom: 12px; color: var(--text-dark); }
+        .step-content p { color: var(--text-light); line-height: 1.8; }
+
+        /* ========== ADMIN DASHBOARD PREVIEW ========== */
+        .dashboard-preview {
+            background: #1a1a2e;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        .dashboard-header {
+            background: #16213e;
+            padding: 18px 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #0f3460;
+        }
+
+        .dashboard-logo {
+            color: white;
+            font-weight: 700;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .dashboard-body {
+            display: grid;
+            grid-template-columns: 240px 1fr;
+            min-height: 550px;
+        }
+
+        @media(max-width: 968px) {
+            .dashboard-body { grid-template-columns: 1fr; }
+            .dashboard-sidebar { display: none; }
+        }
+
+        .dashboard-sidebar {
+            background: #16213e;
+            padding: 20px;
+            border-right: 1px solid #0f3460;
+        }
+
+        .sidebar-menu { list-style: none; }
+
+        .sidebar-menu li {
+            padding: 14px 18px;
+            color: #94a3b8;
+            cursor: pointer;
+            border-radius: 10px;
+            margin-bottom: 6px;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .sidebar-menu li:hover,
+        .sidebar-menu li.active {
+            background: rgba(37,211,102,0.15);
+            color: var(--primary);
+        }
+
+        .dashboard-main {
+            padding: 25px;
+            background: #1a1a2e;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 18px;
+            margin-bottom: 25px;
+        }
+
+        .stat-card {
+            background: #16213e;
+            border-radius: 14px;
+            padding: 22px;
+            border: 1px solid #0f3460;
+        }
+
+        .stat-card-label {
+            color: #64748b;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+
+        .stat-card-value {
+            color: white;
+            font-size: 2rem;
+            font-weight: 800;
+        }
+
+        .stat-card-change {
+            font-size: 0.82rem;
+            margin-top: 6px;
+        }
+
+        .stat-card-change.positive { color: #10b981; }
+        .stat-card-change.negative { color: #ef4444; }
+
+        .chart-placeholder {
+            background: #16213e;
+            border-radius: 14px;
+            padding: 25px;
+            border: 1px solid #0f3460;
+            height: 250px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #64748b;
+        }
+
+        /* ========== TABLE STYLES ========== */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .data-table th {
+            background: #f8fafc;
+            padding: 14px 18px;
+            text-align: left;
+            font-weight: 700;
+            color: var(--text-dark);
+            border-bottom: 2px solid #e5e7eb;
+            font-size: 0.88rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .data-table td {
+            padding: 14px 18px;
+            border-bottom: 1px solid #f3f4f6;
+            color: var(--text-light);
+        }
+
+        .data-table tr:hover td { background: #f8fafc; }
+
+        .badge {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.78rem;
+            font-weight: 700;
+        }
+
+        .badge-success { background: #dcfce7; color: #166534; }
+        .badge-warning { background: #fef3c7; color: #92400e; }
+        .badge-danger { background: #fee2e2; color: #991b1b; }
+        .badge-info { background: #dbeafe; color: #1e40af; }
+
+        /* ========== PAYMENT SECTION ========== */
+        .payment-demo {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 20px;
+            padding: 40px;
+            color: white;
+            text-align: center;
+        }
+
+        .payment-form {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            margin-top: 25px;
+            color: var(--text-dark);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 14px 18px;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            font-size: 15px;
+            transition: all 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(37,211,102,0.1);
+        }
+
+        .btn-primary {
+            background: var(--gradient-2);
+            color: white;
+            border: none;
+            padding: 16px 32px;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(37,211,102,0.4);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: var(--text-dark);
+            border: 2px solid #e5e7eb;
+            padding: 14px 28px;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        /* ========== LANGUAGE FLAGS ========== */
+        .lang-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .lang-card {
+            background: white;
+            border: 2px solid #e5e7eb;
+            border-radius: 14px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .lang-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-3px);
+        }
+
+        .lang-flag {
+            font-size: 36px;
+            margin-bottom: 10px;
+        }
+
+        .lang-name {
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+
+        .lang-native {
+            font-size: 0.85rem;
+            color: var(--text-light);
+        }
+
+        /* ========== ACCORDION ========== */
+        .accordion-item {
+            background: white;
+            border-radius: 14px;
+            margin-bottom: 12px;
+            overflow: hidden;
+            border: 1px solid #e5e7eb;
+        }
+
+        .accordion-header {
+            padding: 20px 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            font-weight: 700;
+            color: var(--text-dark);
+            transition: background 0.3s;
+        }
+
+        .accordion-header:hover { background: #f8fafc; }
+
+        .accordion-body {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease;
+            background: #f8fafc;
+        }
+
+        .accordion-body.open { max-height: 800px; }
+
+        .accordion-body-inner {
+            padding: 22px 25px;
+            color: var(--text-light);
+            line-height: 1.8;
+        }
+
+        /* ========== CTA SECTIONS ========== */
+        .cta-box {
+            background: var(--gradient-1);
+            border-radius: 24px;
+            padding: 60px 40px;
+            text-align: center;
+            color: white;
+            margin: 50px 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-box::before {
+            content: '';
+            position: absolute;
+            width: 400px;
+            height: 400px;
+            background: rgba(255,255,255,0.08);
+            border-radius: 50%;
+            bottom: -200px;
+            right: -100px;
+        }
+
+        .cta-box h2 {
+            font-size: 2.5rem;
+            margin-bottom: 18px;
+        }
+
+        .cta-box p {
+            font-size: 1.15rem;
+            opacity: 0.95;
+            max-width: 650px;
+            margin: 0 auto 30px;
+        }
+
+        /* ========== TOAST ========== */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: #1f2937;
+            color: white;
+            padding: 18px 28px;
+            border-radius: 14px;
+            box-shadow: 0 15px 45px rgba(0,0,0,0.3);
+            display: none;
+            align-items: center;
+            gap: 14px;
+            z-index: 9999;
+            animation: slideInRight 0.4s ease;
+        }
+
+        @keyframes slideInRight {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        .toast.show { display: flex; }
+        .toast.success { background: #059669; }
+
+        /* ========== FOOTER ========== */
+        footer {
+            background: #075E54;
+            color: white;
+            padding: 50px 20px 30px;
+            margin-top: 80px;
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 35px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .footer-col h4 {
+            margin-bottom: 18px;
+            font-size: 1.1rem;
+        }
+
+        .footer-col a {
+            display: block;
+            color: rgba(255,255,255,0.75);
+            text-decoration: none;
+            margin-bottom: 10px;
+            transition: color 0.3s;
+        }
+
+        .footer-col a:hover { color: var(--primary); }
+
+        .footer-bottom {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 25px;
+            border-top: 1px solid rgba(255,255,255,0.15);
+            color: rgba(255,255,255,0.65);
+        }
+
+        /* ========== SCROLLBAR ========== */
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+        @media(max-width: 768px) {
+            .navbar { flex-direction: column; gap: 15px; padding: 15px; }
+            .nav-links { justify-content: center; }
+            .hero h1 { font-size: 2.2rem; }
+            .card { padding: 22px; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+    <div class="logo">
+        <i class="fab fa-whatsapp"></i>
+        <span>WhatsApp AI Enterprise</span>
+    </div>
+    <div class="nav-links">
+        <button class="nav-link active" onclick="showTab('overview')">🏠 Overview</button>
+        <button class="nav-link" onclick="showTab('backend')">⚙️ Backend</button>
+        <button class="nav-link" onclick="showTab('database')">🗄️ Database</button>
+        <button class="nav-link" onclick="showTab('admin')">📊 Dashboard</button>
+        <button class="nav-link" onclick="showTab('multilang')">🌍 Multi-Language</button>
+        <button class="nav-link" onclick="showTab('payment')">💳 Payment</button>
+        <button class="nav-link" onclick="showTab('deploy')">🚀 Deploy</button>
+    </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+    <h1>🤖 WhatsApp AI Enterprise Suite</h1>
+    <p>Platform lengkap untuk membangun sistem WhatsApp Chatbot AI dengan backend, database, admin dashboard, multi-bahasa, dan integrasi payment. Siap deploy ke production!</p>
+    
+    <div style="display:flex;gap:15px;justify-content:center;flex-wrap:wrap;">
+        <button class="btn-primary" onclick="showTab('backend')"><i class="fas fa-download"></i> Download Source Code</button>
+        <button class="btn-secondary" style="background:rgba(255,255,255,0.2);color:white;border-color:white;" onclick="showTab('deploy')"><i class="fas fa-play"></i> Mulai Deploy</button>
+    </div>
+
+    <div class="hero-stats">
+        <div class="stat-item">
+            <span class="stat-number">50+</span>
+            <span class="stat-label">File Source Code</span>
+        </div>
+        <div class="stat-item">
+            <span class="stat-number">100%</span>
+            <span class="stat-label">Production Ready</span>
+        </div>
+        <div class="stat-item">
+            <span class="stat-number">∞</span>
+            <span class="stat-label">Scalable Users</span>
+        </div>
+        <div class="stat-item">
+            <span class="stat-number">24/7</span>
+            <span class="stat-label">AI Support</span>
+        </div>
+    </div>
+</section>
+
+<div class="container">
+
+<!-- ==================== TAB: OVERVIEW ==================== -->
+<div id="tab-overview" class="tab-section active">
+    
+    <div class="card">
+        <div class="card-header">
+            <div class="card-icon" style="background:var(--gradient-2);"><i class="fas fa-rocket"></i></div>
+            <div>
+                <h2 class="card-title">Platform Overview</h2>
+                <p class="card-subtitle">Semua yang Anda butuhkan dalam satu paket enterprise</p>
+            </div>
+        </div>
+
+        <div class="grid-4">
+            <div class="feature-box">
+                <i class="fab fa-node-js" style="color:#339933;"></i>
+                <h4>Backend Server</h4>
+                <p>Node.js + Express.js REST API dengan WebSocket support, rate limiting, dan error handling.</p>
+            </div>
+            <div class="feature-box">
+                <i class="fas fa-database" style="color:#336791;"></i>
+                <h4>Database Schema</h4>
+                <p>PostgreSQL/MongoDB schema lengkap untuk users, messages, conversations, payments.</p>
+            </div>
+            <div class="feature-box">
+                <i class="fas fa-chart-line" style="color:#f59e0b;"></i>
+                <h4>Admin Dashboard</h4>
+                <p>Dashboard real-time untuk monitoring chat, analytics, user management, dan reports.</p>
+            </div>
+            <div class="feature-box">
+                <i class="fas fa-globe" style="color:#8b5cf6;"></i>
+                <h4>Multi-Language</h4>
+                <p>Dukungan 10+ bahasa termasuk Indonesia, Inggris, Jawa, Sunda, Arab, Mandarin.</p>
+            </div>
+            <div class="feature-box">
+                <i class="fas fa-credit-card" style="color:#10b981;"></i>
+                <h4>Payment Gateway</h4>
+                <p>Integrasi Midtrans/Xendit/Stripe untuk transaksi via WhatsApp bot.</p>
+            </div>
+            <div class="feature-box">
+                <i class="fas fa-cloud-upload-alt" style="color:#3b82f6;"></i>
+                <h4>Deploy Ready</h4>
+                <p>Docker, Railway, Vercel, AWS deployment scripts dan CI/CD pipelines.</p>
+            </div>
+            <div class="feature-box">
+                <i class="fas fa-shield-alt" style="color:#ef4444;"></i>
+                <h4>Security</h4>
+                <p>JWT auth, rate limiting, input validation, CORS, helmet security headers.</p>
+            </div>
+            <div class="feature-box">
+                <i class="fas fa-file-code" style="color:#ec4899;"></i>
+                <h4>Documentation</h4>
+                <p>API docs, setup guide, troubleshooting, dan best practices lengkap.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Architecture Diagram -->
+    <div class="card">
+        <div class="card-header">
+            <div class="card-icon" style="background:var(--gradient-1);"><i class="fas fa-project-diagram"></i></div>
+            <div>
+                <h2 class="card-title">System Architecture</h2>
+                <p class="card-subtitle">Alur data end-to-end dari user ke AI dan kembali</p>
+            </div>
+        </div>
+
+        <div style="background:linear-gradient(135deg,#f8fafc,#e2e8f0);border-radius:16px;padding:40px;text-align:center;">
+            <div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:15px;margin-bottom:30px;">
+                
+                <div style="background:#fff;padding:25px;border-radius:14px;border:3px solid #25D366;min-width:150px;box-shadow:0 8px 25px rgba(0,0,0,0.1);">
+                    <i class="fab fa-whatsapp" style="font-size:40px;color:#25D366;display:block;margin-bottom:10px;"></i>
+                    <strong>User WhatsApp</strong><br><small style="color:#6b7280;">Mobile/Desktop</small>
+                </div>
+
+                <i class="fas fa-arrow-right" style="font-size:28px;color:#25D366;"></i>
+
+                <div style="background:#fff;padding:25px;border-radius:14px;border:3px solid:#f59e0b;min-width:150px;box-shadow:0 8px 25px rgba(0,0,0,0.1);">
+                    <i class="fas fa-exchange-alt" style="font-size:40px;color:#f59e0b;display:block;margin-bottom:10px;"></i>
+                    <strong>Twilio API</strong><br><small style="color:#6b7280;">Webhook Handler</small>
+                </div>
+
+                <i class="fas fa-arrow-right" style="font-size:28px;color:#f59e0b;"></i>
+
+                <div style="background:#fff;padding:25px;border-radius:14px;border:3px solid:#3b82f6;min-width:150px;box-shadow:0 8px 25px rgba(0,0,0,0.1);">
+                    <i class="fas fa-server" style="font-size:40px;color:#3b82f6;display:block;margin-bottom:10px;"></i>
+                    <strong>Express Server</strong><br><small style="color:#6b7280;">Node.js Backend</small>
+                </div>
+
+                <i class="fas fa-arrow-right" style="font-size:28px;color:#3b82f6;"></i>
+
+                <div style="background:#fff;padding:25px;border-radius:14px;border:3px solid:#8b5cf6;min-width:150px;box-shadow:0 8px 25px rgba(0,0,0,0.1);">
+                    <i class="fas fa-brain" style="font-size:40px;color:#8b5cf6;display:block;margin-bottom:10px;"></i>
+                    <strong>OpenAI GPT-4</strong><br><small style="color:#6b7280;">AI Engine</small>
+                </div>
+            </div>
+
+            <div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:15px;">
+                
+                <div style="background:#fff;padding:25px;border-radius:14px;border:3px solid:#10b981;min-width:130px;box-shadow:0 8px 25px rgba(0,0,0,0.1);">
+                    <i class="fas fa-database" style="font-size:32px;color:#10b981;display:block;margin-bottom:8px;"></i>
+                    <strong>PostgreSQL</strong><br><small style="color:#6b7280;">Data Storage</small>
+                </div>
+
+                <div style="background:#fff;padding:25px;border-radius:14px;border:3px solid:#ef4444;min-width:130px;box-shadow:0 8px 25px rgba(0,0,0,0.1);">
+                    <i class="fas fa-credit-card" style="font-size:32px;color:#ef4444;display:block;margin-bottom:8px;"></i>
+                    <strong>Midtrans</strong><br><small style="color:#6b7280;">Payment</small>
+                </div>
+
+                <div style="background:#fff;padding:25px;border-radius:14px;border:3px solid:#ec4899;min-width:130px;box-shadow:0 8px 25px rgba(0,0,0,0.1);">
+                    <i class="fas fa-chart-pie" style="font-size:32px;color:#ec4899;display:block;margin-bottom:8px;"></i>
+                    <strong>Admin Panel</strong><br><small style="color:#6b7280;">Monitoring</small>
+                </div>
+
+                <div style="background:#fff;padding:25px;border-radius:14px;border:3px solid:#06b6d4;min-width:130px;box-shadow:0 8px 25px rgba(0,0,0,0.1);">
+                    <i class="fas fa-globe-asia" style="font-size:32px;color:#06b6d4;display:block;margin-bottom:8px;"></i>
+                    <strong>i18n</strong><br><small style="color:#6b7280;">Multi-Lang</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tech Stack -->
+    <div class="card">
+        <div class="card-header">
+            <div class="card-icon" style="background:var(--gradient-3);"><i class="fas fa-layer-group"></i></div>
+            <div>
+                <h2 class="card-title">Tech Stack Complete</h2>
+                <p class="card-subtitle">Teknologi modern dan teruji production</p>
+            </div>
+        </div>
+
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Kategori</th>
+                    <th>Teknologi</th>
+                    <th>Versi</th>
+                    <th>Fungsi</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Runtime</strong></td>
+                    <td>Node.js</td>
+                    <td><span class="badge badge-info">18+ LTS</span></td>
+                    <td>Server runtime environment</td>
+                </tr>
+                <tr>
+                    <td><strong>Framework</strong></td>
+                    <td>Express.js</td>
+                    <td><span class="badge badge-success">4.19.x</span></td>
+                    <td>Web framework REST API</td>
+                </tr>
+                <tr>
+                    <td><strong>Database</strong></td>
+                    <td>PostgreSQL + Prisma ORM</td>
+                    <td><span class="badge badge-success">15+</span></td>
+                    <td>Relational database & query builder</td>
+                </tr>
+                <tr>
+                    <td><strong>Cache</strong></td>
+                    <td>Redis</td>
+                    <td><span class="badge badge-info">7.x</span></td>
+                    <td>Caching, sessions, queues</td>
+                </tr>
+                <tr>
+                    <td><strong>AI Engine</strong></td>
+                    <td>OpenAI GPT-4 / Claude</td>
+                    <td><span class="badge badge-success">Latest</span></td>
+                    <td>Natural language processing</td>
+                </tr>
+                <tr>
+                    <td><strong>WhatsApp API</strong></td>
+                    <td>Twilio / Baileys</td>
+                    <td><span class="badge badge-info">Latest</span></td>
+                    <td>WhatsApp Business integration</td>
+                </tr>
+                <tr>
+                    <td><strong>Payment</strong></td>
+                    <td>Midtrans / Xendit</td>
+                    <td><span class="badge badge-success">v2</span></td>
+                    <td>Payment gateway Indonesia</td>
+                </tr>
+                <tr>
+                    <td><strong>Auth</strong></td>
+                    <td>JWT + Passport.js</td>
+                    <td><span class="badge badge-info">Latest</span></td>
+                    <td>Authentication & authorization</td>
+                </tr>
+                <tr>
+                    <td><strong>Frontend Admin</strong></td>
+                    <td>React + TailwindCSS</td>
+                    <td><span class="badge badge-success">18+ / 3.4</span></td>
+                    <td>Admin dashboard UI</td>
+                </tr>
+                <tr>
+                    <td><strong>Deployment</strong></td>
+                    <td>Docker + Railway/AWS</td>
+                    <td><span class="badge badge-info">Latest</span></td>
+                    <td>Containerization & cloud hosting</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+<!-- ==================== TAB: BACKEND ==================== -->
+<div id="tab-backend" class="tab-section">
+
+    <div class="card">
+        <div class="card-header">
+            <div class="card-icon" style="background:var(--gradient-2);"><i class="fab fa-node-js"></i></div>
+            <div>
+                <h2 class="card-title">Backend Server - Node.js + Express</h2>
+                <p class="card-subtitle">Source code lengkap siap copy-paste dan deploy</p>
+            </div>
+        </div>
+
+        <!-- Project Structure -->
+        <h3 style="margin:25px 0 15px;font-size:1.3rem;"><i class="fas fa-folder-tree" style="color:var(--primary);margin-right:10px;"></i>Project Structure</h3>
+        
+        <div class="code-container">
+            <div class="code-header">
+                <span class="code-filename">📁 Project Structure</span>
+                <button class="copy-btn" onclick="copyText(this)"><i class="fas fa-copy"></i> Copy</button>
+            </div>
+            <pre><code class="language-bash">whatsapp-ai-enterprise/
+├── src/
+│   ├── config/
+│   │   ├── index.js          # Environment config loader
+│   │   ├── database.js       # PostgreSQL connection
+│   │   └── redis.js          # Redis client setup
+│   ├── controllers/
+│   │   ├── webhookController.js    # WhatsApp webhook handler
+│   │   ├── chatController.js       # Chat operations
+│   │   ├── aiController.js         # OpenAI integration
+│   │   ├── paymentController.js    # Payment processing
+│   │   └── adminController.js      # Admin operations
+│   ├── middleware/
+│   │   ├── auth.js          # JWT authentication
+│   │   ├── rateLimit.js     # Rate limiting
+│   │   ├── validator.js     # Input validation
+│   │   └── errorHandler.js  # Global error handler
+│   ├── models/
+│   │   ├── User.js          # User schema
+│   │   ├── Conversation.js  # Conversation model
+│   │   ├── Message.js       # Message model
+│   │   └── Transaction.js   # Payment records
+│   ├── routes/
+│   │   ├── webhook.routes.js
+│   │   ├── api.routes.js
+│   │   ├── admin.routes.js
+│   │   └── payment.routes.js
+│   ├── services/
+│   │   ├── whatsappService.js     # Twilio/Baileys wrapper
+│   │   ├── openaiService.js       # GPT-4 integration
+│   │   ├── paymentService.js      # Midtrans/Xendit
+│   │   ├── translationService.js  # i18n multi-language
+│   │   └── analyticsService.js    # Data aggregation
+│   ├── utils/
+│   │   ├── logger.js       # Winston logger
+│   │   ├── helpers.js      # Utility functions
+│   │   └── constants.js    # App constants
+│   ├── app.js              # Express app entry
+│   └── server.js           # Server startup
+├── prisma/
+│   └── schema.prisma       # Database schema
+├── public/                 # Static files
+├── docker-compose.yml      # Docker orchestration
+├── Dockerfile              # Container build
+├── .env.example            # Env template
+├── package.json
+└── README.md</code></pre>
+        </div>
+
+        <!-- package.json -->
+        <h3 style="margin:30px 0 15px;font-size:1.3rem;"><i class="fas fa-box" style="color:var(--primary);margin-right:10px;"></i>package.json</h3>
+        
+        <div class="code-container">
+            <div class="code-header">
+                <span class="code-filename">📄 package.json</span>
+                <button class="copy-btn" onclick="copyText(this)"><i class="fas fa-copy"></i> Copy</button>
+            </div>
+            <pre><code class="language-json">{
+  "name": "whatsapp-ai-enterprise",
+  "version": "1.0.0",
+  "description": "Enterprise WhatsApp AI Chatbot Platform",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "nodemon src/server.js",
+    "build": "prisma generate",
+    "migrate": "prisma migrate dev",
+    "studio": "prisma studio",
+    "docker:build": "docker build -t whatsapp-ai .",
+    "docker:run": "docker run -p 3000:3000 whatsapp-ai",
+    "test": "jest",
+    "lint": "eslint src/",
+    "seed": "node prisma/seed.js"
+  },
+  "dependencies": {
+    "@prisma/client": "^5.7.0",
+    "express": "^4.19.2",
+    "twilio": "^4.21.0",
+    "openai": "^4.24.0",
+    "midtrans-client": "^1.3.1",
+    "jsonwebtoken": "^9.0.2",
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "helmet": "^7.1.0",
+    "express-rate-limit": "^7.1.5",
+    "express-validator": "^7.0.1",
+    "winston": "^3.11.0",
+    "i18next": "^23.7.0",
+    "i18next-http-middleware": "^3.5.0",
+    "redis": "^4.6.0",
+    "socket.io": "^4.7.4",
+    "dotenv": "^16.3.1",
+    "uuid": "^9.0.1",
+    "moment": "^2.29.4",
+    "multer": "^1.4.5-lts.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.2",
+    "jest": "^29.7.0",
+    "eslint": "^8.56.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}</code></pre>
+        </div>
+
+        <!-- Main App File -->
+        <h3 style="margin:30px 0 15px;font-size:1.3rem;"><i class="fas fa-cogs" style="color:var(--primary);margin-right:10px;"></i>src/app.js - Express Application Setup</h3>
+        
+        <div class="code-container">
+            <div class="code-header">
+                <span class="code-filename">📄 src/app.js</span>
+                <button class="copy-btn" onclick="copyText(this)"><i class="fas fa-copy"></i> Copy</button>
+            </div>
+            <pre><code class="language-javascript">const express = require('express');
+const cors = require('cors');
+const helmet = require('helmet');
+const rateLimit = require('express-rate-limit');
+const { createServer } = require('http');
+const { Server } = require('socket.io');
+require('dotenv').config();
+
+// Import routes
+const webhookRoutes = require('./routes/webhook.routes');
+const apiRoutes = require('./routes/api.routes');
+const adminRoutes = require('./routes/admin.routes');
+const paymentRoutes = require('./routes/payment.routes');
+
+// Import middleware
+const errorHandler = require('./middleware/errorHandler');
+const { authenticateJWT } = require('./middleware/auth');
+
+const app = express();
+const httpServer = createServer(app);
+const io = new Server(httpServer, {
+  cors: { origin: process.env.CORS_ORIGIN || '*' }
+});
+
+// ==================== SECURITY MIDDLEWARE ====================
+app.use(helmet({
+  contentSecurityPolicy: false,
+  crossOriginEmbedderPolicy: false
+}));
+
+app.use(cors({
+  origin: process.env.CORS_ORIGIN || '*',
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH']
+}));
+
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+
+// ==================== RATE LIMITING ====================
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // limit each IP to 100 requests per windowMs
+  message: { error: 'Too many requests, please try again later.' },
+  standardHeaders: true,
+  legacyHeaders: false
+});
+
+const strictLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000, // 1 hour
+  max: 10, // stricter for sensitive endpoints
+  message: { error: 'Rate limit exceeded for this endpoint.' }
+});
+
+app.use('/api/', limiter);
+
+// ==================== HEALTH CHECK ====================
+app.get('/health', (req, res) => {
+  res.status(200).json({
+    status: 'ok',
+    timestamp: new Date().toISOString(),
+    uptime: process.uptime(),
+    environment: process.env.NODE_ENV || 'development'
+  });
+});
+
+// ==================== ROUTES ====================
+// Public routes (no auth required)
+app.use('/webhook', webhookRoutes);
+
+// Protected API routes
+app.use('/api/v1', apiRoutes);
+
+// Admin routes (requires admin role)
+app.use('/admin', authenticateJWT, adminRoutes);
+
+// Payment routes
+app.use('/payment', paymentRoutes);
+
+// Socket.IO for real-time updates
+app.set('io', io);
+
+io.on('connection', (socket) => {
+  console.log(`Client connected: ${socket.id}`);
+  
+  socket.on('join-room', (roomId) => {
+    socket.join(roomId);
+    console.log(`Socket ${socket.id} joined room: ${roomId}`);
+  });
+
+  socket.on('disconnect', () => {
+    console.log(`Client disconnected: ${socket.id}`);
+  });
+});
+
+// ==================== ERROR HANDLING ====================
+app.use(errorHandler.notFound);
+app.use(errorHandler.handler);
+
+module.exports = { app, httpServer, io };</code></pre>
+        </div>
+
+        <!-- Server Entry Point -->
+        <h3 style="margin:30px 0 15px;font-size:1.3rem;"><i class="fas fa-play-circle" style="color:var(--primary);margin-right:10px;"></i>src/server.js - Entry Point</h3>
+        
+        <div class="code-container">
+            <div class="code-header">
+                <span class="code-filename">📄 src/server.js</span>
+                <button class="copy-btn" onclick="copyText(this)"><i class="fas fa-copy"></i> Copy</button>
+            </div>
+            <pre><code class="language-javascript">const { app, httpServer, io } = require('./app');
+const connectDB = require('./config/database');
+const connectRedis = require('./config/redis');
+const logger = require('./utils/logger');
+
+const PORT = process.env.PORT || 3000;
+
+// Connect to databases
+async function startServer() {
+  try {
+    // Connect PostgreSQL
+    await connectDB();
+    logger.info('✅ PostgreSQL connected successfully');
+
+    // Connect Redis
+    await connectRedis();
+    logger.info('✅ Redis connected successfully');
+
+    // Start HTTP server
+    httpServer.listen(PORT, () => {
+      logger.info(`
+╔══════════════════════════════════════════╗
+║                                          ║
+║   🚀 WhatsApp AI Enterprise Server       ║
+║                                          ║
+║   Running on: http://localhost:${PORT}       ║
+║   Mode: ${process.env.NODE_ENV || 'development'}                        ║
+║   Time: ${new Date().toISOString()}         ║
+║                                          ║
+╚══════════════════════════════════════════╝
+      `);
+    });
+
+  } catch (error) {
+    logger.error('❌ Failed to start server:', error);
+    process.exit(1);
+  }
+}
+
+// Graceful shutdown
+process.on('SIGTERM', async () => {
+  logger.info('SIGTERM received. Shutting down gracefully...');
+  httpServer.close(() => {
+    logger.info('HTTP server closed');
+    process.exit(0);
+  });
+});
+
+process.on('SIGINT', async () => {
+  logger.info('SIGINT received. Shutting down gracefully...');
+  process.exit(0);
+});
+
+// Handle uncaught exceptions
+process.on('uncaughtException', (error) => {
+  logger.error('Uncaught Exception:', error);
+  process.exit(1);
+});
+
+process.on('unhandledRejection', (reason, promise) => {
+  logger.error('Unhandled Rejection at:', promise, 'reason:', reason);
+});
+
+startServer();</code></pre>
+        </div>
+
+        <!-- Webhook Controller -->
+        <h3 style="margin:30px 0 15px;font-size:1.3rem;"><i class="fab fa-whatsapp" style="color:var(--primary);margin-right:10px;"></i>src/controllers/webhookController.js - WhatsApp Webhook Handler</h3>
+        
+        <div class="code-container">
+            <div class="code-header">
+                <span class="code-filename">📄 src/controllers/webhookController.js</span>
+                <button class="copy-btn" onclick="copyText(this)"><i class="fas fa-copy"></i> Copy</button>
+            </div>
+            <pre><code class="language-javascript">const twilio = require('twilio');
+const { getAIResponse } = require('../services/openaiService');
+const { saveMessage, getUserConversation } = require('../services/chatService');
+const { detectLanguage, translate } = require('../services/translationService');
+const logger = require('../utils/logger');
+
+// Initialize Twilio client
+const twilioClient = twilio(
+  process.env.TWILIO_ACCOUNT_SID,
+  process.env.TWILIO_AUTH_TOKEN
+);
+
+/**
+ * POST /webhook/whatsapp
+ * Receive incoming WhatsApp messages from Twilio
+ */
+exports.receiveMessage = async (req, res) => {
+  try {
+    const startTime = Date.now();
+    
+    // Extract message data from Twilio webhook
+    const {
+      Body: messageBody,
+      From: senderNumber,
+      To: recipientNumber,
+      MessageSid: messageId,
+      NumMedia: mediaCount
+    } = req.body;
+
+    logger.info(`📩 Incoming message from ${senderNumber}: ${messageBody?.substring(0, 50)}...`);
+
+    // Validate required fields
+    if (!messageBody || !senderNumber) {
+      return res.status(400).send('Missing required fields');
+    }
+
+    // Detect language of incoming message
+    const detectedLang = detectLanguage(messageBody);
+    logger.info(`🌍 Detected language: ${detectedLang}`);
+
+    // Get or create user conversation history
+    const conversationHistory = await getUserConversation(senderNumber);
+    
+    // Save incoming message to database
+    await saveMessage({
+      messageId,
+      senderNumber,
+      recipientNumber,
+      messageBody,
+      direction: 'inbound',
+      language: detectedLang,
+      mediaCount: parseInt(mediaCount) || 0
+    });
+
+    // Emit real-time event to admin dashboard
+    const io = req.app.get('io');
+    io.to('admin-dashboard').emit('new-message', {
+      from: senderNumber,
+      message: messageBody.substring(0, 100),
+      timestamp: new Date(),
+      language: detectedLang
+    });
+
+    // Send typing indicator to user
+    await sendTypingIndicator(senderNumber);
+
+    // Process with AI
+    const aiResponse = await getAIResponse({
+      message: messageBody,
+      userId: senderNumber,
+      language: detectedLang,
+      history: conversationHistory
+    });
+
+    // Translate response if needed (respond in user's language)
+    let finalResponse = aiResponse;
+    if (detectedLang !== 'en') {
+      finalResponse = await translate(aiResponse, detectedLang);
+    }
+
+    // Send reply via Twilio WhatsApp
+    await sendMessage(senderNumber, finalResponse);
+
+    // Save outgoing message
+    await saveMessage({
+      messageId: `out_${Date.now()}`,
+      senderNumber: recipientNumber,
+      recipientNumber: senderNumber,
+      messageBody: finalResponse,
+      direction: 'outbound',
+      language: detectedLang,
+      processingTime: Date.now() - startTime
+    });
+
+    // Log metrics
+    const processingTime = Date.now() - startTime;
+    logger.info(`✅ Response sent in ${processingTime}ms`);
+
+    // Respond to Twilio webhook immediately (async processing)
+    res.status(200).send(`
+      <?xml version="1.0" encoding="UTF-8"?>
+      <Response></Response>
+    `);
+
+  } catch (error) {
+    logger.error('❌ Webhook error:', error);
+    
+    // Send error fallback message
+    try {
+      await sendMessage(req.body.From, 'Maaf, sedang ada gangguan. Silakan coba lagi nanti.');
+    } catch (sendError) {
+      logger.error('Failed to send error message:', sendError);
+    }
+    
+    res.status(200).send('<Response></Response>');
+  }
+};
+
+/**
+ * GET /webhook/whatsapp
+ * Twilio webhook verification (URL challenge)
+ */
+exports.verifyWebhook = (req, res) => {
+  // For Twilio, we just need to respond with 200 OK
+  // The actual verification is done via Twilio Console
+  res.status(200).type('text/xml').send(`
+    <?xml version="1.0" encoding="UTF-8"?>
+    <Response>
+      <Message>Webhook verified!</Message>
+    </Response>
+  `);
+};
+
+/**
+ * Send message via Twilio WhatsApp API
+ */
+async function sendMessage(to, body) {
+  return await twilioClient.messages.create({
+    body: body,
+    from: `whatsapp:${process.env.TWILIO_PHONE_NUMBER}`,
+    to: `whatsapp:${to}`
+  });
+}
+
+/**
+ * Send typing indicator
+ */
+async function sendTypingIndicator(to) {
+  // Note: Twilio doesn't support native typing indicators
+  // This is handled by the delay before sending actual response
+  logger.info(`⌨️ Processing message for ${to}...`);
+}
+
+/**
+ * POST /webhook/status
+ * Handle message status callbacks (delivered, read, failed)
+ */
+exports.messageStatus = async (req, res) => {
+  const { MessageStatus, MessageSid } = req.body;
+  
+  logger.info(`📊 Message ${MessageSid} status: ${MessageStatus}`);
+  
+  // Update message status in database
+  // await updateMessageStatus(MessageSid, MessageStatus);
+  
+  res.status(200).send('OK');
+};</code></pre>
+        </div>
+
+        <!-- OpenAI Service -->
+        <h3 style="margin:30px 0 15px;font-size:1.3rem;"><i class="fas fa-brain" style="color:var(--primary);margin-right:10px;"></i>src/services/openaiService.js - AI Engine</h3>
+        
+        <div class="code-container">
+            <div class="code-header">
+                <span class="code-filename">📄 src/services/openaiService.js</span>
+                <button class="copy-btn" onclick="copyText(this)"><i class="fas fa-copy"></i> Copy</button>
+            </div>
+            <pre><code class="language-javascript">const OpenAI = require('openai');
+const logger = require('../utils/logger');
+
+// Initialize OpenAI client
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY
+});
+
+// System prompts by use case
+const SYSTEM_PROMPTS = {
+  default: `Kamu adalah asisten AI yang ramah, cerdas, dan membantu bernama "WhatsApp AI Assistant".
+  
+Aturan:
+- Jawab dalam bahasa yang sama dengan pengguna
+- Gunakan emoji secukupnya untuk membuat percakapan menyenangkan
+- Berikan jawaban yang jelas, ringkas, dan akurat
+- Jika tidak tahu jawabannya, katakan dengan jujur
+- Format respons dengan markdown jika diperlukan (bold, lists, dll)`,
+
+  customer_service: `Kamu adalah customer service bot profesional untuk [NAMA_BISNIS].
+
+Tugas:
+- Menjawab pertanyaan produk/jasa
+- Membantu proses order/pembelian
+- Menangani keluhan dengan empati
+- Memberikan informasi harga, stok, promo
+
+Tone: Ramah, profesional, solutif`,
+
+  sales_bot: `Kamu adalah sales assistant yang persuasif namun tidak mengganggu.
+
+Tujuan:
+- Membantu customer menemukan produk tepat
+- Menjelaskan benefit produk
+- Mengarahkan ke pembelian
+- Follow up setelah purchase
+
+Teknik: SPIN Selling, consultative approach`,
+
+  technical_support: `Kamu adalah teknisi IT expert.
+
+Spesialisasi:
+- Troubleshooting software/hardware
+- Setup & konfigurasi sistem
+- Debugging & error resolution
+- Best practices programming
+
+Style: Step-by-step instructions, code examples when needed`
+};
+
+/**
+ * Get AI response using GPT-4
+ */
+async function getAIResponse({ message, userId, language, history = [], persona = 'default' }) {
+  try {
+    // Build conversation messages
+    const messages = [
+      { 
+        role: 'system', 
+        content: `${SYSTEM_PROMPTS[persona]}\n\nBahasa utama: ${getLanguageName(language)}` 
+      },
+      
+      // Add conversation history for context (last 10 messages)
+      ...history.slice(-10).map(msg => ({
+        role: msg.direction === 'inbound' ? 'user' : 'assistant',
+        content: msg.messageBody
+      })),
+      
+      // Current user message
+      { role: 'user', content: message }
+    ];
+
+    // Call OpenAI API
+    const completion = await openai.chat.completions.create({
+      model: process.env.OPENAI_MODEL || 'gpt-4',
+      messages: messages,
+      max_tokens: parseInt(process.env.MAX_TOKENS) || 500,
+      temperature: parseFloat(process.env.AI_TEMPERATURE) || 0.7,
+      top_p: 1,
+      frequency_penalty: 0,
+      presence_penalty: 0,
+
+      // Function calling capabilities (for actions like orders, payments)
+      functions: [
+        {
+          name: 'create_order',
+          description: 'Create a new product order',
+          parameters: {
+            type: 'object',
+            properties: {
+              product_id: { type: 'string', description: 'Product ID' },
+              quantity: { type: 'integer', description: 'Quantity to order' },
+              customer_name: { type: 'string' },
+              address: { type: 'string' }
+            },
+            required: ['product_id', 'quantity']
+          }
+        },
+        {
+          name: 'check_product_availability',
+          description: 'Check if product is in stock',
+          parameters: {
+            type: 'object',
+            properties: {
+              product_name: { type: 'string' }
+            },
+            required: ['product_name']
+          }
+        },
+        {
+          name: 'initiate_payment',
+          description: 'Start payment process for an order',
+          parameters: {
+            type: 'object',
+            properties: {
+              order_id: { type: 'string' },
+              payment_method: { 
+                type: 'string', 
+                enum: ['gopay', 'ovo', 'dana', 'bank_transfer', 'qris'] 
+              }
+            },
+            required: ['order_id', 'payment_method']
+          }
+        }
+      ],
+      function_call: 'auto'
+    });
+
+    const response = completion.choices[0].message;
+
+    // Check if AI wants to call a function
+    if (response.function_call) {
+      return await handleFunctionCall(response.function_call, userId);
+    }
+
+    // Log token usage for cost tracking
+    logger.info(`🤖 OpenAI API call - Tokens used: ${completion.usage.total_tokens}, Cost: $${(completion.usage.total_tokens * 0.00003).toFixed(4)}`);
+
+    return response.content;
+
+  } catch (error) {
+    logger.error('OpenAI API Error:', error);
+    
+    // Fallback responses based on error type
+    if (error.code === 'rate_limit_exceeded') {
+      return 'Maaf, sedang banyak yang bertanya. Silakan tunggu sebentar lalu coba lagi ya! 😊';
+    }
+    
+    if (error.code === 'insufficient_quota') {
+      return 'Maaf, layanan AI sedang maintenance. Tim kami akan segera menghubungi Anda.';
+    }
+    
+    return 'Maaf, terjadi kesalahan. Silakan coba lagi atau hubungi admin.';
+  }
+}
+
+/**
+ * Handle AI function calls (orders, payments, etc.)
+ */
+async function handleFunctionCall(functionCall, userId) {
+  const { name, arguments: args } = functionCall;
+  const parsedArgs = JSON.parse(args);
+
+  logger.info(`🔧 Function called: ${name}`, parsedArgs);
+
+  switch (name) {
+    case 'create_order':
+      // Import and call order service
+      const { createOrder } = require('./orderService');
+      return await createOrder({ ...parsedArgs, userId });
+    
+    case 'check_product_availability':
+      const { checkStock } = require('./productService');
+      return await checkStock(parsedArgs.product_name);
+    
+    case 'initiate_payment':
+      const { createPayment } = require('./paymentService');
+      return await createPayment(parsedArgs);
+    
+    default:
+      return 'Maaf, fitur tersebut sedang dalam pengembangan.';
+  }
+}
+
+function getLanguageName(code) {
+  const languages = {
+    'id': 'Indonesia',
+    'en': 'English',
+    'jv': 'Jawa',
+    'su': 'Sunda',
+    'ar': 'Arabic',
+    'zh': 'Mandarin',
+    'ja': 'Japanese',
+    'ko': 'Korean',
+    'es': 'Spanish',
+    'fr': 'French'
+  };
+  return languages[code] || 'Indonesia';
+}
+
+module.exports = { getAIResponse };</code></pre>
+        </div>
+
+        <!-- Auth Middleware -->
+        <h3 style="margin:30px 0 15px;font-size:1.3rem;"><i class="fas fa-lock" style="color:var(--primary);margin-right:10px;"></i>src/middleware/auth.js - JWT Authentication</h3>
+        
+        <div class="code-container">
+            <div class="code-header">
+                <span class="code-filename">📄 src/middleware/auth.js</span>
+                <button class="copy-btn" onclick="copyText(this)"><i class="fas fa-copy"></i> Copy</button>
+            </div>
+            <pre><code class="language-javascript">const jwt = require('jsonwebtoken');
+const { promisify } = require('util');
+
+const JWT_SECRET = process.env.JWT_SECRET || 'your-super-secret-key-change-in-production';
+const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || '7d';
+const JWT_COOKIE_EXPIRES = 7; // days
+
+/**
+ * Generate JWT token
+ */
+const signToken = (id, role = 'user') => {
+  return jwt.sign(
+    { id, role },
+    JWT_SECRET,
+    { expiresIn: JWT_EXPIRES_IN }
+  );
+};
+
+/**
+ * Create and send token in cookie
+ */
+const createSendToken = (user, statusCode, res) => {
+  const token = signToken(user.id, user.role);
+
+  const cookieOptions = {
+    expires: new Date(Date.now() + JWT_COOKIE_EXPIRES * 24 * 60 * 60 * 1000),
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'strict'
+  };
+
+  res.cookie('jwt', token, cookieOptions);
+
+  // Remove password from output
+  user.password = undefined;
+
+  res.status(statusCode).json({
+    status: 'success',
+    token,
+    data: { user }
+  });
+};
+
+/**
+ * Protect routes - Verify JWT token
+ */
+const authenticateJWT = async (req, res, next) => {
+  try {
+    // 1) Get token from header or cookie
+    let token;
+    if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
+      token = req.headers.authorization.split(' ')[1];
+    } else if (req.cookies.jwt) {
+      token = req.cookies.jwt;
+    }
+
+    if (!token) {
+      return res.status(401).json({
+        status: 'error',
+        message: 'Anda belum login. Silakan login untuk mengakses.'
+      });
+    }
+
+    // 2) Verify token
+    const decoded = await promisify(jwt.verify)(token, JWT_SECRET);
+
+    // 3) Check if user still exists (optional - requires DB)
+    // const currentUser = await User.findById(decoded.id);
+    // if (!currentUser) {
+    //   return res.status(401).json({
+    //     status: 'error',
+    //     message: 'User tidak lagi exist.'
+    //   });
+    // }
+
+    // Grant access
+    req.user = decoded;
+    next();
+
+  } catch (error) {
+    return res.status(401).json({
+      status: 'error',
+      message: 'Token invalid atau expired.'
+    });
+  }
+};
+
+/**
+ * Restrict to specific roles
+ */
+const restrictTo = (...roles) => {
+  return (req, res, next) => {
+    if (!roles.includes(req.user.role)) {
+      return res.status(403).json({
+        status: 'error',
+        message: 'Anda tidak memiliki izin untuk aksi ini.'
+      });
+    }
+    next();
+  };
+};
+
+/**
+ * Optional auth - attach user if token exists, but don't require it
+ */
+const optionalAuth = async (req, res, next) => {
+  try {
+    let token;
+    if (req.headers.authorization?.startsWith('Bearer')) {
+      token = req.headers.authorization.split(' ')[1];
+    }
+    
+    if (token) {
+      const decoded = await promisify(jwt.verify)(token, JWT_SECRET);
+      req.user = decoded;
+    }
+    next();
+  } catch (error) {
+    next();
+  }
+};
+
+module.exports = {
+  signToken,
+  createSendToken,
+  authenticateJWT,
+  restrictTo,
+  optionalAuth
+};</code></pre>
+        </div>
+
+        <!-- Environment Variables Template -->
+        <h3 style="margin:30px 0 15px;font-size:1.3rem;"><i class="fas fa-key" style="color:var(--primary);margin-right:10px;"></i>.env.example - Environment Configuration</h3>
+        
+        <div class="code-container">
+            <div class="code-header">
+                <span class="code-filename">📄 .env.example</span>
+                <button class="copy-btn" onclick="copyText(this)"><i class="fas fa-copy"></i> Copy</button>
+            </div>
+            <pre><code class="language-bash"># ===========================================
+# WHATSAPP AI ENTERPRISE - ENVIRONMENT CONFIG
+# ===========================================
+
+# ---- SERVER ----
+NODE_ENV=development
+PORT=3000
+CORS_ORIGIN=http://localhost:3000
+
+# ---- DATABASE (PostgreSQL) ----
+DATABASE_URL=postgresql://user:password@localhost:5432/whatsapp_ai
+
+# ---- REDIS (Cache/Sessions) ----
+REDIS_URL=redis://localhost:6379
+
+# ---- TWILIO (WhatsApp API) ----
+TWILIO_ACCOUNT_SID=your_twilio_account_sid
+TWILIO_AUTH_TOKEN=your_twilio_auth_token
+TWILIO_PHONE_NUMBER=+14155238886
+WEBHOOK_URL=https://yourdomain.com/webhook/whatsapp
+
+# ---- OPENAI (AI Engine) ----
+OPENAI_API_KEY=sk-your-openai-api-key-here
+OPENAI_MODEL=gpt-4
+MAX_TOKENS=500
+AI_TEMPERATURE=0.7
+
+# ---- JWT (Authentication) ----
+JWT_SECRET=your-super-secret-jwt-key-min-32-chars
+JWT_EXPIRES_IN=7d
+JWT_COOKIE_EXPIRES=7
+
+# ---- MIDTRANS (Payment Gateway) ----
+MIDTRANS_SERVER_KEY=your_midtrans_server_key
+MIDTRANS_CLIENT_KEY=your_midtrans_client_key
+MIDTRANS_IS_PRODUCTION=false
+
+# ---- LOGGING ----
+LOG_LEVEL=info
+LOG_FILE=logs/app.log
+
+# ---- RATE LIMITING ----
+RATE_LIMIT_WINDOW_MS=900000
+RATE_LIMIT_MAX_REQUESTS=100
+
+# ---- ADMIN DEFAULT CREDENTIALS ----
+ADMIN_EMAIL=admin@yourcompany.com
+ADMIN_PASSWORD=change-this-password-immediately!</code></pre>
+        </div>
+    </div>
+</div>
+
+
+<!-- ==================== TAB: DATABASE ==================== -->
+<div id="tab-database" class="tab-section">
+
+    <div class="card">
+        <div class="card-header">
+            <div class="card-icon" style="background:linear-gradient(135deg,#336791,#00add8);"><i class="fas fa-database"></i></div>
+            <div>
+                <h2 class="card-title">Database Schema - PostgreSQL + Prisma</h2>
+                <p class="card-subtitle">Complete relational database design for enterprise scale</p>
+            </div>
+        </div>
+
+        <!-- Prisma Schema -->
+        <h3 style="margin:25px 0 15px;font-size:1.3rem;"><i class="fas fa-table" style="color:var(--primary);margin-right:10px;"></i>prisma/schema.prisma - Full Database Schema</h3>
+        
+        <div class="code-container">
+            <div class="code-header">
+                <span class="code-filename">📄 prisma/schema.prisma</span>
+                <button class="copy-btn" onclick="copyText(this)"><i class="fas fa-copy"></i> Copy</button>
+            </div>
+            <pre><code class="language-prisma">// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================
+// USER MODEL
+// ============================================
+model User {
+  id                String           @id @default(cuid())
+  phone             String           @unique
+  email             String?          @unique
+  name              String?
+  avatar            String?
+  language          String           @default("id") // ISO 639-1 code
+  role              UserRole         @default(USER)
+  isActive          Boolean          @default(true)
+  lastSeenAt        DateTime?
+  metadata          Json?
+
+  // Relations
+  conversations     Conversation[]
+  messages          Message[]
+  transactions      Transaction[]
+  reviews           Review[]
+
+  createdAt         DateTime         @default(now())
+  updatedAt         DateTime         @updatedAt
+
+  @@index([phone])
+  @@index([role])
+  @@map("users")
+}
+
+enum UserRole {
+  USER
+  ADMIN
+  MODERATOR
+  BOT
+}
+
+// ============================================
+// CONVERSATION MODEL
+// ============================================
+model Conversation {
+  id                String           @id @default(cuid())
+  title             String?
+  type              ConversationType @default(PRIVATE)
+  status            ConversationStatus @default(ACTIVE)
+
+  // Participants
+  participants      UserConversation[]
+
+  // Messages
+  messages          Message[]
+
+  // Metadata
+  lastMessageAt     DateTime?
+  messageCount      Int              @default(0)
+  metadata          Json?
+
+  createdAt         DateTime         @default(now())
+  updatedAt         DateTime         @updatedAt
+
+  @@index([status])
+  @@index([lastMessageAt])
+  @@map("conversations")
+}
+
+enum ConversationType {
+  PRIVATE
+  GROUP
+  BROADCAST
+  SUPPORT_TICKET
+  SALES_CONVERSATION
+}
+
+enum ConversationStatus {
+  ACTIVE
+  ARCHIVED
+  CLOSED
+  PENDING
+}
+
+// ============================================
+// USER_CONVERSATION (Join Table)
+// ============================================
+model UserConversation {
+  id                String           @id @default(cuid())
+  userId            String
+  conversationId    String
+  role              String           @default("member") // owner, admin, member
+  
+  joinedAt          DateTime         @default(now())
+  leftAt            DateTime?
+  lastReadAt        DateTime?
+  unreadCount       Int              @default(0)
+
+  user              User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  conversation      Conversation     @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, conversationId])
+  @@index([conversationId])
+  @@map("user_conversations")
+}
+
+// ============================================
+// MESSAGE MODEL
+// ============================================
+model Message {
+  id                String           @id @default(cuid())
+  externalId        String?          @unique // Twilio MessageSid
+  conversationId    String
+  senderId          String
+  
+  content           String           @db.Text
+  contentType       ContentType      @default(TEXT)
+  mediaUrl          String?
+  mediaType         String?
+  
+  direction         MessageDirection // inbound or outbound
+  status            MessageStatus    @default(SENT)
+  
+  // AI Processing
+  aiModel           String?          // gpt-4, claude, etc.
+  aiTokensUsed      Int?
+  processingTimeMs  Int?
+  
+  // Language
+  language          String           @default("id")
+  translatedContent String?          @db.Text
+
+  // Metadata
+  metadata          Json?
+  repliedToId       String?
+  
+  // Timestamps
+  sentAt            DateTime         @default(now())
+  deliveredAt       DateTime?
+  readAt            DateTime?
+  
+  createdAt         DateTime         @default(now())
+
+  conversation      Conversation     @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  sender            User             @relation(fields: [senderId], references: [id])
+  replies           Message[]        @relation("MessageReplies")
+  replyTo           Message?         @relation("MessageReplies", fields: [repliedToId], references: [id])
+
+  @@index([conversationId])
+  @@index([senderId])
+  @@index([sentAt])
+  @@index([status])
+  @@map("messages")
+}
+
+enum ContentType {
+  TEXT
+  IMAGE
+  VIDEO
+  AUDIO
+  DOCUMENT
+  LOCATION
+  CONTACT
+  INTERACTIVE // buttons, lists
+  TEMPLATE
+}
+
+enum MessageDirection {
+  INBOUND
+  OUTBOUND
+}
+
+enum MessageStatus {
+  QUEUED
+  SENT
+  DELIVERED
+  READ
+  FAILED
+}
+
+// ============================================
+// PRODUCT MODEL (For E-commerce)
+// ============================================
+model Product {
+  id                String           @id @default(cuid())
+  name              String
+  description       String?          @db.Text
+  sku               String?          @unique
+  price             Decimal          @db.Decimal(12, 2)
+  comparePrice      Decimal?         @db.Decimal(12, 2)
+  currency          String           @default("IDR")
+  
+  category          String?
+  tags              String[]
+  
+  images            String[]
+  stock             Int              @default(0)
+  lowStockThreshold Int              @default(5)
+  
+  isActive          Boolean          @default(true)
+  isFeatured        Boolean          @default(false)
+  
+  weight            Decimal?         @db.Decimal(8, 3)
+  dimensions        Json?            // {length, width, height}
+  
+  metadata          Json?
+  
+  createdAt         DateTime         @default(now())
+  updatedAt         DateTime         @updatedAt
+
+  orderItems        OrderItem[]
+  reviews           Review[]
+
+  @@index([category])
+  @@index([isActive])
+  @@index([sku])
+  @@map("products")
+}
+
+// ============================================
+// ORDER MODEL
+// ============================================
+model Order {
+  id                String           @id @default(cuid())
+  orderNumber       String           @unique
+  userId            String
+  
+  status            OrderStatus      @default(PENDING)
+  paymentStatus     PaymentStatus    @default(PENDING)
+  
+  subtotal          Decimal          @db.Decimal(12, 2)
+  discount          Decimal          @default(0) @db.Decimal(12, 2)
+  tax               Decimal          @default(0) @db.Decimal(12, 2)
+  shippingCost      Decimal          @default(0) @db.Decimal(12, 2)
+  totalAmount       Decimal          @db.Decimal(12, 2)
+  
+  currency          String           @default("IDR")
+  
+  // Shipping
+  shippingName      String?
+  shippingPhone     String?
+  shippingAddress   String?          @db.Text
+  shippingCity      String?
+  shippingPostalCode String?
+  shippingMethod    String?
+  trackingNumber    String?
+  
+  // Notes
+  customerNotes     String?          @db.Text
+  internalNotes     String?          @db.Text
+  
+  // Channel
+  channel           OrderChannel      @default(WHATSAPP)
+  
+  items             OrderItem[]
+  transactions      Transaction[]
+  
+  createdAt         DateTime         @default(now())
+  updatedAt         DateTime         @updatedAt
+
+  user              User             @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@index([status])
+  @@index([orderNumber])
+  @@map("orders")
+}
+
+enum OrderStatus {
+  PENDING
+  CONFIRMED
+  PROCESSING
+  SHIPPED
+  DELIVERED
+  COMPLETED
+  CANCELLED
+  REFUNDED
+}
+
+enum PaymentStatus {
+  PENDING
+  PROCESSING
+  PAID
+  FAILED
+  REFUNDED
+  EXPIRED
+}
+
+enum OrderChannel {
+  WEBSITE
+  WHATSAPP
+  INSTAGRAM
+  MARKETPLACE
+  WALK_IN
+}
+
+// ============================================
+// ORDER ITEM MODEL
+// ============================================
+model OrderItem {
+  id                String           @id @default(cuid())
+  orderId           String
+  productId         String
+  
+  productName       String
+  productSku        String?
+  quantity          Int
+  unitPrice         Decimal          @db.Decimal(12, 2)
+  discount          Decimal          @default(0) @db.Decimal(12, 2)
+  totalPrice        Decimal          @db.Decimal(12, 2)
+  
+  notes             String?
+
+  order             Order            @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product           Product          @relation(fields: [productId], references: [id])
+
+  @@index([orderId])
+  @@index([productId])
+  @@map("order_items")
+}
+
+// ============================================
+// TRANSACTION/PAYMENT MODEL
+// ============================================
+model Transaction {
+  id                String           @id @default(cuid())
+  transactionId     String           @unique // External payment ID
+  orderId           String?
+  userId            String
+  
+  type              TransactionType
+  status            TransactionStatus @default(PENDING)
+  
+  amount            Decimal          @db.Decimal(12, 2)
+  currency          String           @default("IDR")
+  fee               Decimal          @default(0) @db.Decimal(12, 2)
+  netAmount         Decimal          @db.Decimal(12, 2)
+  
+  // Payment Method
+  paymentMethod     String?          // gopay, ovo, dana, bank_transfer, qris
+  paymentChannel    String?          // bank_name, e-wallet name
+  accountNumber     String?
+  
+  // Provider Details
+  provider          String           @default("midtrans") // midtrans, xendit, stripe
+  providerData      Json?            // Raw response from provider
+  
+  // Expiry
+  expiresAt         DateTime?
+  paidAt            DateTime?
+  
+  // Fraud Check
+  ipAddress         String?
+  userAgent         String?
+  
+  notes             String?
+  metadata          Json?
+  
+  createdAt         DateTime         @default(now())
+  updatedAt         DateTime         @updatedAt
+
+  order             Order?           @relation(fields: [orderId], references: [id])
+  user              User             @relation(fields: [userId], references: [id])
+
+  @@index([orderId])
+  @@index([userId])
+  @@index([status])
+  @@index([transactionId])
+  @@map("transactions")
+}
+
+enum TransactionType {
+  PAYMENT
+  REFUND
+  TOPUP
+  WITHDRAWAL
+  FEE
+}
+
+enum TransactionStatus {
+  PENDING
+  PROCESSING
+  SUCCESS
+  FAILED
+  EXPIRED
+  CANCELLED
+  REFUNDED
+}
+
+// ============================================
+// REVIEW/RATING MODEL
+// ============================================
+model Review {
+  id                String           @id @default(cuid())
+  userId            String
+  productId         String?
+  orderId           String?
+  
+  rating            Int              // 1-5 stars
+  title             String?
+  comment           String?          @db.Text
+  
+  // Moderation
+  isApproved        Boolean          @default(false)
+  isVerified        Boolean          @default(false)
+  
+  // Response
+  adminResponse     String?          @db.Text
+  respondedAt       DateTime?
+  
+  helpfulCount      Int              @default(0)
+  
+  createdAt         DateTime         @default(now())
+  updatedAt         DateTime         @updatedAt
+
+  user              User             @relation(fields: [userId], references: [id])
+  product           Product?         @relation(fields: [productId], references: [id])
+
+  @@index([productId])
+  @@index([userId])
+  @@index([rating])
+  @@map("reviews")
+}
+
+// ============================================
+// ANALYTICS/LOGS MODEL
+// ============================================
+model AnalyticsEvent {
+  id                String           @id @default(cuid())
+  eventType         String           // message_sent, order_created, etc.
+  eventName         String
+  
+  properties        Json
+  userId            String?
+  sessionId         String?
+  
+  ipAddress         String?
+  userAgent         String?
+  
+  createdAt         DateTime         @default(now())
+
+  @@index([eventType])
+  @@index([eventName])
+  @@index([createdAt])
+  @@index([userId])
+  @@map("analytics_events")
+}
+
+// ============================================
+// SETTINGS MODEL (App Configuration)
+// ============================================
+model Setting {
+  id                String           @id @default(cuid())
+  key               String           @unique
+  value             Json
+  description       String?
+  isPublic          Boolean          @default(false)
+  
+  createdAt         DateTime         @default(now())
+  updatedAt         DateTime         @updatedAt
+
+  @@map("settings")
+}</code></pre>
+        </div>
+
+        <!-- Seed Data -->
+        <h3 style="margin:30px 0 15px;font-size:1.3rem;"><i class="fas fa-seedling" style="color:var(--primary);margin-right:10px;"></i>prisma/seed.js - Initial Data Seeding</h3>
+        
+        <div class="code-container">
+            <div class="code-header">
+                <span class="code-filename">📄 prisma/seed.js</span>
+                <button class="copy-btn" onclick="copyText(this)"><i class="fas fa-copy"></i> Copy</button>
+            </div>
+            <pre><code class="language-javascript">const { PrismaClient } = require('@prisma/client');
+const bcrypt = require('bcryptjs');
+
+const prisma = new PrismaClient();
+
+async function main() {
+  console.log('🌱 Starting database seed...\n');
+
+  // ==========================================
+  // 1. Create Admin User
+  // ==========================================
+  const hashedPassword = await bcrypt.hash('Admin123!', 12);
+  
+  const admin = await prisma.user.upsert({
+    where: { email: 'admin@whatsapp.ai' },
+    update: {},
+    create: {
+      email: 'admin@whatsapp.ai',
+      phone: '+6281234567890',
+      name: 'Super Admin',
+      password: hashedPassword,
+      role: 'ADMIN',
+      language: 'id',
+      isActive: true
+    }
+  });
+  console.log('✅ Admin user created:', admin.email);
+
+  // ==========================================
+  // 2. Create Sample Products
+  // ==========================================
+  const products = [
+    {
+      name: 'Paket Starter - WhatsApp Bot Basic',
+      description: 'Paket dasar untuk mulai menggunakan WhatsApp AI Bot. Cocok untuk UMKM kecil.',
+      sku: 'WABOT-STARTER-001',
+      price: 299000,
+      comparePrice: 499000,
+      category: 'Paket Berlangganan',
+      tags: ['starter', 'basic', 'umkm'],
+      images: ['/images/products/starter-pack.jpg'],
+      stock: 999,
+      isActive: true,
+      isFeatured: true
+    },
+    {
+      name: 'Paket Business - WhatsApp Bot Pro',
+      description: 'Paket bisnis dengan fitur lengkap: multi-bot, analytics, custom AI training.',
+      sku: 'WABOT-BUSINESS-001',
+      price: 999000,
+      comparePrice: 1499000,
+      category: 'Paket Berlangganan',
+      tags: ['business', 'pro', 'enterprise'],
+      images: ['/images/products/business-pack.jpg'],
+      stock: 999,
+      isActive: true,
+      isFeatured: true
+    },
+    {
+      name: 'Paket Enterprise - Custom Solution',
+      description: 'Solusi custom untuk kebutuhan enterprise. Dedicated support, on-premise option.',
+      sku: 'WABOT-ENTERPRISE-001',
+      price: 4999000,
+      comparePrice: 7999000,
+      category: 'Paket Berlangganan',
+      tags: ['enterprise', 'custom', 'dedicated'],
+      images: ['/images/products/enterprise-pack.jpg'],
+      stock: 50,
+      isActive: true,
+      isFeatured: false
+    },
+    {
+      name: 'Konsultasi Setup WhatsApp Bot',
+      description: 'Layanan konsultasi 1-on-1 untuk setup dan konfigurasi WhatsApp bot Anda.',
+      sku: 'CONSULT-001',
+      price: 500000,
+      comparePrice: 750000,
+      category: 'Layanan',
+      tags: ['konsultasi', 'setup', 'support'],
+      images: ['/images/products/consultation.jpg'],
+      stock: 100,
+      isActive: true,
+      isFeatured: true
+    },
+    {
+      name: 'Custom AI Training Session',
+      description: 'Pelatihan AI khusus sesuai kebutuhan bisnis Anda. Include knowledge base upload.',
+      sku: 'AITRAIN-001',
+      price: 1500000,
+      comparePrice: 2500000,
+      category: 'Layanan',
+      tags: ['ai', 'training', 'custom'],
+      images: ['/images/products/ai-training.jpg'],
+      stock: 30,
+      isActive: true,
+      isFeatured: false
+    }
+  ];
+
+  for (const product of products) {
+    await prisma.product.upsert({
+      where: { sku: product.sku },
+      update: {},
+      create: product
+    });
+  }
+  console.log(`✅ ${products.length} products created`);
+
+  // ==========================================
+  // 3. Create Default Settings
+  // ==========================================
+  const settings = [
+    {
+      key: 'app_name',
+      value: 'WhatsApp AI Enterprise',
+      description: 'Nama aplikasi',
+      isPublic: true
+    },
+    {
+      key: 'app_description',
+      value: 'Platform WhatsApp AI Chatbot Enterprise Grade',
+      description: 'Deskripsi aplikasi',
+      isPublic: true
+    },
+    {
+      key: 'whatsapp_business_name',
+      value: 'WhatsApp AI Support',
+      description: 'Nama tampil di WhatsApp',
+      isPublic: true
+    },
+    {
+      key: 'welcome_message',
+      value: 'Halo! 👋 Selamat datang di WhatsApp AI Assistant.\n\nSaya bisa membantu:\n• Informasi produk\n• Proses pemesanan\n• Tracking pesanan\n• Pertanyaan umum\n\nSilakan ketik kebutuhan Anda!',
+      description: 'Pesan sambutan otomatis',
+      isPublic: false
+    },
+    {
+      key: 'away_message',
+      value: 'Terima kasih telah menghubungi kami. 🕐\n\nJam operasional:\nSenin-Jumat: 08:00 - 17:00 WIB\nSabtu: 09:00 - 15:00 WIB\n\nPesan Anda akan dibalas saat jam kerja.',
+      description: 'Pesan saat diluar jam kerja',
+      isPublic: false
+    },
+    {
+      key: 'auto_reply_enabled',
+      value: true,
+      description: 'Aktifkan auto-reply',
+      isPublic: false
+    },
+    {
+      key: 'ai_model',
+      value: 'gpt-4',
+      description: 'Model AI yang digunakan',
+      isPublic: false
+    },
+    {
+      key: 'max_tokens_per_message',
+      value: 500,
+      description: 'Maksimal token per respons AI',
+      isPublic: false
+    },
+    {
+      key: 'rate_limit_per_hour',
+      value: 50,
+      description: 'Batas pesan per jam per user',
+      isPublic: false
+    },
+    {
+      key: 'supported_languages',
+      value: ['id', 'en', 'jv', 'su', 'ar', 'zh', 'ja', 'ko'],
+      description: 'Bahasa yang didukung',
+      isPublic: true
+    }
+  ];
+
+  for (const setting of settings) {
+    await prisma.setting.upsert({
+      where: { key: setting.key },
+      update: { value: setting.value },
+      create: setting
+    });
+  }
+  console.log(`✅ ${settings.length} settings created`);
+
+  // ==========================================
+  // 4. Create Sample Analytics Events
+  // ==========================================
+  const sampleEvents = [
+    { eventType: 'system', eventName: 'database_seeded', properties: { version: '1.0.0' } },
+    { eventType: 'system', eventName: 'admin_created', properties: { email: admin.email } }
+  ];
+
+  for (const event of sampleEvents) {
+    await pr.analyticsEvent.create({ data: event });
+  }
+  console.log(`✅ ${sampleEvents.length} analytics events created`);
+
+  console.log('\n========================================');
+  console.log('🎉 Database seeding completed!');
+  console.log('========================================');
+  console.log('\n📧 Admin Login:');
+  console.log('   Email: admin@whatsapp.ai');
+  console.log('   Password: Admin123!');
+  console.log('\n⚠️  Please change the default password!\n');
+}
+
+main()
+  .catch((e) => {
+    console.error('❌ Seed error:', e);
+    process.exit(1);
+  })
+  .finally(async () => {
+    await prisma.$disconnect();
+  });</code></pre>
+        </div>
+
+        <!-- Database Config -->
+        <h3 style="margin:30px 0 15px;font-size:1.3rem;"><i class="fas fa-plug" style="color:var(--primary);margin-right:10px;"></i>src/config/database.js - PostgreSQL Connection</h3>
+        
+        <div class="code-container">
+            <div class="code-header">
+                <span class="code-filename">📄 src/config/database.js</span>
+                <button class="copy-btn" onclick="copyText(this)"><i class="fas fa-copy"></i> Copy</button>
+            </div>
+            <pre><code class="language-javascript">const { PrismaClient } = require('@prisma/client');
+const logger = require('../utils/logger');
+
+// Create Prisma instance with logging in development
+const prisma = new PrismaClient({
+  log: process.env.NODE_ENV === 'development' 
+    ? ['query', 'info', 'warn', 'error'] 
+    : ['error']
+});
+
+/**
+ * Connect to database
+ */
+async function connectDB() {
+  try {
+    await prisma.$connect();
+    logger.info('✅ Database connected successfully');
+    
+    // Test query
+    await prisma.$queryRaw`SELECT 1`;
+    
+    return prisma;
+  } catch (error) {
+    logger.error('❌ Database connection failed:', error.message);
+    throw error;
+  }
+}
+
+/**
+ * Graceful disconnect
+ */
+async function disconnectDB() {
+  await prisma.$disconnect();
+  logger.info('Database disconnected');
+}
+
+/**
+ * Health check
+ */
+async function healthCheck() {
+  try {
+    await prisma.$queryRaw`SELECT 1`;
+    return { status: 'healthy', database: 'connected' };
+  } catch (error) {
+    return { status: 'unhealthy', error: error.message };
+  }
+}
+
+module.exports = { prisma, connectDB, disconnectDB, healthCheck };</code></pre>
+        </div>
+    </div>
+
+    <!-- ERD Visualization -->
+    <div class="card">
+        <div class="card-header">
+            <div class="card-icon" style="background:var(--gradient-4);"><i class="fas fa-project-diagram"></i></div>
+            <div>
+                <h2 class="card-title">Entity Relationship Diagram (ERD)</h2>
+                <p class="card-subtitle">Visualisasi hubungan antar tabel database</p>
+            </div>
+        </div>
+
+        <div style="background:linear-gradient(135deg,#fefce8,#fef3c7);border-radius:16px;padding:40px;overflow-x:auto;">
+            <pre style="font-family:'Monaco','Consolas',monospace;font-size:13px;line-height:1.8;color:#1f2937;">
+┌─────────────────┐       ┌────────────────────┐       ┌─────────────────┐
+│     USERS       │       │  USER_CONVERSATIONS │       │  CONVERSATIONS  │
+├─────────────────┤       ├────────────────────┤       ├─────────────────┤
+│ PK id (cuid)    │───┐   │ PK id              │   ┌───│ PK id (cuid)    │
+│    phone (uniq) │   │   │ FK user_id         │───┘   │    type          │
+│    email (uniq) │   │   │ FK conversation_id  │───┐   │    status        │
+│    name         │   │   │    role             │   │   │    title         │
+│    role         │   │   │    joined_at        │   │   └────────┬────────┘
+│    language     │   │   └────────────────────┘   │            │
+└────────┬────────┘                               │            │
+         │                                        │            │
+         │ 1:N                                    │ N:1        │ 1:N
+         ▼                                        ▼            ▼
+┌─────────────────┐       ┌────────────────────┐       ┌─────────────────┐
+│    MESSAGES     │       │      ORDERS         │       │    PRODUCTS     │
+├─────────────────┤       ├────────────────────┤       ├─────────────────┤
+│ PK id (cuid)    │       │ PK id (cuid)        │       │ PK id (cuid)    │
+│ FK conversation │◄──┐   │ FK user_id          │       │    name          │
+│ FK sender       │   │   │    order_number     │       │    sku (uniq)    │
+│    content      │   │   │    status           │       │    price         │
+│    direction    │   │   │    total_amount     │       │    stock         │
+│    status       │   │   └──────────┬─────────┘       │    category      │
+│    language     │   │              │                 └────────┬────────┘
+└────────┬────────┘   │              │                          │
+         │            │              │ 1:N                      │ 1:N
+         │            ▼              ▼                          ▼
+         │    ┌─────────────────┐  ┌─────────────────┐    ┌─────────────────┐
+         │    │ ORDER_ITEMS     │  │  TRANSACTIONS   │  │     REVIEWS      │
+         │    ├─────────────────┤  ├─────────────────┤  ├─────────────────┤
+         │    │ PK id           │  │ PK transaction_id│  │ PK id           │
+         └───►│ FK order_id     │  │ FK order_id     │  │ FK user_id      │
+              │ FK product_id   │◄─┤ FK user_id      │  │ FK product_id   │
+              │    quantity     │  │    amount       │  │    rating       │
+              │    unit_price   │  │    status       │  │    comment      │
+              └─────────────────┘  │    method       │  └─────────────────┘
+                                  └─────────────────┘
+            </pre>
+        </div>
+    </div>
+</div>
+
+
+<!-- ==================== TAB: ADMIN DASHBOARD ==================== -->
+<div id="tab-admin" class="tab-section">
+
+    <div class="card">
+        <div class="card-header">
+            <div class="card-icon" style="background:linear-gradient(135deg,#f59e0b,#f97316);"><i class="fas fa-chart-line"></i></div>
+            <div>
+                <h2 class="card-title">Admin Dashboard Preview</h2>
+                <p class="card-subtitle">Real-time monitoring dashboard untuk manage seluruh sistem</p>
+            </div>
+        </div>
+
+        <!-- Interactive Dashboard Demo -->
+        <div class="dashboard-preview">
+            <div class="dashboard-header">
+                <div class="dashboard-logo">
+                    <i class="fab fa-whatsapp"></i>
+                    WhatsApp AI Admin
+                </div>
+                <div style="display:flex;gap:15px;align-items:center;">
+                    <span style="color:#94a3b8;font-size:14px;"><i class="fas fa-clock"></i> <span id="dashTime">--:--:--</span></span>
+                    <div style="width:36px;height:36px;background:var(--primary);border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;font-weight:700;">A</div>
+                </div>
+            </div>
+
+            <div class="dashboard-body">
+                <!-- Sidebar -->
+                <div class="dashboard-sidebar">
+                    <ul class="sidebar-menu">
+                        <li class="active" onclick="switchDashMenu(this,'overview')"><i class="fas fa-home"></i> Overview</li>
+                        <li onclick="switchDashMenu(this,'chats')"><i class="fas fa-comments"></i> Live Chats</li>
+                        <li onclick="switchDashMenu(this,'users')"><i class="fas fa-users"></i> Users</li>
+                        <li onclick="switchDashMenu(this,'analytics')"><i class="fas fa-chart-bar"></i> Analytics</li>
+                        <li onclick="switchDashMenu(this,'orders')"><i class="fas fa-shopping-cart"></i> Orders</li>
+                        <li onclick="switchDashMenu(this,'payments')"><i class="fas fa-credit-card"></i> Payments</li>
+                        <li onclick="switchDashMenu(this,'products')"><i class="fas fa-box"></i> Products</li>
+                        <li onclick="switchDashMenu(this,'settings')"><i class="fas fa-cog"></i> Settings</li>
+                        <li style="margin-top:auto;border-top:1px solid #0f3460;padding-top:15px;" onclick="switchDashMenu(this,'logout')"><i class="fas fa-sign-out-alt"></i> Logout</li>
+                    </ul>
+                </div>
+
+                <!-- Main Content Area -->
+                <div class="dashboard-main" id="dashboardMain">
+                    
+                    <!-- Overview Tab Content -->
+                    <div id="dash-overview" class="dash-content">
+                        <h3 style="color:white;margin-bottom:20px;font-size:1.3rem;">📊 Dashboard Overview</h3>
+                        
+                        <div class="stats-grid">
+                            <div class="stat-card">
+                                <div class="stat-card-label">Total Messages Today</div>
+                                <div class="stat-card-value" id="statMessages">1,247</div>
+                                <div class="stat-card-change positive"><i class="fas fa-arrow-up"></i> +12.5% vs yesterday</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-card-label">Active Users</div>
+                                <div class="stat-card-value" id="statUsers">892</div>
+                                <div class="stat-card-change positive"><i class="fas fa-arrow-up"></i> +8.3% this week</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-card-label">Revenue (MTD)</div>
+                                <div class="stat-card-value" id="statRevenue">Rp 47.8M</div>
+                                <div class="stat-card-change positive"><i class="fas fa-arrow-up"></i> +23.1% vs last month</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-card-label">Avg Response Time</div>
+                                <div class="stat-card-value" id="statResponse">1.2s</div>
+                                <div class="stat-card-change negative"><i class="fas fa-arrow-down"></i> +0.3s slower</div>
+                            </div>
+                        </div>
+
+                        <div style="display:grid;grid-template-columns:2fr 1fr;gap:18px;margin-top:18px;">
+                            <div class="chart-placeholder" style="height:280px;">
+                                <div style="text-align:center;">
+                                    <i class="fas fa-chart-area" style="font-size:48px;margin-bottom:15px;display:block;"></i>
+                                    <strong>Messages Over Time</strong><br>
+                                    <span style="font-size:13px;">Real-time chart would render here</span>
+                                </div>
+                            </div>
+                            <div class="chart-placeholder" style="height:280px;">
+                                <div style="text-align:center;">
+                                    <i class="fas fa-language" style="font-size:48px;margin-bottom:15px;display:block;"></i>
+                                    <strong>Language Distribution</strong><br>
+                                    <div style="margin-top:15px;font-size:13px;">
+                                        🇮🇩 ID: 67%<br>
+                                        🇬🇧 EN: 22%<br>
+                                        🇯🇵 JP: 6%<br>
+                                        🌍 Other: 5%
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Live Chats Tab -->
+                    <div id="dash-chats" class="dash-content" style="display:none;">
+                        <h3 style="color:white;margin-bottom:20px;font-size:1.3rem;">💬 Live Conversations</h3>
+                        
+                        <div style="background:#16213e;border-radius:14px;padding:20px;max-height:420px;overflow-y:auto;">
+                            <div style="display:flex;gap:15px;padding:15px;background:#0f3460;border-radius:10px;margin-bottom:12px;cursor:pointer;" onclick="selectChatPreview(this)">
+                                <div style="width:45px;height:45px;background:linear-gradient(135deg,#667eea,#764ba2);border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;font-weight:700;">AS</div>
+                                <div style="flex:1;">
+                                    <div style="display:flex;justify-content:space-between;color:white;font-weight:600;">
+                                        <span>Ahmad Suryadi</span><span style="font-size:12px;color:#10b981;">● Active now</span>
+                                    </div>
+                                    <div style="color:#94a3b8;font-size:13px;margin-top:4px;">Halo, mau tanya tentang paket business...</div>
+                                </div>
+                            </div>
+
+                            <div style="display:flex;gap:15px;padding:15px;background:#1a1a2e;border-radius:10px;margin-bottom:12px;cursor:pointer;" onclick="selectChatPreview(this)">
+                                <div style="width:45px;height:45px;background:linear-gradient(135deg,#f093fb,#f5576c);border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;font-weight:700;">RW</div>
+                                <div style="flex:1;">
+                                    <div style="display:flex;justify-content:space-between;color:white;font-weight:600;">
+                                        <span>Rina Wulandari</span><span style="font-size:12px;color:#94a3b8;">2 min ago</span>
+                                    </div>
+                                    <div style="color:#94a3b8;font-size:13px;margin-top:4px;">Sudah transfer pembayaran, cek dong...</div>
+                                </div>
+                            </div>
+
+                            <div style="display:flex;gap:15px;padding:15px;background:#1a1a2e;border-radius:10px;margin-bottom:12px;cursor:pointer;" onclick="selectChatPreview(this)">
+                                <div style="width:45px;height:45px;background:linear-gradient(135deg,#11998e,#38ef7d);border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;font-weight:700;">BP</div>
+                                <div style="flex:1;">
+                                    <div style="display:flex;justify-content:space-between;color:white;font-weight:600;">
+                                        <span>Budi Pratama</span><span style="font-size:12px;color:#94a3b8;">5 min ago</span>
+                                    </div>
+                                    <div style="color:#94a3b8;font-size:13px;margin-top:4px;">Apakah bisa custom AI untuk bahasa Jawa?</div>
+                                </div>
+                            </div>
+
+                            <div style="display:flex;gap:15px;padding:15px;background:#1a1a2e;border-radius:10px;margin-bottom:12px;cursor:pointer;" onclick="selectChatPreview(this)">
+                                <div style="width:45px;height:45px;background:linear-gradient(135deg,#fc4a1a,#f7b733);border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;font-weight:700;">DS</div>
+                                <div style="flex:1;">
+                                    <div style="display:flex;justify-content:space-between;color:white;font-weight:600;">
+                                        <span>Dewi Sartika</span><span style="font-size:12px;color:#94a3b8;">12 min ago</span>
+                                    </div>
+                                    <div style="color:#94a3b8;font-size:13px;margin-top:4px;">Terima kasih, sudah solved! ⭐⭐⭐⭐⭐</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Users Tab -->
+                    <div id="dash-users" class="dash-content" style="display:none;">
+                        <h3 style="color:white;margin-bottom:20px;font-size:1.3rem;">👥 User Management</h3>
+                        
+                        <table class="data-table" style="background:transparent;">
+                            <thead>
+                                <tr style="background:#16213e;color:white;">
+                                    <th>User</th>
+                                    <th>Phone</th>
+                                    <th>Language</th>
+                                    <th>Messages</th>
+                                    <th>Status</th>
+                                    <th>Joined</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody style="color:#cbd5e1;">
+                                <tr style="background:#16213e;">
+                                    <td><strong>Ahmad Suryadi</strong></td>
+                                    <td>+62812****1234</td>
+                                    <td>🇮🇩 ID</td>
+                                    <td>147</td>
+                                    <td><span class="badge badge-success">Active</span></td>
+                                    <td>2024-01-15</td>
+                                    <td><button style="padding:6px 12px;border:none;background:#3b82f6;color:white;border-radius:6px;cursor:pointer;font-size:12px;">View</button></td>
+                                </tr>
+                                <tr style="background:#1a1a2e;">
+                                    <td><strong>Rina Wulandari</strong></td>
+                                    <td>+62813****5678</td>
+                                    <td>🇮🇩 ID</td>
+                                    <td>89</td>
+                                    <td><span class="badge badge-success">Active</span></td>
+                                    <td>2024-01-20</td>
+                                    <td><button style="padding:6px 12px;border:none;background:#3b82f6;color:white;border-radius:6px;cursor:pointer;font-size:12px;">View</button></td>
+                                </tr>
+                                <tr style="background:#16213e;">
+                                    <td><strong>John Smith</strong></td>
+                                    <td>+1415****9012</td>
+                                    <td>🇬🇧 EN</td>
+                                    <td>234</td>
+                                    <td><span class="badge badge-success">Active</span></td>
+                                    <td>2024-01-10</td>
+                                    <td><button style="padding:6px 12px;border:none;background:#3b82f6;color:white;border-radius:6px;cursor:pointer;font-size:12px;">View</button></td>
+                                </tr>
+                                <tr style="background:#1a1a2e;">
+                                    <td><strong>Tanaka Yuki</strong></td>
+                                    <td>+81****3456</td>
+                                    <td>🇯🇵 JP</td>
+                                    <td>56</td>
+                                    <td><span class="badge badge-warning">Idle</span></td>
+                                    <td>2024-02-01</td>
+                                    <td><button style="padding:6px 12px;border:none;background:#3b82f6;color:white;border-radius:6px;cursor:pointer;font-size:12px;">View</button></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Default placeholder for other tabs -->
+                    <div id="dash-analytics" class="dash-content" style="display:none;">
+                        <h3 style="color:white;margin-bottom:20px;font-size:1.3rem;">📈 Analytics & Reports</h3>
+                        <div class="chart-placeholder" style="height:350px;">
+                            <div style="text-align:center;">
+                                <i class="fas fa-chart-pie" style="font-size:64px;margin-bottom:20px;display:block;"></i>
+                                <strong>Analytics Dashboard</strong><br>
+                                <span>Charts, graphs, and detailed metrics would render here</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="dash-orders" class="dash-content" style="display:none;">
+                        <h3 style="color:white;margin-bottom:20px;font-size:1.3rem;">🛒 Order Management</h3>
+                        <div class="chart-placeholder" style="height:350px;">
+                            <div style="text-align:center;">
+                                <i class="fas fa-shopping-bag" style="font-size:64px;margin-bottom:20px;display:block;"></i>
+                                <strong>Orders List</strong><br>
+                                <span>Full order management interface with filters and actions</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="dash-payments" class="dash-content" style="display:none;">
+                        <h3 style="color:white;margin-bottom:20px;font-size:1.3rem;">💳 Payment Transactions</h3>
+                        <div class="chart-placeholder" style="height:350px;">
+                            <div style="text-align:center;">
+                                <i class="fas fa-receipt" style="font-size:64px;margin-bottom:20px;display:block;"></i>
+                                <strong>Transaction History</strong><br>
+                                <span>Payment tracking, refunds, reconciliation tools</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="dash-products" class="dash-content" style="display:none;">
+                        <h3 style="color:white;margin-bottom:20px;font-size:1.3rem;">📦 Product Catalog</h3>
+                        <div class="chart-placeholder" style="height:350px;">
+                            <div style="text-align:center;">
+                                <i class="fas fa-boxes" style="font-size:64px;margin-bottom:20px;display:block;"></i>
+                                <strong>Product Management</strong><br>
+                                <span>CRUD products, inventory, categories, pricing</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="dash-settings" class="dash-content" style="display:none;">
+                        <h3 style="color:white;margin-bottom:20px;font-size:1.3rem;">⚙️ System Settings</h3>
+                        <div class="chart-placeholder" style="height:350px;">
+                            <div style="text-align:center;">
+                                <i class="fas fa-sliders-h" style="font-size:64px;margin-bottom:20px;display:block;"></i>
+                                <strong>Configuration Panel</strong><br>
+                                <span>AI settings, notifications, integrations, API keys</span>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dashboard React Code -->
+    <div class="card">
+        <div class="card-header">
+            <div class="card-icon" style="background:linear-gradient(135deg,#3b82f6,#06b6d4);"><i class="fab fa-react"></i></div>
+            <div>
+                <h2 class="card-title">Admin Dashboard - React Component Code</h2>
+                <p class="card-subtitle">Source code untuk membangun dashboard admin dengan React + TailwindCSS</p>
+            </div>
+        </div>
+
+        <div class="code-container">
+            <div class="code-header">
+                <span class="code-filename">📄 src/components/Dashboard.jsx</span>
+                <button class="copy-btn" onclick="copyText(this)"><i class="fas fa-copy"></i> Copy</button>
+            </div>
+            <pre><code class="language-jsx">import React, { useState, useEffect } from 'react';
+import { BarChart, Bar, LineChart, Line, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { formatCurrency, formatDate } from '../utils/helpers';
+
+// Color palette
+const COLORS = ['#25D366', '#3B82F6', '#F59E0B', '#EF4444', '#8B5CF6', '#EC4899'];
+
+export default function Dashboard() {
+  const [stats, setStats] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [timeRange, setTimeRange] = useState('7d'); // 24h, 7d, 30d, 90d
+
+  useEffect(() => {
+    fetchDashboardStats();
+    const interval = setInterval(fetchDashboardStats, 30000); // Auto-refresh 30s
+    return () => clearInterval(interval);
+  }, [timeRange]);
+
+  const fetchDashboardStats = async () => {
+    try {
+      const response = await fetch(`/api/v1/admin/stats?range=${timeRange}`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+      });
+      const data = await response.json();
+      setStats(data);
+      setLoading(false);
+    } catch (error) {
+      console.error('Failed to fetch stats:', error);
+      setLoading(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-96">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-500"></div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="flex justify-between items-center">
+        <h1 className="text-2xl font-bold text-gray-900">Dashboard Overview</h1>
+        <select 
+          value={timeRange}
+          onChange={(e) => setTimeRange(e.target.value)}
+          className="px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500"
+        >
+          <option value="24h">Last 24 Hours</option>
+          <option value="7d">Last 7 Days</option>
+          <option value="30d">Last 30 Days</option>
+          <option value="90d">Last 90 Days</option>
+        </select>
+      </div>
+
+      {/* Stats Cards Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <StatCard 
+          title="Total Messages" 
+          value={stats?.messages?.total?.toLocaleString()} 
+          change={stats?.messages?.change}
+          icon="💬"
+          color="green"
+        />
+        <StatCard 
+          title="Active Users" 
+          value={stats?.users?.active?.toLocaleString()} 
+          change={stats?.users?.change}
+          icon="👥"
+          color="blue"
+        />
+        <StatCard 
+          title="Revenue" 
+          value={formatCurrency(stats?.revenue?.total)} 
+          change={stats?.revenue?.change}
+          icon="💰"
+          color="yellow"
+        />
+        <StatCard 
+          title="Avg Response Time" 
+          value={`${stats?.performance?.avgResponseTime}s`} 
+          change={stats?.performance?.responseChange}
+          icon="⚡"
+          color="purple"
+          inverse
+        />
+      </div>
+
+      {/* Charts Row */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Messages Chart - Takes 2 columns */}
+        <div className="lg:col-span-2 bg-white rounded-xl shadow-sm p-6">
+          <h3 className="text-lg font-semibold mb-4">Messages Over Time</h3>
+          <ResponsiveContainer width="100%" height={300}>
+            <LineChart data={stats?.messages?.timeline}>
+              <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+              <XAxis dataKey="date" tick={{ fontSize: 12 }} />
+              <YAxis tick={{ fontSize: 12 }} />
+              <Tooltip />
+              <Legend />
+              <Line type="monotone" dataKey="inbound" stroke="#25D366" strokeWidth={2} name="Received" />
+              <Line type="monotone" dataKey="outbound" stroke="#3B82F6" strokeWidth={2} name="Sent" />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
+
+        {/* Language Distribution Pie Chart */}
+        <div className="bg-white rounded-xl shadow-sm p-6">
+          <h3 className="text-lg font-semibold mb-4">Languages</h3>
+          <ResponsiveContainer width="100%" height={300}>
+            <PieChart>
+              <Pie
+                data={stats?.languages}
+                cx="50%"
+                cy="50%"
+                innerRadius={60}
+                outerRadius={100}
+                paddingAngle={5}
+                dataKey="value"
+              >
+                {stats?.languages?.map((entry, index) => (
+                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                ))}
+              </Pie>
+              <Tooltip />
+            </PieChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+
+      {/* Recent Activity Table */}
+      <div className="bg-white rounded-xl shadow-sm p-6">
+        <h3 className="text-lg font-semibold mb-4">Recent Activity</h3>
+        <div className="overflow-x-auto">
+          <table className="w-full">
+            <thead>
+              <tr className="text-left text-gray-500 text-sm border-b">
+                <th className="pb-3">Time</th>
+                <th className="pb-3">User</th>
+                <th className="pb-3">Activity</th>
+                <th className="pb-3">Details</th>
+                <th className="pb-3">Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {stats?.recentActivity?.map((activity, idx) => (
+                <tr key={idx} className="border-b last:border-0 hover:bg-gray-50">
+                  <td className="py-3 text-sm">{formatDate(activity.timestamp)}</td>
+                  <td className="py-3">
+                    <div className="flex items-center gap-2">
+                      <div className="w-8 h-8 rounded-full bg-gradient-to-r from-green-400 to-blue-500 flex items-center justify-center text-white text-xs font-bold">
+                        {activity.userInitials}
+                      </div>
+                      <span className="font-medium">{activity.userName}</span>
+                    </div>
+                  </td>
+                  <td className="py-3 text-sm">{activity.type}</td>
+                  <td className="py-3 text-sm text-gray-500">{activity.details}</td>
+                  <td className="py-3">
+                    <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                      activity.status === 'success' ? 'bg-green-100 text-green-700' :
+                      activity.status === 'pending' ? 'bg-yellow-100 text-yellow-700' :
+                      'bg-red-100 text-red-700'
+                    }`}>
+                      {activity.status}
+                    </span>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// Reusable Stat Card Component
+function StatCard({ title, value, change, icon, color, inverse = false }) {
+  const colors = {
+    green: 'from-green-500 to-emerald-600',
+    blue: 'from-blue-500 to-indigo-600',
+    yellow: 'from-yellow-500 to-orange-600',
+    purple: 'from-purple-500 to-pink-600'
+  };
+
+  const isPositive = change > 0;
+
+  return (
+    <div className="bg-white rounded-xl shadow-sm p-6 hover:shadow-md transition-shadow">
+      <div className="flex justify-between items-start">
+        <div>
+          <p className="text-gray-500 text-sm font-medium">{title}</p>
+          <p className="text-3xl font-bold mt-2">{value}</p>
+          <p className={`text-sm mt-2 flex items-center gap-1 ${
+            inverse ? (isPositive ? 'text-red-500' : 'text-green-500') : (isPositive ? 'text-green-500' : 'text-red-500')
+          }`}>
+            <i className={`fas fa-arrow-${isPositive ? 'up' : 'down'}`}></i>
+            {Math.abs(change)}% vs previous period
+          </p>
+        </div>
+        <div className={`w-14 h-14 rounded-xl bg-gradient-to-br ${colors[color]} flex items-center justify-center text-2xl shadow-lg`}>
+          {icon}
+        </div>
+      </div>
+    </div>
+  );
+}</code></pre>
+        </div>
+    </div>
+</div>
+
+
+<!-- ==================== TAB: MULTI-LANGUAGE ==================== -->
+<div id="tab-multilang" class="tab-section">
+
+    <div class="card">
+        <div class="card-header">
+            <div class="card-icon" style="background:linear-gradient(135deg,#8b5cf6,#ec4899);"><i class="fas fa-globe-asia"></i></div>
+            <div>
+                <h2 class="card-title">Multi-Language Support (i18n)</h2>
+                <p class="card-subtitle">Dukungan 10+ bahasa dengan deteksi otomatis dan terjemahan real-time</p>
+            </div>
+        </div>
+
+        <!-- Language Grid -->
+        <h3 style="margin:25px 0 15px;font-size:1.3rem;"><i class="fas fa-language" style="color:var(--primary);margin-right:10px;"></i>Supported Languages</h3>
+        
+        <div class="lang-grid">
+            <div class="lang-card" onclick="showLangDetail('id')">
+                <div class="lang-flag">🇮🇩</div>
+                <div class="lang-name">Indonesia</div>
+                <div class="lang-native">Bahasa Indonesia</div>
+            </div>
+            <div class="lang-card" onclick="showLangDetail('en')">
+                <div class="lang-flag">🇬🇧</div>
+                <div class="lang-name">English</div>
+                <div class="lang-native">English</div>
+            </div>
+            <div class="lang-card" onclick="showLangDetail('jv')">
+                <div class="lang-flag">🇮🇩</div>
+                <div class="lang-name">Jawa</div>
+                <div class="lang-native">Basa Jawa</div>
+            </div>
+            <div class="lang-card" onclick="showLangDetail('su')">
+                <div class="lang-flag">🇮🇩</div>
+                <div class="lang-name">Sunda</div>
+                <div class="lang-native">Basa Sunda</div>
+            </div>
+            <div class="lang-card" onclick="showLangDetail('ar')">
+                <div class="lang-flag">🇸🇦</div>
+                <div class="lang-name">Arabic</div>
+                <div class="lang-native">العربية</div>
+            </div>
+            <div class="lang-card" onclick="showLangDetail('zh')">
+                <div class="lang-flag">🇨🇳</div>
+                <div class="lang-name">Mandarin</div>
+                <div class="lang-native">中文</div>
+            </div>
+            <div class="lang-card" onclick="showLangDetail('ja')">
+                <div class="lang-flag">🇯🇵</div>
+                <div class="lang-name">Japanese</div>
+                <div class="lang-native">日本語</div>
+            </div>
+            <div class="lang-card" onclick="showLangDetail('ko')">
+                <div class="lang-flag">🇰🇷</div>
+                <div class="lang-name">Korean</div>
+                <div class="lang-native">한국어</div>
+            </div>
+            <div class="lang-card" onclick="showLangDetail('es')">
+                <div class="lang-flag">🇪🇸</div>
+                <div class="lang-name">Spanish</div>
+                <div class="lang-native">Español</div>
+            </div>
+            <div class="lang-card" onclick="showLangDetail('fr')">
+                <div class="lang-flag">🇫🇷</div>
+                <div class="lang-name">French</div>
+                <div class="lang-native">Français</div>
+            </div>
+        </div>
+
+        <!-- Translation Service Code -->
+        <h3 style="margin:35px 0 15px;font-size:1.3rem;"><i class="fas fa-code" style="color:var(--primary);margin-right:10px;"></i>src/services/translationService.js</h3>
+        
+        <div class="code-container">
+            <div class="code-header">
+                <span class="code-filename">📄 src/services/translationService.js</span>
+                <button class="copy-btn" onclick="copyText(this)"><i class="fas fa-copy"></i> Copy</button>
+            </div>
+            <pre><code class="language-javascript">// Language detection patterns
+const LANGUAGE_PATTERNS = {
+  id: {
+    patterns: [/^(halo|hai|hi|hey|selamat|apa kabar|terima kasih|maaf)/i, /^(ada|bisa|tolong|bantuan|mau|ingin)/i],
+    commonWords: ['yang', 'dan', 'untuk', 'dengan', 'dari', 'ini', 'itu', 'pada', 'adalah', 'bisa'],
+    confidence: 0.8
+  },
+  en: {
+    patterns: [/^(hello|hi|hey|good morning|thank you|sorry|please)/i, /^(can|could|would|help|want|need)/i],
+    commonWords: ['the', 'and', 'for', 'with', 'this', 'that', 'is', 'are', 'can'],
+    confidence: 0.8
+  },
+  jv: {
+    patterns: [/^(halo|hai|nuwun|maturnuwun|matur|sembah)/i, /^(kula|kowé|sampeyan|timbali)/i],
+    commonWords: ['kula', 'kowé', 'iki', 'iku', 'lan', 'saking', 'marang', 'ing', 'dhateng'],
+    confidence: 0.7
+  },
+  su: {
+    patterns: [/^(halo|hai|hatur|nuhun|punten|sampurasun)/i, /^(abdi|maneh/aing|anjeun)/i],
+    commonWords: ['abdi', 'maneh', 'ieu', 'ieu', 'jeung', 'ti', 'ka', 'di', 'sareng'],
+    confidence: 0.7
+  },
+  ar: {
+    patterns: [/^(مرحبا|سلام|شكرا|عفوا|من فضلك)/i],
+    commonWords: ['في', 'من', 'على', 'هذا', 'ذلك', 'و', 'مع', 'هو', 'كان'],
+    direction: 'rtl',
+    confidence: 0.8
+  },
+  zh: {
+    patterns: [/^(你好|您好|谢谢|对不起|请)/i],
+    commonWords: ['的', '是', '在', '了', '和', '有', '我', '不', '这'],
+    confidence: 0.8
+  },
+  ja: {
+    patterns: [/^(こんにちは|ありがとう|すみません|お願い)/i],
+    commonWords: ['は', 'が', 'を', 'に', 'で', 'と', 'の', 'も', 'です'],
+    confidence: 0.8
+  },
+  ko: {
+    patterns: [/^(안녕하세요|감사합니다|죄송합니다|제발)/i],
+    commonWords: ['은', '는', '이', '가', '을', '를', '에', '와', '과'],
+    confidence: 0.8
+  }
+};
+
+// Translation cache (Redis recommended for production)
+const translationCache = new Map();
+
+/**
+ * Detect language from text
+ */
+function detectLanguage(text) {
+  if (!text || typeof text !== 'string') return 'id'; // Default to Indonesian
+
+  const cleanText = text.toLowerCase().trim();
+
+  // Check each language pattern
+  let bestMatch = { lang: 'id', score: 0 };
+
+  for (const [lang, config] of Object.entries(LANGUAGE_PATTERNS)) {
+    let score = 0;
+
+    // Check starting patterns
+    for (const pattern of config.patterns) {
+      if (pattern.test(cleanText)) score += 0.4;
+    }
+
+    // Count common words
+    const words = cleanText.split(/\s+/);
+    const commonWordMatches = words.filter(w => config.commonWords.includes(w)).length;
+    score += (commonWordMatches / Math.max(words.length, 1)) * 0.6;
+
+    if (score > bestMatch.score) {
+      bestMatch = { lang, score };
+    }
+  }
+
+  return bestMatch.lang;
+}
+
+/**
+ * Translate text using OpenAI (more accurate than Google Translate for context)
+ */
+async function translate(text, targetLang, sourceLang = null) {
+  const cacheKey = `${sourceLang || 'auto'}:${targetLang}:${text.substring(0, 100)}`;
+  
+  // Check cache first
+  if (translationCache.has(cacheKey)) {
+    return translationCache.get(cacheKey);
+  }
+
+  try {
+    // Use OpenAI for contextual translation
+    const OpenAI = require('openai');
+    const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+
+    const targetNames = {
+      id: 'Bahasa Indonesia',
+      en: 'English',
+      jv: 'Basa Jawa (Javanese)',
+      su: 'Basa Sunda (Sundanese)',
+      ar: 'العربية (Arabic)',
+      zh: '中文 (Mandarin Chinese)',
+      ja: '日本語 (Japanese)',
+      ko: '한국어 (Korean)',
+      es: 'Español (Spanish)',
+      fr: 'Français (French)'
+    };
+
+    const prompt = sourceLang 
+      ? `Translate the following text from ${sourceLang.toUpperCase()} to ${targetNames[targetLang]}. Only output the translated text, nothing else:\n\n"${text}"`
+      : `Detect the language of the following text and translate it to ${targetNames[targetLang]}. Only output the translated text:\n\n"${text}"`;
+
+    const response = await openai.chat.completions.create({
+      model: 'gpt-3.5-turbo', // Cheaper model for translations
+      messages: [{ role: 'user', content: prompt }],
+      max_tokens: Math.min(text.length * 2, 1000),
+      temperature: 0.3 // Lower temperature for more consistent translations
+    });
+
+    const translated = response.choices[0].message.content.trim();
+    
+    // Cache result (with TTL)
+    translationCache.set(cacheKey, translated);
+    setTimeout(() => translationCache.delete(cacheKey), 3600000); // 1 hour TTL
+
+    return translated;
+
+  } catch (error) {
+    console.error('Translation error:', error);
+    return text; // Return original on error
+  }
+}
+
+/**
+ * Get localized system prompts
+ */
+function getSystemPrompt(lang) {
+  const prompts = {
+    id: `Kamu adalah asisten AI ramah bernama "WhatsApp AI". Jawab dalam Bahasa Indonesia yang baik dan benar.`,
+    en: `You are a friendly AI assistant named "WhatsApp AI". Respond in proper English.`,
+    jv: `Kula asisten AI sing jenenge "WhatsApp AI". Wangsulana nganggo Basa Jawa sing bener lan sopan.`,
+    su: `Abdi asisten AI nu ngaranna "WhatsApp AI". Tanggeun maké Basa Sunda anu bener sareng sopan.`,
+    ar: `أنت مساعد ذكاء اصطناعي ودود يسمى "WhatsApp AI". أجب باللغة العربية الصحيحة.`,
+    zh: `你是名为"WhatsApp AI"的友好AI助手。请用正确的中文回答。`,
+    ja: `あなたは「WhatsApp AI」という名前の親切なAIアシスタントです。正しい日本語で答えてください。`,
+    ko: `당신은 "WhatsApp AI"라는 이름의 친절한 AI 어시스턴트입니다. 올바른 한국어로 답변해 주세요.`,
+    es: `Eres un asistente de IA amigable llamado "WhatsApp AI". Responde en español correcto.`,
+    fr: `Vous êtes un assistant IA amical nommé "WhatsApp AI". Répondez en français correct.`
+  };
+
+  return prompts[lang] || prompts.id;
+}
+
+/**
+ * Get localized welcome message
+ */
+function getWelcomeMessage(lang) {
+  const messages = {
+    id: 'Halo! 👋 Selamat datang di WhatsApp AI Assistant.\n\nSaya bisa membantu:\n• 💡 Jawab pertanyaan\n• 🛒 Info produk & order\n• 📦 Tracking pesanan\n• ✍️ Layanan lainnya\n\nSilakan ketik kebutuhan Anda!',
+    en: 'Hello! 👋 Welcome to WhatsApp AI Assistant.\n\nI can help you with:\n• 💡 Answer questions\n• 🛒 Product info & orders\n• 📦 Order tracking\n• ✍️ Other services\n\nPlease type what you need!',
+    jv: 'Halo! 👋 Sugeng rawuh ing WhatsApp AI Assistant.\n\nKula bisa mbantu:\n• 💡 Wangsulan pitakonan\n• 🛒 Info produk & order\n• 📦 Tracking pesenan\n• ✍é Liyané\n\nTulisen kepriyé panjenengan butuhake!',
+    su: 'Halo! 👋 Sampurasun di WhatsApp AI Assistant.\n\nAbdi tiasa ngabantosan:\n• 💡 Ngajawab patarosan\n• 🛒 Info produk & order\n• 📦 Tracking pesenan\n• ✍é Séjénna\n\nTuliskeun naon anu anjeun peryogikeun!'
+  };
+
+  return messages[lang] || messages.id;
+}
+
+module.exports = {
+  detectLanguage,
+  translate,
+  getSystemPrompt,
+  getWelcomeMessage,
+  LANGUAGE_PATTERNS
+};</code></pre>
+        </div>
+
+        <!-- i18n JSON Files -->
+        <h3 style="margin:30px 0 15px;font-size:1.3rem;"><i class="fas fa-file-alt" style="color:var(--primary);margin-right:10px;"></i>i18n Translation Files Structure</h3>
+        
+        <div class="code-container">
+            <div class="code-header">
+                <span class="code-filename">📁 locales/id.json (Indonesian)</span>
+                <button class="copy-btn" onclick="copyText(this)"><i class="fas fa-copy"></i> Copy</button>
+            </div>
+            <pre><code class="language-json">{
+  "common": {
+    "appName": "WhatsApp AI Assistant",
+    "welcome": "Selamat datang!",
+    "loading": "Memuat...",
+    "error": "Terjadi kesalahan",
+    "retry": "Coba Lagi",
+    "cancel": "Batal",
+    "confirm": "Konfirmasi",
+    "save": "Simpan",
+    "delete": "Hapus",
+    "edit": "Edit",
+    "search": "Cari...",
+    "noData": "Tidak ada data",
+    "back": "Kembali",
+    "next": "Selanjutnya",
+    "previous": "Sebelumnya",
+    "close": "Tutup",
+    "send": "Kirim",
+    "typing": "Sedang mengetik...",
+    "online": "Online",
+    "offline": "Offline",
+    "yesterday": "Kemarin",
+    "today": "Hari ini",
+    "justNow": "Baru saja"
+  },
+  "chat": {
+    "placeholder": "Ketik pesan...",
+    "newChat": "Chat Baru",
+    "attachment": "Lampiran",
+    "emoji": "Emoji",
+    "voiceNote": "Catatan Suara",
+    "image": "Gambar",
+    "document": "Dokumen",
+    "location": "Lokasi",
+    "contact": "Kontak"
+  },
+  "menu": {
+    "home": "Beranda",
+    "chats": "Percakapan",
+    "contacts": "Kontak",
+    "profile": "Profil",
+    "settings": "Pengaturan",
+    "help": "Bantuan",
+    "about": "Tentang",
+    "logout": "Keluar"
+  },
+  "order": {
+    "title": "Pesanan Saya",
+    "newOrder": "Buat Pesanan Baru",
+    "trackOrder": "Lacak Pesanan",
+    "orderHistory": "Riwayat Pesanan",
+    "status": {
+      "pending": "Menunggu",
+      "confirmed": "Dikonfirmasi",
+      "processing": "Diproses",
+      "shipped": "Dikirim",
+      "delivered": "Diterima",
+      "completed": "Selesai",
+      "cancelled": "Dibatalkan"
+    },
+    "payment": {
+      "pending": "Menunggu Pembayaran",
+      "paid": "Dibayar",
+      "failed": "Gagal",
+      "refunded": "Dikembalikan"
+    }
+  },
+  "payment": {
+    "title": "Pembayaran",
+    "method": "Metode Pembayaran",
+    "methods": {
+      "gopay": "GoPay",
+      "ovo": "OVO",
+      "dana": "DANA",
+      "bank_transfer": "Transfer Bank",
+      "qris": "QRIS",
+      "credit_card": "Kartu Kredit"
+    },
+    "payNow": "Bayar Sekarang",
+    "payLater": "Bayar Nanti",
+    "total": "Total Pembayaran",
+    "subtotal": "Subtotal",
+      "discount": "Diskon",
+      "shipping": "Ongkos Kirim",
+      "tax": "Pajak"
+  },
+  "errors": {
+    "networkError": "Koneksi internet bermasalah",
+    "serverError": "Server sedang gangguan",
+    "notFound": "Data tidak ditemukan",
+    "unauthorized": "Anda belum login",
+    "forbidden": "Anda tidak memiliki akses",
+    "validationError": "Data tidak valid",
+    "rateLimited": "Terlalu banyak permintaan, coba lagi nanti"
+  },
