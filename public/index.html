@@ -12,7 +12,6 @@
     <!-- Libraries -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <script src="https://cdn.socket.io/4.7.4/socket.io.min.js"></script>
-    <!-- Library QR Code (Wajib untuk Railway) -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 
     <style>
@@ -149,10 +148,9 @@
         
         .cpInfo { width: 100%; padding: 20px; background: var(--bgch); border: 1px solid var(--brd); border-radius: var(--r); display: none; }
 
-        /* QR Modal Specifics - PENTING UNTUK SCAN */
+        /* QR Modal Specifics */
         .qr-mod .mdb { background: #fff; color: #111; padding: 30px; text-align: center; border-radius: var(--rl); }
         #qrCanvas { background: #fff; border-radius: 8px; display: flex; justify-content: center; align-items: center; min-height: 260px; }
-        /* Styling tambahan untuk elemen yang dibuat library qrcode.js */
         #qrCanvas img, #qrCanvas canvas { max-width: 100%; border: 1px solid #ddd; }
         
         .qr-inst { color: #555; margin-top: 15px; font-size: 13px; line-height: 1.5; }
@@ -406,7 +404,6 @@
             <button class="mdc" onclick="closeQRModal()"><i class="fas fa-times"></i></button>
         </div>
         <div class="mdb">
-            <!-- Tempat Library QR Code menggambar -->
             <div id="qrCanvas">
                 <span style="color:#999;font-size:14px">Memuat QR Code...</span>
             </div>
@@ -490,7 +487,7 @@ function saveLocal() {
 
 // --- SOCKET LOGIC ---
 function connectSocket() {
-    const url = window.location.origin; // Otomatis ambil domain Railway
+    const url = window.location.origin;
     document.getElementById('sockUrl').textContent = url;
     document.getElementById('srvUrl').value = url;
 
@@ -516,18 +513,15 @@ function connectSocket() {
             console.error(err);
         });
 
-        // --- EVENT PENTING: QR CODE ---
+        // --- EVENT QR ---
         socket.on('qr', (data) => {
-            // Hapus QR lama
             const container = document.getElementById('qrCanvas');
             container.innerHTML = '';
             
-            // Update status
             const status = document.getElementById('qrStatus');
             status.style.display = 'block';
             status.textContent = 'QR Code Terbaru';
 
-            // Generate REAL QR
             try {
                 new QRCode(container, {
                     text: data.qr,
@@ -581,7 +575,6 @@ function nav(p, el) {
 function openQRModal() {
     if(connected) return toast('Bot sudah terhubung', 'w');
     document.getElementById('qrModal').classList.add('sh');
-    // Server Railway biasanya mengirim QR otomatis saat connect
 }
 
 function closeQRModal() {
@@ -606,7 +599,7 @@ function setWAConnected(info) {
 
 function discWA() {
     if(socket) socket.emit('disconnect-wa');
-    location.reload(); // Refresh halaman agar bersih
+    location.reload(); 
 }
 
 function startUptime() {
@@ -643,7 +636,7 @@ function setGm(m, el) {
     saveLocal();
 }
 
-// Rules (Local Only)
+// Rules
 function saveRule() {
     const id = document.getElementById('rid').value;
     const r = {
@@ -691,7 +684,7 @@ function renderRules() {
     `).join('');
 }
 
-// Schedules (Local Only)
+// Schedules
 function saveSched() {
     const s = {
         id: Date.now(),
@@ -759,6 +752,18 @@ function resetData() {
 function refreshData() {
     if(socket) socket.emit('get-stats');
     toast('Refreshed', 's');
+}
+
+function togBot() {
+    const cb = document.getElementById('btog');
+    const txt = document.getElementById('bstxt');
+    if(cb.checked) {
+        txt.textContent = 'ACTIVE';
+        txt.style.color = 'var(--acc)';
+    } else {
+        txt.textContent = 'OFFLINE';
+        txt.style.color = 'var(--fgd)';
+    }
 }
 
 function toast(m,t='s') {
